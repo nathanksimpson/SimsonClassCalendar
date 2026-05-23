@@ -12,6 +12,17 @@ const translations = {
         export: 'Export',
         import: 'Import',
         print: 'Print',
+        printCalendarBtn: 'Print calendar',
+        printSummaryBtn: 'Print summary',
+        printSectionCalendar: 'Calendar (landscape)',
+        printSectionCalendarHint: 'Opens one preview tab with the month grid. Use your browser\'s Print or Save as PDF there.',
+        printSectionSummary: 'Summary & syllabi (portrait)',
+        printSectionSummaryHint: 'Opens one preview tab with lists and syllabus tables (one class per page).',
+        printNothingSelectedSummary: 'Choose at least one summary section to print.',
+        printCalendarNeedsTerm: 'Set a term start month before printing the calendar.',
+        printCalendarWarnManyTypes: 'You turned on {count} event types on the printed calendar (this layout works best with {max} or fewer). Extra types crowd each day and may be cut off.',
+        printCalendarWarnManyClasses: 'You have {count} classes showing on the calendar. Printed day cells are small; some lesson details may be cut off. Use “Filter lessons…” to show fewer classes.',
+        printCalendarWarnContinue: 'Print anyway?',
         clearAllData: 'Clear All Data',
         topBarCollapse: 'Collapse toolbar',
         topBarExpand: 'Expand toolbar',
@@ -58,6 +69,11 @@ const translations = {
         hostCopyLink: 'Copy link',
         hostLinkCopied: 'Team link copied!',
         langToggle: '🌐 한국어',
+        themeDark: '🌙 Dark',
+        themeLight: '☀️ Light',
+        themeToggleTitle: 'Switch light/dark theme',
+        howToBtn: 'Help?',
+        howToBtnTitle: 'How to use this app',
         
         // Term Selector
         calendarName: 'Calendar Name:',
@@ -94,10 +110,47 @@ const translations = {
         printLessonFilterActive: 'Lesson filter is on: only {visible} of {total} classes appear on the calendar and in class-related print sections.',
         tabCalendar: 'Calendar',
         tabClasses: 'Classes',
+        tabSyllabus: 'Syllabus',
         tabEvents: 'Events',
+        tabHomework: 'Homework',
         tabPrint: 'Print & data',
         tabPrintDataHeading: 'Data & settings',
+        printBooksHeading: 'Books',
+        printBooksHint: 'Curriculum books (Write Now, Write Right, Hand in Hand, etc.): lesson plans and page blocks that class syllabi pull from. Green / Blue / Navy levels share one book where pagination is the same.',
+        printBooksStats: '{books} book(s) in catalog · {edited} edited',
+        printBooksEmpty: 'No curriculum books with page data are registered yet.',
+        booksListEdit: 'Edit book',
+        booksListSessions: '{n} sessions',
+        booksListEdited: 'Edited',
+        booksEditorTitle: 'Edit book',
+        booksEditorHint: 'Lesson plans and page blocks for this book. Changes apply to all linked class types (e.g. Green, Blue, Navy).',
+        booksEditorMetaLevels: 'Levels: {levels}',
+        booksEditorMetaLessons: 'Typical lessons per term: {n}',
+        booksEditorMetaPresets: 'Linked presets: {ids}',
+        booksEditorCustomBadge: 'You have custom page data saved for this book.',
+        booksEditorSessionsHeading: 'Sessions',
+        booksEditorColPlan: 'Lesson plan',
+        booksEditorColPages: 'Pages / detail',
+        booksEditorSave: 'Save book',
+        booksEditorReset: 'Reset to factory',
+        booksEditorResetConfirm: 'Reset this book to factory page data? All linked class types will use the built-in pages again.',
+        booksEditorNoRows: 'Add at least one session row before saving.',
+        printSyllabusPresetsHeading: 'My lesson plans/books',
+        printSyllabusPresetsHint: 'Custom lesson plans you save under My syllabi on the Syllabus tab, plus edited curriculum books. Export or import a pack to back up lesson plans, book page data, and class-type defaults.',
+        printSyllabusStats: '{templates} custom lesson plan(s) · {overrides} edited class-type default(s)',
+        printExportSyllabusPack: 'Export lesson plans/books pack',
+        printImportSyllabusPack: 'Import lesson plans/books pack',
+        printOpenSyllabusTab: 'Open Syllabus tab',
+        printEditPdfPresets: 'Edit PDF preset defaults',
+        printSyllabusPackExported: 'Lesson plans/books pack downloaded.',
+        printSyllabusPackImported: 'Imported {templates} lesson plan(s), {books} book(s), and {overrides} class-type override(s).',
+        printSyllabusPackInvalid: 'Not a valid lesson plans/books pack file.',
+        printSyllabusManageTemplate: 'Edit',
+        printSyllabusNoTemplates: 'No custom lesson plans yet. Use the Syllabus tab → My syllabi, or import a pack.',
+        printSyllabusTemplateListLabel: 'Custom lesson plans',
         openFullClassEditor: 'Open full editor',
+        viewClassInCalendar: 'View in Calendar',
+        viewEventInCalendar: 'View in Calendar',
         openFullEventEditor: 'Open full editor',
         classEditorEmpty: 'Select a class from the list, or click + Add Class to create one.',
         eventEditorEmpty: 'Select an event from the list, or click + Add Event to create one.',
@@ -238,6 +291,7 @@ const translations = {
         delete: 'Delete',
         deleteClass: 'Delete class',
         saveClass: 'Save Class',
+        classSaved: 'Class saved.',
         classTypeLabel: 'Class type',
         classTypeHint: 'Pick a preset for typical lesson counts and meeting days. You can still edit every field.',
         classTypeCustom: 'Custom (no preset)',
@@ -300,6 +354,77 @@ const translations = {
         homeworkImportNoRows: 'Refresh from calendar first to create syllabus rows.',
         homeworkImportPreviewHeader: 'Matched {matched}, unmatched {unmatched}',
         homeworkImportApplied: 'Applied homework to {n} row(s).',
+        homeworkTabReferenceDate: 'Reference date',
+        homeworkTabToday: 'Today',
+        homeworkTabMiniCalendarLabel: 'Pick reference date',
+        homeworkTabPrevMonth: 'Previous month',
+        homeworkTabNextMonth: 'Next month',
+        homeworkTabRefreshSyllabi: 'Refresh syllabi from calendar',
+        homeworkTabEditorEmpty: 'Select a class to see homework copy blocks from its syllabus.',
+        homeworkTabOpenClass: 'Edit syllabus in Classes',
+        homeworkTabOpenSyllabus: 'Edit syllabus',
+        openSyllabusTab: 'Edit syllabus',
+        classTabOpenSyllabus: 'Edit syllabus',
+        syllabusTabEditorEmpty: 'Select a class or a custom syllabus template.',
+        syllabusSegmentClasses: 'Classes',
+        syllabusSegmentTemplates: 'My syllabi',
+        syllabusNewTemplate: '+ New custom syllabus',
+        syllabusTemplateSearchPlaceholder: 'Search templates…',
+        syllabusSaveClass: 'Save syllabus',
+        syllabusSaveTemplate: 'Save template',
+        syllabusOpenClassSettings: 'Class schedule & settings',
+        syllabusOpenHomework: 'Homework copy',
+        syllabusApplyTemplatePick: 'Apply custom syllabus…',
+        syllabusSaveAsTemplate: 'Save as template',
+        syllabusDeleteTemplate: 'Delete template',
+        syllabusModeTemplate: 'Editing template: {name} — apply to a class when ready.',
+        syllabusScheduleChip: 'Schedule (saved): {days} · {start} – {end}',
+        syllabusScheduleUnsavedHint: 'Save the class in Classes first for an accurate Refresh from calendar.',
+        syllabusClassSummary: '{rows} rows in syllabus',
+        syllabusClassSummaryEmpty: 'No syllabus rows yet',
+        syllabusStartBlank: 'Start blank syllabus',
+        addSyllabusLessonRow: 'Add lesson row',
+        syllabusConfirmBlank: 'Clear all syllabus units and rows for this class?',
+        syllabusConfirmApplyTemplate: 'Replace this class syllabus units and merge page content from the template?',
+        syllabusConfirmDeleteTemplate: 'Delete this custom syllabus template?',
+        syllabusTemplateNamePrompt: 'Template name',
+        syllabusTemplateSaved: 'Template saved.',
+        syllabusTemplateApplied: 'Custom syllabus applied.',
+        syllabusSaved: 'Syllabus saved.',
+        syllabusDuplicateFromClass: 'Duplicate from class',
+        syllabusNoTemplates: 'No custom syllabi yet. Click + New custom syllabus.',
+        syllabusGeneralNotes: 'General notes & instructions',
+        syllabusGeneralNotesHint: 'For parents, substitutes, or your own reminders. Shown at the top when you print this syllabus.',
+        syllabusGeneralNotesPlaceholder: 'e.g., Bring workbook every class. Quiz on Unit 3 at session 8…',
+        homeworkTabHint: 'This tab only prepares text to copy. Paste it into your separate Simson grading website and homework assignment website — those pages are not part of this app. Text comes from each class syllabus (Pages / detail). Refresh syllabi after calendar changes.',
+        homeworkTabExternalBanner: 'Copy from here, then paste on your other websites (Simson grading and homework assignment).',
+        homeworkTabDueDate: 'Homework due (next class)',
+        homeworkTabGradingTitle: 'Previous week — for Simson grading site',
+        homeworkTabAssignTitle: 'This week — for homework assignment site',
+        homeworkTabGradingHint: 'Copy this block, open your Simson grading webpage in another tab, and paste there. This is homework due at the current class (from that session’s Pages / detail).',
+        homeworkTabAssignHint: 'Copy this block, open your homework assignment webpage in another tab, and paste there. Due on the next in-person class (skips holidays and no-class days).',
+        homeworkTabCopy: 'Copy',
+        homeworkTabCopyBoth: 'Copy both blocks',
+        homeworkTabSyllabiRefreshed: 'Syllabi updated from calendar.',
+        homeworkTabCopied: 'Copied to clipboard.',
+        homeworkTabCopyFailed: 'Could not copy. Select the text and copy manually.',
+        homeworkTabNoLessons: 'No scheduled lessons in the syllabus. Open the class editor and click Refresh from calendar.',
+        homeworkTabNoHomeworkText: 'Lessons are scheduled but Pages / detail is empty. Add homework in the syllabus or use Import homework from paste.',
+        homeworkTabNoAssignText: 'No homework text for this week in the syllabus.',
+        homeworkTabNoGradingText: 'No previous-week homework in the syllabus (first lesson of term).',
+        homeworkTabNoDueDate: 'No next class date before term end. Check meeting days and end date.',
+        homeworkTabTargetLesson: 'Assign at class on {date} · Session {n}: {title}',
+        homeworkTabGradingFrom: 'Grade homework from session {n} ({date}): {title}',
+        homeworkTabModuleMissing: 'Homework tab module did not load. Press Ctrl+F5 to refresh.',
+        homeworkTabDueLabel: 'Due',
+        homeworkTabSessionLabel: 'Session',
+        homeworkTabEditableHint: 'Edit the text areas below to update the syllabus (Pages / detail). Copy adds the class name and session header.',
+        homeworkTabSavesTo: 'Saves to syllabus: Session {n} · {title}',
+        homeworkTabSaved: 'Homework saved to syllabus.',
+        homeworkTabNoSyllabusRow: 'No syllabus row linked. Click Refresh syllabi from calendar first.',
+        homeworkTabSkippedHeading: 'Regular class days skipped before due date:',
+        homeworkTabSkipHoliday: '{date} — {name} (no class)',
+        homeworkTabSkipHolidayNoName: '{date} — holiday (no class)',
         
         // Holiday Modal
         addHolidayTitle: 'Add Holiday',
@@ -339,7 +464,6 @@ const translations = {
         printCalendar: 'Print Calendar',
         printSummaryPage: 'Print Summary Page',
         includeClassList: 'Include Class List',
-        includeHolidayList: 'Include Holiday List',
         includeLessonSchedule: 'Include Lesson Schedule',
         includeCompressionNotes: 'Include Compression Notes',
         
@@ -393,6 +517,17 @@ const translations = {
         export: '내보내기',
         import: '가져오기',
         print: '인쇄',
+        printCalendarBtn: '캘린더 인쇄',
+        printSummaryBtn: '요약 인쇄',
+        printSectionCalendar: '캘린더 (가로)',
+        printSectionCalendarHint: '월별 그리드 미리 보기 탭이 열립니다. 브라우저에서 인쇄하거나 PDF로 저장하세요.',
+        printSectionSummary: '요약 및 강의계획표 (세로)',
+        printSectionSummaryHint: '목록과 강의계획표(반별 1페이지) 미리 보기 탭이 열립니다.',
+        printNothingSelectedSummary: '인쇄할 요약 항목을 하나 이상 선택하세요.',
+        printCalendarNeedsTerm: '캘린더를 인쇄하려면 먼저 학기 시작 월을 설정하세요.',
+        printCalendarWarnManyTypes: '인쇄 캘린더에 {count}개 유형이 켜져 있습니다(이 레이아웃은 {max}개 이하가 가장 잘 보입니다). 유형이 많으면 날짜 칸이 비좁고 잘릴 수 있습니다.',
+        printCalendarWarnManyClasses: '캘린더에 {count}개 수업이 표시됩니다. 인쇄 칸이 작아 일부 수업 정보가 잘릴 수 있습니다. “수업 필터…”로 수업 수를 줄여 보세요.',
+        printCalendarWarnContinue: '그래도 인쇄할까요?',
         clearAllData: '모든 데이터 지우기',
         topBarCollapse: '도구 모음 접기',
         topBarExpand: '도구 모음 펼치기',
@@ -439,6 +574,11 @@ const translations = {
         hostCopyLink: '링크 복사',
         hostLinkCopied: '팀 링크가 복사되었습니다!',
         langToggle: '🌐 English',
+        themeDark: '🌙 다크',
+        themeLight: '☀️ 라이트',
+        themeToggleTitle: '라이트/다크 테마 전환',
+        howToBtn: '도움말?',
+        howToBtnTitle: '앱 사용 방법',
         
         // Term Selector
         calendarName: '캘린더 이름:',
@@ -475,10 +615,47 @@ const translations = {
         printLessonFilterActive: '수업 필터 적용 중: {total}개 중 {visible}개만 캘린더와 수업 관련 인쇄에 표시됩니다.',
         tabCalendar: '캘린더',
         tabClasses: '수업',
+        tabSyllabus: '강의 계획표',
         tabEvents: '일정',
+        tabHomework: '숙제',
         tabPrint: '인쇄 및 데이터',
         tabPrintDataHeading: '데이터 및 설정',
+        printBooksHeading: '교재',
+        printBooksHint: 'Write Now, Write Right, Hand in Hand 등 교재별 수업 계획·페이지 데이터입니다. 수업 강의 계획표에 불러옵니다. Green/Blue/Navy는 페이지가 같으면 하나의 교재로 묶입니다.',
+        printBooksStats: '교재 {books}권 · 수정 {edited}권',
+        printBooksEmpty: '등록된 교재 페이지 데이터가 없습니다.',
+        booksListEdit: '교재 편집',
+        booksListSessions: '수업 {n}회',
+        booksListEdited: '수정됨',
+        booksEditorTitle: '교재 편집',
+        booksEditorHint: '이 교재의 수업 계획과 페이지 블록입니다. 저장하면 연결된 모든 수업 유형(Green, Blue, Navy 등)에 적용됩니다.',
+        booksEditorMetaLevels: '레벨: {levels}',
+        booksEditorMetaLessons: '학기 기본 수업 수: {n}',
+        booksEditorMetaPresets: '연결 프리셋: {ids}',
+        booksEditorCustomBadge: '이 교재에 저장된 사용자 페이지 데이터가 있습니다.',
+        booksEditorSessionsHeading: '회차',
+        booksEditorColPlan: '수업 계획',
+        booksEditorColPages: '페이지 / 상세',
+        booksEditorSave: '교재 저장',
+        booksEditorReset: '공장 기본값 복원',
+        booksEditorResetConfirm: '이 교재를 공장 기본 페이지로 되돌릴까요? 연결된 모든 수업 유형에 적용됩니다.',
+        booksEditorNoRows: '저장하려면 최소 한 개의 회차가 필요합니다.',
+        printSyllabusPresetsHeading: '내 수업 계획/교재',
+        printSyllabusPresetsHint: '강의 계획표 탭의 내 강의 계획표에 저장한 사용자 수업 계획과 수정한 교재입니다. 팩으로보내거나 가져와 수업 계획, 교재 페이지, 수업 유형 기본값을 백업할 수 있습니다.',
+        printSyllabusStats: '사용자 수업 계획 {templates}개 · 수정한 유형 기본값 {overrides}개',
+        printExportSyllabusPack: '수업 계획·교재 팩보내기',
+        printImportSyllabusPack: '수업 계획·교재 팩 가져오기',
+        printOpenSyllabusTab: '강의 계획표 탭 열기',
+        printEditPdfPresets: 'PDF 프리셋 기본값 편집',
+        printSyllabusPackExported: '수업 계획·교재 팩을 다운로드했습니다.',
+        printSyllabusPackImported: '수업 계획 {templates}개, 교재 {books}권, 유형 덮어쓰기 {overrides}개를 가져왔습니다.',
+        printSyllabusPackInvalid: '올바른 수업 계획·교재 팩 파일이 아닙니다.',
+        printSyllabusManageTemplate: '편집',
+        printSyllabusNoTemplates: '사용자 수업 계획이 없습니다. 강의 계획표 탭 → 내 강의 계획표를 사용하거나 팩을 가져오세요.',
+        printSyllabusTemplateListLabel: '사용자 수업 계획',
         openFullClassEditor: '전체 편집기 열기',
+        viewClassInCalendar: '캘린더에서 보기',
+        viewEventInCalendar: '캘린더에서 보기',
         openFullEventEditor: '전체 편집기 열기',
         classEditorEmpty: '목록에서 수업을 선택하거나 + 수업 추가를 클릭하세요.',
         eventEditorEmpty: '목록에서 일정을 선택하거나 + 일정 추가를 클릭하세요.',
@@ -619,6 +796,7 @@ const translations = {
         delete: '삭제',
         deleteClass: '수업 삭제',
         saveClass: '수업 저장',
+        classSaved: '수업을 저장했습니다.',
         classTypeLabel: '수업 유형',
         classTypeHint: '미리 정해진 수업 횟수·요일을 불러옵니다. 아래 항목은 언제든 바꿀 수 있습니다.',
         classTypeCustom: '사용자 지정 (프리셋 없음)',
@@ -681,6 +859,77 @@ const translations = {
         homeworkImportNoRows: '먼저 캘린더에서 새로고침하세요.',
         homeworkImportPreviewHeader: '매칭 {matched}건, 미매칭 {unmatched}건',
         homeworkImportApplied: '{n}개 행에 과제를 적용했습니다.',
+        homeworkTabReferenceDate: '기준 날짜',
+        homeworkTabToday: '오늘',
+        homeworkTabMiniCalendarLabel: '기준 날짜 선택',
+        homeworkTabPrevMonth: '이전 달',
+        homeworkTabNextMonth: '다음 달',
+        homeworkTabRefreshSyllabi: '캘린더에서 강의 계획표 새로고침',
+        homeworkTabEditorEmpty: '수업을 선택하면 강의 계획표의 숙제 복사 블록이 표시됩니다.',
+        homeworkTabOpenClass: '수업 탭에서 강의 계획표 편집',
+        homeworkTabOpenSyllabus: '강의 계획표 편집',
+        openSyllabusTab: '강의 계획표 편집',
+        classTabOpenSyllabus: '강의 계획표 편집',
+        syllabusTabEditorEmpty: '수업 또는 사용자 강의 계획표 템플릿을 선택하세요.',
+        syllabusSegmentClasses: '수업',
+        syllabusSegmentTemplates: '내 강의 계획표',
+        syllabusNewTemplate: '+ 사용자 강의 계획표',
+        syllabusTemplateSearchPlaceholder: '템플릿 검색…',
+        syllabusSaveClass: '강의 계획표 저장',
+        syllabusSaveTemplate: '템플릿 저장',
+        syllabusOpenClassSettings: '수업 일정 및 설정',
+        syllabusOpenHomework: '숙제 복사',
+        syllabusApplyTemplatePick: '사용자 강의 계획표 적용…',
+        syllabusSaveAsTemplate: '템플릿으로 저장',
+        syllabusDeleteTemplate: '템플릿 삭제',
+        syllabusModeTemplate: '템플릿 편집: {name} — 준비되면 수업에 적용하세요.',
+        syllabusScheduleChip: '일정 (저장됨): {days} · {start} – {end}',
+        syllabusScheduleUnsavedHint: '캘린더에서 정확히 새로고침하려면 수업 탭에서 먼저 저장하세요.',
+        syllabusClassSummary: '강의 계획표 {rows}행',
+        syllabusClassSummaryEmpty: '강의 계획표 행 없음',
+        syllabusStartBlank: '빈 강의 계획표로 시작',
+        addSyllabusLessonRow: '수업 행 추가',
+        syllabusConfirmBlank: '이 수업의 강의 계획표 단원과 행을 모두 지울까요?',
+        syllabusConfirmApplyTemplate: '이 수업의 단원을 바꾸고 템플릿의 페이지 내용을 병합할까요?',
+        syllabusConfirmDeleteTemplate: '이 사용자 강의 계획표 템플릿을 삭제할까요?',
+        syllabusTemplateNamePrompt: '템플릿 이름',
+        syllabusTemplateSaved: '템플릿을 저장했습니다.',
+        syllabusTemplateApplied: '사용자 강의 계획표를 적용했습니다.',
+        syllabusSaved: '강의 계획표를 저장했습니다.',
+        syllabusDuplicateFromClass: '수업에서 복제',
+        syllabusNoTemplates: '사용자 강의 계획표가 없습니다. + 사용자 강의 계획표를 누르세요.',
+        syllabusGeneralNotes: '일반 메모 및 안내',
+        syllabusGeneralNotesHint: '학부모, 대체 강사, 본인 참고용. 강의 계획표 인쇄 시 상단에 표시됩니다.',
+        syllabusGeneralNotesPlaceholder: '예: 매 수업 교재 지참. 8회차에 3단원 시험…',
+        homeworkTabHint: '이 탭은 복사할 텍스트만 준비합니다. 별도의 Simson 채점 웹사이트와 숙제 배정 웹사이트에 붙여넣으세요 — 그 페이지는 이 앱에 없습니다. 텍스트는 각 수업 강의 계획표(페이지/세부)에서 가져옵니다. 캘린더 변경 후 강의 계획표를 새로고침하세요.',
+        homeworkTabExternalBanner: '여기서 복사한 뒤, 다른 웹사이트(Simson 채점·숙제 배정)에 붙여넣으세요.',
+        homeworkTabDueDate: '숙제 마감 (다음 수업)',
+        homeworkTabGradingTitle: '지난주 — Simson 채점 사이트용',
+        homeworkTabAssignTitle: '이번주 — 숙제 배정 사이트용',
+        homeworkTabGradingHint: '이 블록을 복사한 뒤, 다른 탭에서 Simson 채점 웹페이지를 열고 붙여넣으세요. 이번 수업에 제출할 숙제입니다(해당 회차의 페이지/세부).',
+        homeworkTabAssignHint: '이 블록을 복사한 뒤, 다른 탭에서 숙제 배정 웹페이지를 열고 붙여넣으세요. 다음 대면 수업일까지 (휴일·수업 없는 날 제외).',
+        homeworkTabCopy: '복사',
+        homeworkTabCopyBoth: '두 블록 모두 복사',
+        homeworkTabSyllabiRefreshed: '캘린더에서 강의 계획표를 업데이트했습니다.',
+        homeworkTabCopied: '클립보드에 복사했습니다.',
+        homeworkTabCopyFailed: '복사할 수 없습니다. 텍스트를 선택해 직접 복사하세요.',
+        homeworkTabNoLessons: '강의 계획표에 예정된 수업이 없습니다. 수업 편집기에서 캘린더에서 새로고침을 누르세요.',
+        homeworkTabNoHomeworkText: '수업은 있지만 페이지/세부 내용이 비어 있습니다. 강의 계획표에 숙제를 추가하거나 붙여넣기 가져오기를 사용하세요.',
+        homeworkTabNoAssignText: '이번주 강의 계획표에 숙제 텍스트가 없습니다.',
+        homeworkTabNoGradingText: '지난주 숙제가 없습니다 (학기 첫 수업).',
+        homeworkTabNoDueDate: '학기 종료 전 다음 수업일을 찾을 수 없습니다. 수업 요일과 종료일을 확인하세요.',
+        homeworkTabTargetLesson: '{date} 수업에 배정 · {n}회차: {title}',
+        homeworkTabGradingFrom: '{n}회차 숙제 채점 ({date}): {title}',
+        homeworkTabModuleMissing: '숙제 탭 모듈을 불러오지 못했습니다. Ctrl+F5로 새로고침하세요.',
+        homeworkTabDueLabel: '마감',
+        homeworkTabSessionLabel: '회차',
+        homeworkTabEditableHint: '아래 텍스트를 수정하면 강의 계획표(페이지/세부)에 저장됩니다. 복사 시 수업 이름과 회차 헤더가 추가됩니다.',
+        homeworkTabSavesTo: '강의 계획표에 저장: {n}회차 · {title}',
+        homeworkTabSaved: '강의 계획표에 숙제를 저장했습니다.',
+        homeworkTabNoSyllabusRow: '연결된 강의 계획표 행이 없습니다. 먼저 캘린더에서 강의 계획표를 새로고침하세요.',
+        homeworkTabSkippedHeading: '마감 전에 건너뛴 정규 수업일:',
+        homeworkTabSkipHoliday: '{date} — {name} (수업 없음)',
+        homeworkTabSkipHolidayNoName: '{date} — 공휴일 (수업 없음)',
         
         // Holiday Modal
         addHolidayTitle: '휴일 추가',
@@ -720,7 +969,6 @@ const translations = {
         printCalendar: '캘린더 인쇄',
         printSummaryPage: '요약 페이지 인쇄',
         includeClassList: '수업 목록 포함',
-        includeHolidayList: '휴일 목록 포함',
         includeLessonSchedule: '수업 일정 포함',
         includeCompressionNotes: '압축 노트 포함',
         
@@ -788,11 +1036,32 @@ function applyLanguage() {
             el.placeholder = translations[currentLanguage][key];
         }
     });
+
+    document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+        const key = el.getAttribute('data-i18n-aria-label');
+        if (translations[currentLanguage][key]) {
+            el.setAttribute('aria-label', translations[currentLanguage][key]);
+        }
+    });
+
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        if (translations[currentLanguage][key]) {
+            el.setAttribute('title', translations[currentLanguage][key]);
+        }
+    });
     
     // Update language toggle button text
     const langBtn = document.getElementById('langToggleBtn');
     if (langBtn) {
         langBtn.textContent = t('langToggle');
+    }
+
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        themeBtn.textContent = t(isDark ? 'themeLight' : 'themeDark');
+        themeBtn.setAttribute('title', t('themeToggleTitle'));
     }
     
     document.documentElement.lang = currentLanguage === 'ko' ? 'ko' : 'en';
@@ -829,6 +1098,11 @@ function applyLanguage() {
     }
     updateEventApplicabilityButtonLabel();
     updateEventApplicabilitySummaryText();
+    syncClassOpenEditorButton();
+    syncEventOpenEditorButton();
+    if (getActiveTab() === 'homework') {
+        renderHomeworkReferenceMiniCalendar();
+    }
     const eventAppSearchEl = document.getElementById('eventApplicabilitySearch');
     if (eventAppSearchEl && translations[currentLanguage].lessonFilterSearchPlaceholder) {
         eventAppSearchEl.placeholder = translations[currentLanguage].lessonFilterSearchPlaceholder;
@@ -862,6 +1136,7 @@ function updateCalendarTitle() {
             titleEl.textContent = t('appTitle');
         }
     }
+    requestAnimationFrame(syncAppChromeStickyTop);
 }
 
 function toggleLanguage() {
@@ -875,6 +1150,41 @@ function loadLanguage() {
     if (saved && (saved === 'en' || saved === 'ko')) {
         currentLanguage = saved;
     }
+}
+
+function getStoredTheme() {
+    const saved = localStorage.getItem('calendarTheme');
+    if (saved === 'light' || saved === 'dark') {
+        return saved;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+    }
+    return 'light';
+}
+
+function applyTheme(theme) {
+    const next = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.classList.remove('print-color-mode-light');
+    document.documentElement.setAttribute('data-theme', next);
+    document.documentElement.style.colorScheme = next;
+    localStorage.setItem('calendarTheme', next);
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+        const labelKey = next === 'dark' ? 'themeLight' : 'themeDark';
+        themeBtn.textContent = t(labelKey);
+        themeBtn.setAttribute('aria-pressed', next === 'dark' ? 'true' : 'false');
+        themeBtn.setAttribute('title', t('themeToggleTitle'));
+    }
+}
+
+function loadTheme() {
+    applyTheme(getStoredTheme());
+}
+
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    applyTheme(current === 'dark' ? 'light' : 'dark');
 }
 
 // ============================================
@@ -934,6 +1244,14 @@ const VISIBILITY_FILTER_FIELDS = [
     { key: 'other', uiId: 'visOther', printId: 'printCalOther' }
 ];
 
+const PRINT_SUMMARY_OPTION_IDS = [
+    'printClassList',
+    'printLessonSchedule',
+    'printCompressionNotes',
+    'printSyllabusTables',
+    'printEventsList'
+];
+
 const EVENT_TYPE_DEFAULT_COLORS = {
     holiday: { bg: '#fef3c7', text: '#b45309' },
     evaluation_deadline: { bg: '#fecaca', text: '#991b1b' },
@@ -949,7 +1267,9 @@ function getDefaultAppData() {
         events: [],
         holidays: [],
         customClassTypes: [],
+        customSyllabusTemplates: [],
         defaultClassTypeOverrides: {},
+        bookOverrides: {},
         termStart: null,
         termMonthCount: 3,
         calendarName: '',
@@ -1556,9 +1876,32 @@ function initDefaultClassEditorModule() {
             if (def && (isClassPopoutOpen() || (getActiveTab() === 'classes' && classEditorMount === 'tab')) && !elements.classId?.value) {
                 applyClassTypeDefinitionToForm(def);
             }
+            renderPrintSyllabusManager();
         }
     });
     window.CCPDefaultClassEditor.bindEditorUI();
+}
+
+function initBooksEditorModule() {
+    if (!window.CCPBooksEditor) {
+        return;
+    }
+    window.CCPBooksEditor.init({
+        getAppData: () => appData,
+        saveData,
+        t,
+        getLang: () => currentLanguage,
+        applyLanguage,
+        openModal,
+        closeModal,
+        onBooksSaved: () => {
+            renderPrintSyllabusManager();
+            if (window.CCPDefaultClassEditor) {
+                populateClassTypeSelect();
+            }
+        }
+    });
+    window.CCPBooksEditor.bindEditorUI();
 }
 
 function getSyllabusPresetClassTypes() {
@@ -1954,6 +2297,38 @@ function getSyllabusEventColors(event, type) {
     };
 }
 
+/** Fill rowBg/rowColor on holiday/event rows when missing (stale saves, form collect). */
+function enrichSyllabusRowColors(rows, classData) {
+    if (!Array.isArray(rows) || !rows.length) {
+        return rows || [];
+    }
+    return rows.map(row => {
+        if (row.rowBg) {
+            return row;
+        }
+        const kind = row.kind || 'lesson';
+        if (kind === 'holiday' && row.date && classData) {
+            const hol = isHolidayForClass(row.date, classData)
+                ? getHolidayForDate(row.date)
+                : null;
+            const colors = getSyllabusEventColors(hol, 'holiday');
+            return { ...row, rowBg: colors.bg, rowColor: colors.text, eventType: colors.type };
+        }
+        if (kind === 'event' && row.date && classData) {
+            const ev = getInlineScheduleEventForClassOnDate(row.date, classData);
+            if (ev) {
+                const colors = getSyllabusEventColors(ev, ev.type);
+                return { ...row, rowBg: colors.bg, rowColor: colors.text, eventType: colors.type };
+            }
+        }
+        if (kind === 'extra') {
+            const colors = getSyllabusEventColors(null, 'other');
+            return { ...row, rowBg: colors.bg, rowColor: colors.text, eventType: colors.type };
+        }
+        return row;
+    });
+}
+
 function getUnscheduledLessonNumbers(classData, schedule) {
     const totalLessons = sanitizeTotalLessons(classData.totalLessons || 8);
     const scheduledCount = schedule.scheduledCount != null
@@ -2313,6 +2688,148 @@ function refreshClassModalDomRefs() {
     elements.classTypeForm = document.getElementById('classTypeForm');
     elements.deleteClassBtn = document.getElementById('deleteClassBtn');
     elements.classPeriod = document.getElementById('classPeriod');
+}
+
+/** Pop-out: Open full editor. Classes tab: View in Calendar (when class is saved). */
+function syncClassOpenEditorButton() {
+    const btn = document.getElementById('openClassInTabBtn');
+    if (!btn) {
+        return;
+    }
+    const inClassesTabEditor = classEditorMount === 'tab' && getActiveTab() === 'classes';
+    const id = elements.classId && elements.classId.value;
+    if (inClassesTabEditor) {
+        btn.textContent = t('viewClassInCalendar');
+        const show = !!id;
+        btn.hidden = !show;
+        btn.style.display = show ? 'inline-flex' : 'none';
+        btn.setAttribute('aria-hidden', show ? 'false' : 'true');
+    } else {
+        btn.textContent = t('openFullClassEditor');
+        btn.hidden = false;
+        btn.style.display = 'inline-flex';
+        btn.setAttribute('aria-hidden', 'false');
+    }
+}
+
+function focusClassOnCalendar(classId) {
+    const cls = appData.classes.find((c) => c.id === classId);
+    if (!cls) {
+        return;
+    }
+    ensureUiState();
+    appData.ui.topBarCollapsed = false;
+    applyTopBarCollapsedState();
+    appData.ui.lessonFilters = normalizeLessonFilters({
+        ...DEFAULT_LESSON_FILTERS,
+        classIds: [classId]
+    });
+    updateLessonFilterButtonLabel();
+    updatePrintLessonFilterHint();
+    saveData();
+    renderCalendar();
+    requestAnimationFrame(() => {
+        highlightClassLessonBarsOnCalendar(classId);
+    });
+}
+
+function highlightClassLessonBarsOnCalendar(classId) {
+    document.querySelectorAll('.event-bar--calendar-focus').forEach((el) => {
+        el.classList.remove('event-bar--calendar-focus');
+    });
+    const bars = document.querySelectorAll(`.event-bar[data-class-id="${classId}"]`);
+    if (!bars.length) {
+        return;
+    }
+    bars.forEach((bar) => bar.classList.add('event-bar--calendar-focus'));
+    bars[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => {
+        bars.forEach((bar) => bar.classList.remove('event-bar--calendar-focus'));
+    }, 4000);
+}
+
+function viewClassInCalendar(classId) {
+    if (!classId) {
+        return;
+    }
+    navigateToTab('calendar', { focusClassId: classId });
+}
+
+/** Pop-out: Open full editor. Events tab: View in Calendar (when event is saved). */
+function syncEventOpenEditorButton() {
+    const btn = document.getElementById('openEventInTabBtn');
+    if (!btn) {
+        return;
+    }
+    const inEventsTabEditor = eventEditorMount === 'tab' && getActiveTab() === 'events';
+    const id = elements.holidayId && elements.holidayId.value;
+    if (inEventsTabEditor) {
+        btn.textContent = t('viewEventInCalendar');
+        const show = !!id;
+        btn.hidden = !show;
+        btn.style.display = show ? 'inline-flex' : 'none';
+        btn.setAttribute('aria-hidden', show ? 'false' : 'true');
+    } else {
+        btn.textContent = t('openFullEventEditor');
+        btn.hidden = false;
+        btn.style.display = 'inline-flex';
+        btn.setAttribute('aria-hidden', 'false');
+    }
+}
+
+function visibilityKeyForEventType(type) {
+    const normalized = normalizeEventType(type);
+    return normalized === EVENT_TYPES.HOLIDAY ? 'holidays' : normalized;
+}
+
+function ensureEventTypeVisibleOnCalendar(ev) {
+    ensureUiState();
+    const key = visibilityKeyForEventType(ev.type);
+    if (appData.ui.visibilityFilters[key] === false) {
+        appData.ui.visibilityFilters = {
+            ...appData.ui.visibilityFilters,
+            [key]: true
+        };
+        applyVisibilityFiltersToDom();
+    }
+}
+
+function focusEventOnCalendar(eventId) {
+    const ev = (appData.events || []).find((e) => e.id === eventId);
+    if (!ev) {
+        return;
+    }
+    ensureUiState();
+    appData.ui.topBarCollapsed = false;
+    applyTopBarCollapsedState();
+    ensureEventTypeVisibleOnCalendar(ev);
+    saveData();
+    renderCalendar();
+    requestAnimationFrame(() => {
+        highlightEventOnCalendar(eventId);
+    });
+}
+
+function highlightEventOnCalendar(eventId) {
+    document.querySelectorAll('.calendar-event--calendar-focus').forEach((el) => {
+        el.classList.remove('calendar-event--calendar-focus');
+    });
+    const targets = document.querySelectorAll(`[data-event-id="${eventId}"]`);
+    if (!targets.length) {
+        return;
+    }
+    targets.forEach((el) => el.classList.add('calendar-event--calendar-focus'));
+    targets[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => {
+        targets.forEach((el) => el.classList.remove('calendar-event--calendar-focus'));
+    }, 4000);
+}
+
+function viewEventInCalendar(eventId) {
+    if (!eventId) {
+        return;
+    }
+    navigateToTab('calendar', { focusEventId: eventId });
 }
 
 /** Show Delete only when editing an existing class (not when adding a new one). */
@@ -2944,6 +3461,56 @@ function ensureUiState() {
     } else {
         appData.ui.lessonFilters = normalizeLessonFilters(appData.ui.lessonFilters);
     }
+    if (typeof appData.ui.homeworkTabClassId !== 'string') {
+        appData.ui.homeworkTabClassId = '';
+    }
+    if (typeof appData.ui.syllabusTabClassId !== 'string') {
+        appData.ui.syllabusTabClassId = '';
+    }
+    if (typeof appData.ui.syllabusTabTemplateId !== 'string') {
+        appData.ui.syllabusTabTemplateId = '';
+    }
+    if (!syllabusListSegment) {
+        syllabusListSegment = 'classes';
+    }
+}
+
+function getCustomSyllabusTemplates() {
+    return Array.isArray(appData.customSyllabusTemplates) ? appData.customSyllabusTemplates : [];
+}
+
+function getSyllabusTemplatesApi() {
+    return typeof window !== 'undefined' ? window.CCPSyllabusTemplates : null;
+}
+
+/** Match sticky month header / panels to the real global top bar height (avoids a gap below it). */
+function syncAppChromeStickyTop() {
+    const topBar = document.getElementById('appTopBar');
+    if (!topBar) {
+        return;
+    }
+    const height = Math.ceil(topBar.getBoundingClientRect().height);
+    if (height > 0) {
+        document.documentElement.style.setProperty('--app-chrome-sticky-top', `${height}px`);
+    }
+}
+
+let appChromeStickyResizeObserver = null;
+
+function initAppChromeStickyTop() {
+    const topBar = document.getElementById('appTopBar');
+    if (!topBar) {
+        return;
+    }
+    syncAppChromeStickyTop();
+    if (typeof ResizeObserver !== 'undefined') {
+        if (appChromeStickyResizeObserver) {
+            appChromeStickyResizeObserver.disconnect();
+        }
+        appChromeStickyResizeObserver = new ResizeObserver(() => syncAppChromeStickyTop());
+        appChromeStickyResizeObserver.observe(topBar);
+    }
+    window.addEventListener('resize', syncAppChromeStickyTop);
 }
 
 function applyTopBarCollapsedState() {
@@ -2965,6 +3532,7 @@ function applyTopBarCollapsedState() {
         }
     }
     updateTopBarCalendarLabel();
+    requestAnimationFrame(syncAppChromeStickyTop);
 }
 
 function setTopBarCollapsed(collapsed) {
@@ -2990,6 +3558,7 @@ function updateTopBarCalendarLabel() {
         labelEl.textContent = '';
         labelEl.hidden = true;
     }
+    requestAnimationFrame(syncAppChromeStickyTop);
 }
 
 function initTopBarToggle() {
@@ -3116,6 +3685,14 @@ function isPrintVisibilityOn(typeKey) {
         return filters.holidays !== false;
     }
     return filters[typeKey] !== false;
+}
+
+/** Screen visibility, or print visibility while building a calendar print snapshot. */
+function isCalendarItemVisible(typeKey) {
+    if (calendarRenderForPrint) {
+        return isPrintVisibilityOn(typeKey);
+    }
+    return isVisibilityFilterOn(typeKey);
 }
 
 function readVisibilityFiltersFromDom() {
@@ -3513,6 +4090,22 @@ function resetLessonFilters() {
     updatePrintLessonFilterHint();
     saveData();
     renderCalendar();
+}
+
+/** After import: expanded calendar toolbar, show all classes, lessons visible on calendar. */
+function resetCalendarClassVisibilityAfterImport() {
+    ensureUiState();
+    appData.ui.topBarCollapsed = false;
+    appData.ui.lessonFilters = { ...DEFAULT_LESSON_FILTERS };
+    appData.ui.visibilityFilters = { ...DEFAULT_VISIBILITY_FILTERS };
+    applyTopBarCollapsedState();
+    applyVisibilityFiltersToDom();
+    if (isLessonFilterPopoverOpen()) {
+        renderLessonFilterPopoverBody();
+        updateLessonFilterStatusText();
+    }
+    updateLessonFilterButtonLabel();
+    updatePrintLessonFilterHint();
 }
 
 function setAllLessonFilterCheckboxesInPopover(checked) {
@@ -3961,6 +4554,15 @@ function setPrintCalendarVisibilityCheckboxes(checked) {
     });
     appData.ui.printVisibility = filters;
     saveData();
+}
+
+function setPrintSummaryOptionCheckboxes(checked) {
+    PRINT_SUMMARY_OPTION_IDS.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.checked = checked;
+        }
+    });
 }
 
 function setupLessonFilterUi() {
@@ -4736,9 +5338,17 @@ function fillBooksFromTermDefaultBook() {
 // ============================================
 // App shell: templates, tabs, form mounts
 // ============================================
-const APP_TAB_IDS = ['calendar', 'classes', 'events', 'print'];
+const APP_TAB_IDS = ['calendar', 'classes', 'syllabus', 'events', 'homework', 'print'];
 let classEditorMount = 'modal';
 let eventEditorMount = 'modal';
+let printFormMountTarget = 'tab';
+/** When true, calendar cells use print visibility checkboxes instead of screen filters. */
+let calendarRenderForPrint = false;
+let syllabusEditorMounted = false;
+/** @type {'classes'|'templates'} */
+let syllabusListSegment = 'classes';
+/** @type {'class'|'template'|null} */
+let syllabusEditorMode = null;
 
 function mountTemplateInto(templateId, mountId) {
     const tpl = document.getElementById(templateId);
@@ -4753,6 +5363,720 @@ function initAppShellFromTemplates() {
     mountTemplateInto('classFormTemplate', 'classFormMountModal');
     mountTemplateInto('holidayFormTemplate', 'holidayFormMountModal');
     mountTemplateInto('printFormTemplate', 'printFormMountTab');
+}
+
+function mountSyllabusEditor() {
+    if (syllabusEditorMounted) {
+        refreshSyllabusElementRefs();
+        return;
+    }
+    mountTemplateInto('syllabusEditorTemplate', 'syllabusFormMountTab');
+    syllabusEditorMounted = true;
+    refreshSyllabusElementRefs();
+    initSyllabusEditorListeners();
+}
+
+function refreshSyllabusElementRefs() {
+    elements.syllabusUnitsRows = document.getElementById('syllabusUnitsRows');
+    elements.addSyllabusUnitBtn = document.getElementById('addSyllabusUnitBtn');
+    elements.syllabusTableBody = document.getElementById('syllabusTableBody');
+    elements.syllabusTableEmptyHint = document.getElementById('syllabusTableEmptyHint');
+    elements.refreshSyllabusBtn = document.getElementById('refreshSyllabusBtn');
+    elements.startBlankSyllabusBtn = document.getElementById('startBlankSyllabusBtn');
+    elements.fillSyllabusFromUnitsBtn = document.getElementById('fillSyllabusFromUnitsBtn');
+    elements.applyPresetSyllabusBtn = document.getElementById('applyPresetSyllabusBtn');
+    elements.addSyllabusLessonRowBtn = document.getElementById('addSyllabusLessonRowBtn');
+    elements.addSyllabusNoteRowBtn = document.getElementById('addSyllabusNoteRowBtn');
+    elements.homeworkImportPaste = document.getElementById('homeworkImportPaste');
+    elements.homeworkImportPreviewBtn = document.getElementById('homeworkImportPreviewBtn');
+    elements.homeworkImportApplyBtn = document.getElementById('homeworkImportApplyBtn');
+    elements.homeworkImportPreview = document.getElementById('homeworkImportPreview');
+    elements.syllabusEditorForm = document.getElementById('syllabusEditorForm');
+    elements.syllabusGeneralNotes = document.getElementById('syllabusGeneralNotes');
+    elements.printClassSyllabusBtn = document.getElementById('printClassSyllabusBtn');
+}
+
+function getSyllabusGeneralNotesFromForm() {
+    const el = elements.syllabusGeneralNotes || document.getElementById('syllabusGeneralNotes');
+    return el ? (el.value || '').trim() : '';
+}
+
+function setSyllabusGeneralNotesInForm(value) {
+    const el = elements.syllabusGeneralNotes || document.getElementById('syllabusGeneralNotes');
+    if (el) {
+        el.value = value || '';
+    }
+}
+
+function getSyllabusEditorFormEl() {
+    return document.getElementById('syllabusEditorForm') || elements.syllabusEditorForm;
+}
+
+function clearSyllabusEditorSelection(mode) {
+    ensureUiState();
+    if (mode === 'class') {
+        appData.ui.syllabusTabTemplateId = '';
+        syllabusEditorMode = 'class';
+    } else if (mode === 'template') {
+        appData.ui.syllabusTabClassId = '';
+        syllabusEditorMode = 'template';
+    }
+}
+
+function getSelectedSyllabusClass() {
+    ensureUiState();
+    const id = appData.ui.syllabusTabClassId;
+    return id ? appData.classes.find((c) => c.id === id) : null;
+}
+
+function getSelectedSyllabusTemplate() {
+    ensureUiState();
+    const id = appData.ui.syllabusTabTemplateId;
+    return id ? getCustomSyllabusTemplates().find((tpl) => tpl.id === id) : null;
+}
+
+function syncSyllabusEditorChrome() {
+    const empty = document.getElementById('syllabusEditorEmpty');
+    const shell = document.getElementById('syllabusEditorShell');
+    const classData = getSelectedSyllabusClass();
+    const template = getSelectedSyllabusTemplate();
+    const hasClass = syllabusEditorMode === 'class' && classData;
+    const hasTemplate = syllabusEditorMode === 'template' && template;
+    const active = hasClass || hasTemplate;
+
+    if (empty) {
+        empty.hidden = active;
+    }
+    if (shell) {
+        shell.hidden = !active;
+    }
+
+    const titleEl = document.getElementById('syllabusEditorTitle');
+    const metaEl = document.getElementById('syllabusEditorMeta');
+    const bannerEl = document.getElementById('syllabusEditorModeBanner');
+    const chipEl = document.getElementById('syllabusScheduleChip');
+    const saveClassBtn = document.getElementById('syllabusSaveClassBtn');
+    const saveTplBtn = document.getElementById('syllabusSaveTemplateBtn');
+    const openClassBtn = document.getElementById('syllabusOpenClassSettingsBtn');
+    const openHwBtn = document.getElementById('syllabusOpenHomeworkBtn');
+    const applySelect = document.getElementById('syllabusApplyTemplateSelect');
+    const saveAsBtn = document.getElementById('syllabusSaveAsTemplateBtn');
+    const delTplBtn = document.getElementById('syllabusDeleteTemplateBtn');
+    const refreshBtn = elements.refreshSyllabusBtn;
+    const blankBtn = elements.startBlankSyllabusBtn;
+    const printBtn = elements.printClassSyllabusBtn;
+
+    if (titleEl) {
+        titleEl.textContent = hasClass ? classData.name : (hasTemplate ? template.name : '');
+    }
+    if (metaEl) {
+        if (hasClass) {
+            metaEl.textContent = [formatClassLabelWithPeriod(classData), classData.grade, classData.book]
+                .filter(Boolean)
+                .join(' · ');
+        } else if (hasTemplate) {
+            metaEl.textContent = template.notes || '';
+        } else {
+            metaEl.textContent = '';
+        }
+    }
+    if (bannerEl) {
+        if (hasTemplate) {
+            bannerEl.hidden = false;
+            bannerEl.textContent = t('syllabusModeTemplate', { name: template.name });
+        } else {
+            bannerEl.hidden = true;
+            bannerEl.textContent = '';
+        }
+    }
+    if (chipEl) {
+        if (hasClass) {
+            chipEl.hidden = false;
+            chipEl.textContent = t('syllabusScheduleChip', {
+                days: formatMeetingDaysSummary(classData),
+                start: classData.startDate ? formatDateDisplay(classData.startDate) : '—',
+                end: classData.endDate ? formatDateDisplay(classData.endDate) : '—'
+            });
+        } else {
+            chipEl.hidden = true;
+        }
+    }
+
+    if (saveClassBtn) {
+        saveClassBtn.hidden = !hasClass;
+    }
+    if (saveTplBtn) {
+        saveTplBtn.hidden = !hasTemplate;
+    }
+    if (openClassBtn) {
+        openClassBtn.hidden = !hasClass;
+    }
+    if (openHwBtn) {
+        openHwBtn.hidden = !hasClass;
+    }
+    if (applySelect) {
+        applySelect.hidden = !hasClass;
+    }
+    if (saveAsBtn) {
+        saveAsBtn.hidden = !hasClass;
+    }
+    if (delTplBtn) {
+        delTplBtn.hidden = !hasTemplate;
+    }
+    if (refreshBtn) {
+        refreshBtn.hidden = hasTemplate;
+    }
+    if (blankBtn) {
+        blankBtn.hidden = hasTemplate;
+    }
+    if (printBtn) {
+        printBtn.hidden = hasTemplate;
+    }
+
+    populateSyllabusApplyTemplateSelect();
+}
+
+function populateSyllabusApplyTemplateSelect() {
+    const sel = document.getElementById('syllabusApplyTemplateSelect');
+    if (!sel) {
+        return;
+    }
+    const prev = sel.value;
+    sel.innerHTML = '';
+    const opt0 = document.createElement('option');
+    opt0.value = '';
+    opt0.textContent = t('syllabusApplyTemplatePick');
+    sel.appendChild(opt0);
+    getCustomSyllabusTemplates().forEach((tpl) => {
+        const o = document.createElement('option');
+        o.value = tpl.id;
+        o.textContent = tpl.name;
+        sel.appendChild(o);
+    });
+    if (prev && getCustomSyllabusTemplates().some((tpl) => tpl.id === prev)) {
+        sel.value = prev;
+    }
+}
+
+function setSyllabusEditorDataset(classData) {
+    const form = getSyllabusEditorFormEl();
+    if (!form) {
+        return;
+    }
+    if (classData) {
+        form.dataset.homeworkImportMode = classData.homeworkImportMode || '';
+        form.dataset.lessonLabelMode = classData.lessonLabelMode || '';
+    } else {
+        form.dataset.homeworkImportMode = '';
+        form.dataset.lessonLabelMode = '';
+    }
+}
+
+function populateSyllabusEditorForClass(classData) {
+    if (!classData) {
+        return;
+    }
+    clearSyllabusEditorSelection('class');
+    appData.ui.syllabusTabClassId = classData.id;
+    saveData();
+    setSyllabusEditorDataset(classData);
+    setSyllabusGeneralNotesInForm(classData.syllabusGeneralNotes || '');
+    renderSyllabusUnitsRows(classData.syllabusUnits || []);
+    const rows = getSyllabusRowsForClass(classData, { preferMerged: true });
+    renderSyllabusEditorTable(rows);
+    if (elements.homeworkImportPaste) {
+        elements.homeworkImportPaste.value = '';
+    }
+    if (elements.homeworkImportPreview) {
+        elements.homeworkImportPreview.textContent = '';
+        delete elements.homeworkImportPreview.dataset.importPayload;
+    }
+    syncSyllabusEditorChrome();
+    renderSyllabusClassList();
+}
+
+function populateSyllabusEditorForTemplate(template) {
+    if (!template) {
+        return;
+    }
+    clearSyllabusEditorSelection('template');
+    appData.ui.syllabusTabTemplateId = template.id;
+    saveData();
+    setSyllabusEditorDataset({
+        homeworkImportMode: template.homeworkImportMode,
+        lessonLabelMode: template.lessonLabelMode
+    });
+    setSyllabusGeneralNotesInForm(template.syllabusGeneralNotes || template.notes || '');
+    renderSyllabusUnitsRows(template.syllabusUnits || []);
+    const api = getSyllabusTemplatesApi();
+    const mod = getSyllabusModule();
+    let rows = [];
+    if (api && typeof api.expandTemplateToEditorRows === 'function') {
+        rows = api.expandTemplateToEditorRows(template, {
+            newRowId: () => (mod ? mod.newRowId() : generateId())
+        });
+    }
+    renderSyllabusEditorTable(rows);
+    syncSyllabusEditorChrome();
+    renderSyllabusTemplateList();
+}
+
+function updateClassSyllabusSummary(classData) {
+    const wrap = document.getElementById('classSyllabusSummary');
+    const text = document.getElementById('classSyllabusSummaryText');
+    if (!wrap || !text) {
+        return;
+    }
+    if (!classData || !classData.id) {
+        wrap.hidden = true;
+        return;
+    }
+    wrap.hidden = false;
+    const count = Array.isArray(classData.syllabusRows) ? classData.syllabusRows.length : 0;
+    text.textContent = count > 0
+        ? t('syllabusClassSummary', { rows: count })
+        : t('syllabusClassSummaryEmpty');
+}
+
+function renderSyllabusClassList() {
+    const list = document.getElementById('syllabusClassList');
+    if (!list) {
+        return;
+    }
+    ensureUiState();
+    const q = (document.getElementById('syllabusClassListSearch')?.value || '').trim().toLowerCase();
+    const selectedId = appData.ui.syllabusTabClassId || '';
+    list.innerHTML = '';
+    const classes = getClassesInDisplayOrder().filter((c) => {
+        if (!q) {
+            return true;
+        }
+        const hay = [c.name, c.grade, c.book, c.levelCustom, formatClassLabelWithPeriod(c)].join(' ').toLowerCase();
+        return hay.includes(q);
+    });
+    if (classes.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'module-list-empty';
+        empty.style.padding = '12px';
+        empty.style.color = 'var(--text-secondary)';
+        empty.textContent = q ? t('lessonFilterSearchEmpty') : t('classEditorEmpty');
+        list.appendChild(empty);
+        return;
+    }
+    classes.forEach((c) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'module-list-item' + (c.id === selectedId && syllabusEditorMode === 'class' ? ' is-selected' : '');
+        btn.setAttribute('role', 'option');
+        btn.setAttribute('aria-selected', String(c.id === selectedId && syllabusEditorMode === 'class'));
+        btn.innerHTML = `<span>${escapeHtml(c.name)}</span><span class="module-list-item-meta">${escapeHtml([formatClassLabelWithPeriod(c), c.grade].filter(Boolean).join(' · '))}</span>`;
+        btn.addEventListener('click', () => {
+            syllabusListSegment = 'classes';
+            syncSyllabusListSegmentUi();
+            populateSyllabusEditorForClass(c);
+        });
+        list.appendChild(btn);
+    });
+}
+
+function renderSyllabusTemplateList() {
+    const list = document.getElementById('syllabusTemplateList');
+    if (!list) {
+        return;
+    }
+    ensureUiState();
+    const q = (document.getElementById('syllabusTemplateListSearch')?.value || '').trim().toLowerCase();
+    const selectedId = appData.ui.syllabusTabTemplateId || '';
+    list.innerHTML = '';
+    const templates = getCustomSyllabusTemplates().filter((tpl) => {
+        if (!q) {
+            return true;
+        }
+        return (tpl.name || '').toLowerCase().includes(q) || (tpl.notes || '').toLowerCase().includes(q);
+    });
+    if (templates.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'module-list-empty';
+        empty.style.padding = '12px';
+        empty.style.color = 'var(--text-secondary)';
+        empty.textContent = q ? t('lessonFilterSearchEmpty') : t('syllabusNoTemplates');
+        list.appendChild(empty);
+        return;
+    }
+    templates.forEach((tpl) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'module-list-item' + (tpl.id === selectedId && syllabusEditorMode === 'template' ? ' is-selected' : '');
+        btn.setAttribute('role', 'option');
+        btn.innerHTML = `<span>${escapeHtml(tpl.name)}</span>`;
+        btn.addEventListener('click', () => {
+            syllabusListSegment = 'templates';
+            syncSyllabusListSegmentUi();
+            populateSyllabusEditorForTemplate(tpl);
+        });
+        list.appendChild(btn);
+    });
+}
+
+function syncSyllabusListSegmentUi() {
+    const classSec = document.getElementById('syllabusClassListSection');
+    const tplSec = document.getElementById('syllabusTemplateListSection');
+    const btnClass = document.getElementById('syllabusSegmentClasses');
+    const btnTpl = document.getElementById('syllabusSegmentTemplates');
+    const isClass = syllabusListSegment === 'classes';
+    if (classSec) {
+        classSec.hidden = !isClass;
+    }
+    if (tplSec) {
+        tplSec.hidden = isClass;
+    }
+    if (btnClass) {
+        btnClass.classList.toggle('is-active', isClass);
+    }
+    if (btnTpl) {
+        btnTpl.classList.toggle('is-active', !isClass);
+    }
+}
+
+function saveSyllabusForSelectedClass() {
+    const classData = getSelectedSyllabusClass();
+    if (!classData) {
+        return;
+    }
+    const index = appData.classes.findIndex((c) => c.id === classData.id);
+    if (index === -1) {
+        return;
+    }
+    appData.classes[index].syllabusUnits = collectSyllabusUnitsFromForm();
+    appData.classes[index].syllabusRows = collectSyllabusRowsFromForm();
+    appData.classes[index].syllabusGeneralNotes = getSyllabusGeneralNotesFromForm();
+    const form = getSyllabusEditorFormEl();
+    if (form) {
+        const mode = getHomeworkImportModeForSyllabusEditor(classData);
+        if (mode) {
+            appData.classes[index].homeworkImportMode = mode;
+        }
+    }
+    saveData();
+    renderCalendar();
+    setAppStatusMessage(t('syllabusSaved'), false);
+    updateClassSyllabusSummary(appData.classes[index]);
+    if (elements.classId && elements.classId.value === classData.id) {
+        updateClassSyllabusSummary(appData.classes[index]);
+    }
+}
+
+function saveSyllabusTemplateFromEditor() {
+    const template = getSelectedSyllabusTemplate();
+    if (!template) {
+        return;
+    }
+    const api = getSyllabusTemplatesApi();
+    const idx = getCustomSyllabusTemplates().findIndex((tpl) => tpl.id === template.id);
+    if (idx === -1) {
+        return;
+    }
+    const units = collectSyllabusUnitsFromForm();
+    const rows = collectSyllabusRowsFromForm();
+    const collected = api
+        ? api.collectTemplateFromEditor(units, rows)
+        : { syllabusUnits: units, rowTemplates: [], noteRows: [] };
+    appData.customSyllabusTemplates[idx] = {
+        ...appData.customSyllabusTemplates[idx],
+        syllabusUnits: collected.syllabusUnits,
+        rowTemplates: collected.rowTemplates,
+        noteRows: collected.noteRows,
+        syllabusGeneralNotes: getSyllabusGeneralNotesFromForm()
+    };
+    saveData();
+    setAppStatusMessage(t('syllabusTemplateSaved'), false);
+    renderSyllabusTemplateList();
+    renderPrintSyllabusManager();
+}
+
+function createBlankSyllabusTemplate() {
+    const name = prompt(t('syllabusTemplateNamePrompt'), '');
+    if (name === null) {
+        return;
+    }
+    const trimmed = (name || '').trim() || (currentLanguage === 'ko' ? '새 강의 계획표' : 'New syllabus');
+    const tpl = {
+        id: generateId(),
+        name: trimmed,
+        notes: '',
+        syllabusGeneralNotes: '',
+        syllabusUnits: [],
+        rowTemplates: [],
+        noteRows: []
+    };
+    if (!Array.isArray(appData.customSyllabusTemplates)) {
+        appData.customSyllabusTemplates = [];
+    }
+    appData.customSyllabusTemplates.push(tpl);
+    saveData();
+    syllabusListSegment = 'templates';
+    syncSyllabusListSegmentUi();
+    populateSyllabusEditorForTemplate(tpl);
+    renderSyllabusTemplateList();
+    renderPrintSyllabusManager();
+}
+
+function saveClassSyllabusAsTemplate() {
+    const classData = getSelectedSyllabusClass();
+    if (!classData) {
+        return;
+    }
+    const name = prompt(t('syllabusTemplateNamePrompt'), classData.name + ' syllabus');
+    if (name === null) {
+        return;
+    }
+    const api = getSyllabusTemplatesApi();
+    const units = collectSyllabusUnitsFromForm();
+    const rows = collectSyllabusRowsFromForm();
+    const collected = api
+        ? api.collectTemplateFromEditor(units, rows)
+        : { syllabusUnits: units, rowTemplates: [], noteRows: [] };
+    const tpl = {
+        id: generateId(),
+        name: (name || '').trim() || classData.name,
+        notes: '',
+        syllabusGeneralNotes: getSyllabusGeneralNotesFromForm(),
+        syllabusUnits: collected.syllabusUnits,
+        rowTemplates: collected.rowTemplates,
+        noteRows: collected.noteRows,
+        homeworkImportMode: classData.homeworkImportMode,
+        lessonLabelMode: classData.lessonLabelMode
+    };
+    if (!Array.isArray(appData.customSyllabusTemplates)) {
+        appData.customSyllabusTemplates = [];
+    }
+    appData.customSyllabusTemplates.push(tpl);
+    saveData();
+    setAppStatusMessage(t('syllabusTemplateSaved'), false);
+    syllabusListSegment = 'templates';
+    syncSyllabusListSegmentUi();
+    populateSyllabusEditorForTemplate(tpl);
+    renderSyllabusTemplateList();
+    renderPrintSyllabusManager();
+}
+
+function deleteSelectedSyllabusTemplate() {
+    const template = getSelectedSyllabusTemplate();
+    if (!template || !confirm(t('syllabusConfirmDeleteTemplate'))) {
+        return;
+    }
+    appData.customSyllabusTemplates = getCustomSyllabusTemplates().filter((tpl) => tpl.id !== template.id);
+    appData.ui.syllabusTabTemplateId = '';
+    syllabusEditorMode = null;
+    saveData();
+    renderSyllabusTemplateList();
+    renderPrintSyllabusManager();
+    syncSyllabusEditorChrome();
+}
+
+function applyCustomSyllabusTemplateToSelectedClass(templateId) {
+    const classData = getSelectedSyllabusClass();
+    const template = getCustomSyllabusTemplates().find((tpl) => tpl.id === templateId);
+    if (!classData || !template) {
+        return;
+    }
+    if (!confirm(t('syllabusConfirmApplyTemplate'))) {
+        return;
+    }
+    const index = appData.classes.findIndex((c) => c.id === classData.id);
+    if (index === -1) {
+        return;
+    }
+    appData.classes[index].syllabusUnits = (template.syllabusUnits || []).map((u) => ({ ...u, id: u.id || generateId() }));
+    if (template.syllabusGeneralNotes) {
+        appData.classes[index].syllabusGeneralNotes = template.syllabusGeneralNotes;
+    }
+    let rows = collectSyllabusRowsFromForm();
+    if (!rows.length && template.rowTemplates && template.rowTemplates.length) {
+        const api = getSyllabusTemplatesApi();
+        rows = api
+            ? api.expandTemplateToEditorRows(template, { newRowId: () => (getSyllabusModule()?.newRowId() || generateId()) })
+            : [];
+    }
+    const api = getSyllabusTemplatesApi();
+    if (api && template.rowTemplates && template.rowTemplates.length && rows.length) {
+        const result = api.applyRowTemplatesToSyllabusRows(rows, template.rowTemplates);
+        rows = result.rows;
+    }
+    if (template.homeworkImportMode) {
+        appData.classes[index].homeworkImportMode = template.homeworkImportMode;
+    }
+    if (template.lessonLabelMode) {
+        appData.classes[index].lessonLabelMode = template.lessonLabelMode;
+    }
+    appData.classes[index].syllabusRows = rows;
+    saveData();
+    populateSyllabusEditorForClass(appData.classes[index]);
+    setAppStatusMessage(t('syllabusTemplateApplied'), false);
+}
+
+function startBlankSyllabusForSelectedClass() {
+    const classData = getSelectedSyllabusClass();
+    if (!classData || !confirm(t('syllabusConfirmBlank'))) {
+        return;
+    }
+    setSyllabusGeneralNotesInForm('');
+    renderSyllabusUnitsRows([]);
+    renderSyllabusEditorTable([]);
+}
+
+function addSyllabusLessonRow() {
+    const mod = getSyllabusModule();
+    const rows = collectSyllabusRowsFromForm();
+    let maxSession = 0;
+    rows.forEach((row) => {
+        if (row.kind === 'lesson' && row.sessionNumber > maxSession) {
+            maxSession = row.sessionNumber;
+        }
+    });
+    rows.push({
+        id: mod ? mod.newRowId() : generateId(),
+        kind: 'lesson',
+        sessionNumber: maxSession + 1,
+        planTitle: '',
+        planDetail: '',
+        note: '',
+        source: 'manual',
+        weekLabel: '',
+        monthKey: '',
+        date: ''
+    });
+    renderSyllabusEditorTable(rows);
+}
+
+function getClassTypeDefinitionForSyllabusClass(classData) {
+    if (!classData || !classData.classTypeId) {
+        return null;
+    }
+    return getClassTypeDefinitionById(classData.classTypeId);
+}
+
+function getHomeworkImportModeForSyllabusEditor(classData) {
+    const form = getSyllabusEditorFormEl();
+    if (form && form.dataset.homeworkImportMode) {
+        return form.dataset.homeworkImportMode;
+    }
+    if (classData && classData.homeworkImportMode) {
+        return classData.homeworkImportMode;
+    }
+    const def = getClassTypeDefinitionForSyllabusClass(classData);
+    if (def && def.homeworkImportMode) {
+        return def.homeworkImportMode;
+    }
+    if (classData && classUsesDebateCompression(classData)) {
+        return 'debate';
+    }
+    return 'unitPair';
+}
+
+function initSyllabusTabControls() {
+    mountSyllabusEditor();
+    syncSyllabusListSegmentUi();
+    renderSyllabusClassList();
+    renderSyllabusTemplateList();
+    const classData = getSelectedSyllabusClass();
+    const template = getSelectedSyllabusTemplate();
+    if (syllabusEditorMode === 'template' && template) {
+        populateSyllabusEditorForTemplate(template);
+    } else if (classData) {
+        populateSyllabusEditorForClass(classData);
+    } else {
+        syncSyllabusEditorChrome();
+    }
+}
+
+function initSyllabusEditorListeners() {
+    const root = document.getElementById('syllabusFormMountTab');
+    if (!root || root.dataset.syllabusListenersInit) {
+        return;
+    }
+    root.dataset.syllabusListenersInit = '1';
+
+    const segClass = document.getElementById('syllabusSegmentClasses');
+    const segTpl = document.getElementById('syllabusSegmentTemplates');
+    if (segClass) {
+        segClass.addEventListener('click', () => {
+            syllabusListSegment = 'classes';
+            syncSyllabusListSegmentUi();
+        });
+    }
+    if (segTpl) {
+        segTpl.addEventListener('click', () => {
+            syllabusListSegment = 'templates';
+            syncSyllabusListSegmentUi();
+            renderSyllabusTemplateList();
+        });
+    }
+
+    const classSearch = document.getElementById('syllabusClassListSearch');
+    if (classSearch) {
+        classSearch.addEventListener('input', () => renderSyllabusClassList());
+    }
+    const tplSearch = document.getElementById('syllabusTemplateListSearch');
+    if (tplSearch) {
+        tplSearch.addEventListener('input', () => renderSyllabusTemplateList());
+    }
+
+    document.getElementById('syllabusNewTemplateBtn')?.addEventListener('click', createBlankSyllabusTemplate);
+    document.getElementById('syllabusSaveClassBtn')?.addEventListener('click', saveSyllabusForSelectedClass);
+    document.getElementById('syllabusSaveTemplateBtn')?.addEventListener('click', saveSyllabusTemplateFromEditor);
+    document.getElementById('syllabusOpenClassSettingsBtn')?.addEventListener('click', () => {
+        const id = appData.ui.syllabusTabClassId;
+        if (id) {
+            navigateToTab('classes', { classId: id });
+        }
+    });
+    document.getElementById('syllabusOpenHomeworkBtn')?.addEventListener('click', () => {
+        const id = appData.ui.syllabusTabClassId;
+        if (id) {
+            navigateToTab('homework', { classId: id });
+        }
+    });
+    document.getElementById('syllabusSaveAsTemplateBtn')?.addEventListener('click', saveClassSyllabusAsTemplate);
+    document.getElementById('syllabusDeleteTemplateBtn')?.addEventListener('click', deleteSelectedSyllabusTemplate);
+    document.getElementById('syllabusApplyTemplateSelect')?.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (val) {
+            applyCustomSyllabusTemplateToSelectedClass(val);
+            e.target.value = '';
+        }
+    });
+
+    if (elements.addSyllabusUnitBtn) {
+        elements.addSyllabusUnitBtn.addEventListener('click', () => addSyllabusUnitRow('', ''));
+    }
+    if (elements.refreshSyllabusBtn) {
+        elements.refreshSyllabusBtn.addEventListener('click', refreshSyllabusFromCalendar);
+    }
+    if (elements.startBlankSyllabusBtn) {
+        elements.startBlankSyllabusBtn.addEventListener('click', startBlankSyllabusForSelectedClass);
+    }
+    if (elements.fillSyllabusFromUnitsBtn) {
+        elements.fillSyllabusFromUnitsBtn.addEventListener('click', fillSyllabusPagesFromUnits);
+    }
+    if (elements.applyPresetSyllabusBtn) {
+        elements.applyPresetSyllabusBtn.addEventListener('click', () => applyPresetSyllabusRowsToTable());
+    }
+    if (elements.addSyllabusLessonRowBtn) {
+        elements.addSyllabusLessonRowBtn.addEventListener('click', addSyllabusLessonRow);
+    }
+    if (elements.addSyllabusNoteRowBtn) {
+        elements.addSyllabusNoteRowBtn.addEventListener('click', addSyllabusNoteRow);
+    }
+    if (elements.printClassSyllabusBtn) {
+        elements.printClassSyllabusBtn.addEventListener('click', printClassSyllabusFromModal);
+    }
+    if (elements.homeworkImportPreviewBtn) {
+        elements.homeworkImportPreviewBtn.addEventListener('click', previewHomeworkImport);
+    }
+    if (elements.homeworkImportApplyBtn) {
+        elements.homeworkImportApplyBtn.addEventListener('click', applyHomeworkImport);
+    }
 }
 
 initAppShellFromTemplates();
@@ -4782,6 +6106,21 @@ function mountClassForm(target) {
     mount.appendChild(form);
     classEditorMount = target;
     updateClassEditorEmptyState();
+    syncClassOpenEditorButton();
+}
+
+function mountPrintForm(target) {
+    const form = document.getElementById('printForm');
+    const modalMount = document.getElementById('printFormMountModal');
+    const tabMount = document.getElementById('printFormMountTab');
+    const mount = target === 'tab' ? tabMount : modalMount;
+    if (!form || !mount) {
+        return;
+    }
+    if (form.parentElement !== mount) {
+        mount.appendChild(form);
+    }
+    printFormMountTarget = target;
 }
 
 function mountHolidayForm(target) {
@@ -4802,6 +6141,7 @@ function mountHolidayForm(target) {
     }
     eventEditorMount = target;
     updateEventEditorEmptyState();
+    syncEventOpenEditorButton();
 }
 
 function updateClassEditorEmptyState() {
@@ -4874,12 +6214,47 @@ function navigateToTab(tabId, options = {}) {
             populateHolidayForm(null, options);
         }
         updateEventEditorEmptyState();
+    } else if (tabId === 'syllabus') {
+        initSyllabusTabControls();
+        if (options.classId) {
+            const cls = appData.classes.find((c) => c.id === options.classId);
+            if (cls) {
+                syllabusListSegment = 'classes';
+                syncSyllabusListSegmentUi();
+                populateSyllabusEditorForClass(cls);
+            }
+        } else if (options.templateId) {
+            const tpl = getCustomSyllabusTemplates().find((x) => x.id === options.templateId);
+            if (tpl) {
+                syllabusListSegment = 'templates';
+                syncSyllabusListSegmentUi();
+                populateSyllabusEditorForTemplate(tpl);
+            }
+        }
+    } else if (tabId === 'homework') {
+        initHomeworkTabControls();
+        if (options.classId) {
+            appData.ui.homeworkTabClassId = options.classId;
+            saveData();
+        }
+        renderHomeworkClassList();
+        renderHomeworkEditor();
     } else if (tabId === 'print') {
+        mountPrintForm('tab');
         requestAnimationFrame(() => {
+            setPrintFormSectionMode('all');
             syncPrintVisibilityFromUi();
             updatePrintLessonFilterHint();
+            renderPrintSyllabusManager();
         });
+    } else if (tabId === 'calendar' && options.focusClassId) {
+        focusClassOnCalendar(options.focusClassId);
+    } else if (tabId === 'calendar' && options.focusEventId) {
+        focusEventOnCalendar(options.focusEventId);
     }
+
+    syncClassOpenEditorButton();
+    syncEventOpenEditorButton();
 
     if (tabId !== 'calendar') {
         if (elements.classModal) {
@@ -4888,6 +6263,9 @@ function navigateToTab(tabId, options = {}) {
         if (elements.holidayModal) {
             closeModal(elements.holidayModal);
         }
+    }
+    if (elements.printOptionsModal && elements.printOptionsModal.classList.contains('active')) {
+        closePrintOptionsModal();
     }
 }
 
@@ -4913,10 +6291,34 @@ function initAppTabs() {
     if (eventsTabAddBtn) {
         eventsTabAddBtn.addEventListener('click', () => openEventEditor(null, 'tab'));
     }
+    initHomeworkTabListeners();
+    const openSyllabusTabBtn = document.getElementById('openSyllabusTabBtn');
+    if (openSyllabusTabBtn) {
+        openSyllabusTabBtn.addEventListener('click', () => {
+            const id = elements.classId && elements.classId.value;
+            closeModal(elements.classModal);
+            navigateToTab('syllabus', id ? { classId: id } : {});
+        });
+    }
+    const classOpenSyllabusTabBtn = document.getElementById('classOpenSyllabusTabBtn');
+    if (classOpenSyllabusTabBtn) {
+        classOpenSyllabusTabBtn.addEventListener('click', () => {
+            const id = elements.classId && elements.classId.value;
+            if (id) {
+                navigateToTab('syllabus', { classId: id });
+            }
+        });
+    }
     const openClassInTabBtn = document.getElementById('openClassInTabBtn');
     if (openClassInTabBtn) {
         openClassInTabBtn.addEventListener('click', () => {
             const id = elements.classId && elements.classId.value;
+            if (classEditorMount === 'tab' && getActiveTab() === 'classes') {
+                if (id) {
+                    viewClassInCalendar(id);
+                }
+                return;
+            }
             closeModal(elements.classModal);
             navigateToTab('classes', id ? { classId: id } : { newClass: true });
         });
@@ -4925,6 +6327,12 @@ function initAppTabs() {
     if (openEventInTabBtn) {
         openEventInTabBtn.addEventListener('click', () => {
             const id = elements.holidayId && elements.holidayId.value;
+            if (eventEditorMount === 'tab' && getActiveTab() === 'events') {
+                if (id) {
+                    viewEventInCalendar(id);
+                }
+                return;
+            }
             closeModal(elements.holidayModal);
             navigateToTab('events', id ? { eventId: id } : { newEvent: true });
         });
@@ -5022,6 +6430,630 @@ function escapeHtml(str) {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
+}
+
+// ============================================
+// Homework tab
+// ============================================
+function getHomeworkTabModule() {
+    return typeof window !== 'undefined' ? window.CCPHomeworkTab : null;
+}
+
+function getHomeworkTabHooks() {
+    return {
+        getMeetingDays: (classData) => getMeetingDaysFromClass(classData),
+        isHolidayForClass: (dateStr, classData) => isHolidayForClass(dateStr, classData),
+        getHolidayForClass: (dateStr, classData) => {
+            const holiday = getHolidayForDate(dateStr);
+            if (!holiday || !isHolidayForClass(dateStr, classData)) {
+                return null;
+            }
+            return getLocalizedHolidayRecord(holiday);
+        }
+    };
+}
+
+/** Month shown in homework tab mini calendar ({ year, month } with 0-based month). */
+let homeworkRefCalendarView = null;
+
+function getHomeworkReferenceDateFromUi() {
+    const input = document.getElementById('homeworkReferenceDate');
+    if (input && input.value) {
+        return input.value;
+    }
+    const mod = getHomeworkTabModule();
+    return mod ? mod.formatISO(new Date()) : formatDateISO(new Date());
+}
+
+function syncHomeworkRefCalendarViewToDate(isoDate) {
+    const d = parseISODateLocal(isoDate);
+    if (Number.isNaN(d.getTime())) {
+        return;
+    }
+    homeworkRefCalendarView = { year: d.getFullYear(), month: d.getMonth() };
+}
+
+function getHomeworkRefCalendarView() {
+    if (!homeworkRefCalendarView) {
+        syncHomeworkRefCalendarViewToDate(getHomeworkReferenceDateFromUi());
+    }
+    return homeworkRefCalendarView;
+}
+
+function setHomeworkReferenceDate(isoDate, options = {}) {
+    const input = document.getElementById('homeworkReferenceDate');
+    if (!input || !isoDate) {
+        return;
+    }
+    input.value = isoDate;
+    if (options.syncView !== false) {
+        syncHomeworkRefCalendarViewToDate(isoDate);
+    }
+    renderHomeworkReferenceMiniCalendar();
+    renderHomeworkEditor();
+}
+
+function renderHomeworkReferenceMiniCalendar() {
+    const container = document.getElementById('homeworkReferenceMiniCalendar');
+    if (!container) {
+        return;
+    }
+    const selectedIso = getHomeworkReferenceDateFromUi();
+    const view = getHomeworkRefCalendarView();
+    const year = view.year;
+    const month = view.month;
+    const todayIso = formatDateISO(new Date());
+    const monthNames = t('monthNames');
+    const dayNames = t('dayNamesShort');
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const prevMonthDays = new Date(year, month, 0).getDate();
+
+    const weekdayHtml = dayNames.map((name) =>
+        `<div class="homework-mini-cal-weekday">${escapeHtml(name)}</div>`
+    ).join('');
+
+    let daysHtml = '';
+    for (let i = firstDay - 1; i >= 0; i -= 1) {
+        const dayNum = prevMonthDays - i;
+        daysHtml += `<button type="button" class="homework-mini-cal-day other-month" disabled>${dayNum}</button>`;
+    }
+    for (let day = 1; day <= daysInMonth; day += 1) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const classes = ['homework-mini-cal-day'];
+        if (dateStr === selectedIso) {
+            classes.push('is-selected');
+        }
+        if (dateStr === todayIso) {
+            classes.push('is-today');
+        }
+        daysHtml += `<button type="button" class="${classes.join(' ')}" data-date="${escapeAttr(dateStr)}">${day}</button>`;
+    }
+    const totalCells = firstDay + daysInMonth;
+    const remaining = (7 - (totalCells % 7)) % 7;
+    for (let i = 1; i <= remaining; i += 1) {
+        daysHtml += `<button type="button" class="homework-mini-cal-day other-month" disabled>${i}</button>`;
+    }
+
+    const monthTitle = `${monthNames[month] || ''} ${year}`;
+    container.innerHTML = `
+        <div class="homework-mini-cal-nav">
+            <button type="button" class="homework-mini-cal-nav-btn homework-mini-cal-prev" data-action="prev-month" aria-label="${escapeAttr(t('homeworkTabPrevMonth'))}">‹</button>
+            <span class="homework-mini-cal-title">${escapeHtml(monthTitle)}</span>
+            <button type="button" class="homework-mini-cal-nav-btn homework-mini-cal-next" data-action="next-month" aria-label="${escapeAttr(t('homeworkTabNextMonth'))}">›</button>
+        </div>
+        <div class="homework-mini-cal-weekdays" aria-hidden="true">${weekdayHtml}</div>
+        <div class="homework-mini-cal-days" role="grid">${daysHtml}</div>`;
+
+    const ariaLabel = container.getAttribute('data-i18n-aria-label');
+    if (ariaLabel && t(ariaLabel)) {
+        container.setAttribute('aria-label', t(ariaLabel));
+    }
+}
+
+function initHomeworkTabControls() {
+    const input = document.getElementById('homeworkReferenceDate');
+    const miniCal = document.getElementById('homeworkReferenceMiniCalendar');
+    if (!input) {
+        return;
+    }
+    const mod = getHomeworkTabModule();
+    if (!input.value) {
+        input.value = mod ? mod.formatISO(new Date()) : formatDateISO(new Date());
+    }
+    syncHomeworkRefCalendarViewToDate(input.value);
+
+    if (input.dataset.homeworkInit !== '1') {
+        input.dataset.homeworkInit = '1';
+        input.addEventListener('change', () => {
+            syncHomeworkRefCalendarViewToDate(input.value);
+            renderHomeworkReferenceMiniCalendar();
+            renderHomeworkEditor();
+        });
+    }
+
+    const todayBtn = document.getElementById('homeworkReferenceTodayBtn');
+    if (todayBtn && todayBtn.dataset.homeworkInit !== '1') {
+        todayBtn.dataset.homeworkInit = '1';
+        todayBtn.addEventListener('click', () => {
+            setHomeworkReferenceDate(formatDateISO(new Date()));
+        });
+    }
+
+    if (miniCal && miniCal.dataset.homeworkInit !== '1') {
+        miniCal.dataset.homeworkInit = '1';
+        miniCal.addEventListener('click', (e) => {
+            const dayBtn = e.target.closest('button[data-date]');
+            if (dayBtn && dayBtn.dataset.date) {
+                setHomeworkReferenceDate(dayBtn.dataset.date);
+                return;
+            }
+            const navBtn = e.target.closest('button[data-action]');
+            if (!navBtn) {
+                return;
+            }
+            const view = getHomeworkRefCalendarView();
+            if (navBtn.dataset.action === 'prev-month') {
+                const d = new Date(view.year, view.month - 1, 1);
+                homeworkRefCalendarView = { year: d.getFullYear(), month: d.getMonth() };
+            } else if (navBtn.dataset.action === 'next-month') {
+                const d = new Date(view.year, view.month + 1, 1);
+                homeworkRefCalendarView = { year: d.getFullYear(), month: d.getMonth() };
+            }
+            renderHomeworkReferenceMiniCalendar();
+        });
+    }
+
+    renderHomeworkReferenceMiniCalendar();
+}
+
+function computeHomeworkPacketForClass(classData) {
+    const mod = getHomeworkTabModule();
+    if (!mod) {
+        return { messageKey: 'homeworkTabModuleMissing' };
+    }
+    syncHolidaysFromEvents();
+    const rows = getSyllabusRowsForClass(classData, { preferMerged: true });
+    return mod.computeHomeworkForClass({
+        classData,
+        syllabusRows: rows,
+        referenceDate: getHomeworkReferenceDateFromUi(),
+        hooks: getHomeworkTabHooks()
+    });
+}
+
+function renderHomeworkClassList() {
+    const list = document.getElementById('homeworkClassList');
+    if (!list) {
+        return;
+    }
+    ensureUiState();
+    const q = (document.getElementById('homeworkClassListSearch')?.value || '').trim().toLowerCase();
+    const selectedId = appData.ui.homeworkTabClassId || '';
+    list.innerHTML = '';
+    const classes = getClassesInDisplayOrder().filter((c) => {
+        if (!q) {
+            return true;
+        }
+        const hay = [c.name, c.grade, c.book, c.levelCustom, formatClassLabelWithPeriod(c)].join(' ').toLowerCase();
+        return hay.includes(q);
+    });
+    if (classes.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'module-list-empty';
+        empty.style.padding = '12px';
+        empty.style.color = 'var(--text-secondary)';
+        empty.textContent = q ? t('lessonFilterSearchEmpty') : t('classEditorEmpty');
+        list.appendChild(empty);
+        return;
+    }
+    classes.forEach((c) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'module-list-item' + (c.id === selectedId ? ' is-selected' : '');
+        btn.setAttribute('role', 'option');
+        btn.setAttribute('aria-selected', String(c.id === selectedId));
+        btn.innerHTML = `<span>${escapeHtml(c.name)}</span><span class="module-list-item-meta">${escapeHtml([formatClassLabelWithPeriod(c), c.grade].filter(Boolean).join(' · '))}</span>`;
+        btn.addEventListener('click', () => {
+            appData.ui.homeworkTabClassId = c.id;
+            saveData();
+            renderHomeworkClassList();
+            renderHomeworkEditor();
+        });
+        list.appendChild(btn);
+    });
+}
+
+/** Active homework tab editor state (class + packet row ids for syllabus save). */
+let homeworkEditorState = null;
+
+function ensureClassSyllabusRowsForHomeworkEdit(classData) {
+    const mod = getSyllabusModule();
+    const generated = buildGeneratedSyllabusRows(classData);
+    let saved = Array.isArray(classData.syllabusRows) ? classData.syllabusRows : [];
+    if (!saved.length && generated.length) {
+        classData.syllabusRows = generated.map((r) => ({ ...r }));
+        return classData.syllabusRows;
+    }
+    if (mod && generated.length) {
+        classData.syllabusRows = mod.mergeSyllabusRows(saved, generated);
+        return classData.syllabusRows;
+    }
+    return saved;
+}
+
+function findSyllabusRowInClass(classData, rowId) {
+    if (!classData || !rowId) {
+        return null;
+    }
+    const rows = ensureClassSyllabusRowsForHomeworkEdit(classData);
+    let row = rows.find((r) => r.id === rowId);
+    if (row) {
+        return row;
+    }
+    const merged = getSyllabusRowsForClass(classData, { preferMerged: true });
+    row = merged.find((r) => r.id === rowId);
+    if (!row) {
+        return null;
+    }
+    rows.push({ ...row });
+    classData.syllabusRows = rows;
+    return row;
+}
+
+function saveHomeworkDetailToSyllabus(classData, rowId, planDetail) {
+    const row = findSyllabusRowInClass(classData, rowId);
+    if (!row) {
+        return false;
+    }
+    row.planDetail = planDetail;
+    if (row.source === 'generated') {
+        row.source = 'edited';
+    }
+    const idx = appData.classes.findIndex((c) => c.id === classData.id);
+    if (idx >= 0) {
+        appData.classes[idx].syllabusRows = classData.syllabusRows;
+    }
+    saveData();
+    return true;
+}
+
+function updateHomeworkSourceHints(packet) {
+    const gradingHint = document.getElementById('homeworkGradingSourceHint');
+    const assignHint = document.getElementById('homeworkAssignSourceHint');
+    if (gradingHint) {
+        if (packet && packet.gradingSourceRowId) {
+            gradingHint.textContent = t('homeworkTabSavesTo')
+                .replace('{n}', String(packet.targetSessionNumber || ''))
+                .replace('{title}', packet.targetLessonTitle || '');
+            gradingHint.hidden = false;
+        } else {
+            gradingHint.hidden = true;
+        }
+    }
+    if (assignHint) {
+        if (packet && packet.assignSourceRowId) {
+            assignHint.textContent = t('homeworkTabSavesTo')
+                .replace('{n}', String(packet.assignSourceSessionNumber || packet.dueSessionNumber || ''))
+                .replace('{title}', packet.assignSourceTitle || '');
+            assignHint.hidden = false;
+        } else {
+            assignHint.hidden = true;
+        }
+    }
+}
+
+function persistHomeworkTextareaToSyllabus(kind) {
+    const state = homeworkEditorState;
+    if (!state || !state.classId || !state.packet) {
+        return false;
+    }
+    const classData = appData.classes.find((c) => c.id === state.classId);
+    if (!classData) {
+        return false;
+    }
+    const packet = state.packet;
+    const rowId = kind === 'grading' ? packet.gradingSourceRowId : packet.assignSourceRowId;
+    const el = document.getElementById(kind === 'grading' ? 'homeworkGradingText' : 'homeworkAssignText');
+    if (!rowId || !el) {
+        setAppStatusMessage(t('homeworkTabNoSyllabusRow'), true);
+        return false;
+    }
+    const body = el.value;
+    const ok = saveHomeworkDetailToSyllabus(classData, rowId, body);
+    if (!ok) {
+        setAppStatusMessage(t('homeworkTabNoSyllabusRow'), true);
+        return false;
+    }
+    if (kind === 'grading') {
+        packet.gradingHomework = body.trim();
+    } else {
+        packet.assignHomework = body.trim();
+    }
+    setAppStatusMessage(t('homeworkTabSaved'), false);
+    return true;
+}
+
+let debouncedSaveHomeworkGrading = null;
+let debouncedSaveHomeworkAssign = null;
+
+function formatHomeworkPasteBlock(text, classData, packet, kind) {
+    const mod = getHomeworkTabModule();
+    if (!mod) {
+        return (text || '').trim();
+    }
+    const opts = {
+        includeHeader: true,
+        className: classData.name,
+        sessionLabel: t('homeworkTabSessionLabel'),
+        sessionNumber: packet.targetSessionNumber
+    };
+    if (kind === 'assign') {
+        opts.dueLabel = t('homeworkTabDueLabel');
+        opts.dueDateLabel = packet.dueDate ? formatDateDisplay(packet.dueDate) : '';
+    }
+    return mod.formatHomeworkBlock(text, opts);
+}
+
+function renderHomeworkDueDateSkips(packet) {
+    const container = document.getElementById('homeworkDueDateSkips');
+    if (!container) {
+        return;
+    }
+    const skipped = packet && Array.isArray(packet.skippedClassDates) ? packet.skippedClassDates : [];
+    container.replaceChildren();
+    if (!skipped.length) {
+        container.hidden = true;
+        return;
+    }
+    container.hidden = false;
+    const heading = document.createElement('p');
+    heading.className = 'homework-due-skips-heading';
+    heading.textContent = t('homeworkTabSkippedHeading');
+    container.appendChild(heading);
+    const list = document.createElement('ul');
+    list.className = 'homework-due-skips-list';
+    skipped.forEach((item) => {
+        const li = document.createElement('li');
+        const dateLabel = formatDateDisplay(item.date);
+        const templateKey = item.label ? 'homeworkTabSkipHoliday' : 'homeworkTabSkipHolidayNoName';
+        li.textContent = t(templateKey)
+            .replace('{date}', dateLabel)
+            .replace('{name}', item.label || '');
+        list.appendChild(li);
+    });
+    container.appendChild(list);
+}
+
+function renderHomeworkEditor() {
+    const empty = document.getElementById('homeworkEditorEmpty');
+    const content = document.getElementById('homeworkEditorContent');
+    const gradingEl = document.getElementById('homeworkGradingText');
+    const assignEl = document.getElementById('homeworkAssignText');
+    const dueEl = document.getElementById('homeworkDueDateDisplay');
+    const metaEl = document.getElementById('homeworkTargetLessonMeta');
+    const msgEl = document.getElementById('homeworkTabMessage');
+    const titleEl = document.getElementById('homeworkClassTitle');
+    const classMetaEl = document.getElementById('homeworkClassMeta');
+    if (!empty || !content) {
+        return;
+    }
+    ensureUiState();
+    const classId = appData.ui.homeworkTabClassId;
+    const classData = classId ? appData.classes.find((c) => c.id === classId) : null;
+    if (!classData) {
+        empty.hidden = false;
+        content.hidden = true;
+        return;
+    }
+    empty.hidden = true;
+    content.hidden = false;
+    if (titleEl) {
+        titleEl.textContent = classData.name;
+    }
+    if (classMetaEl) {
+        classMetaEl.textContent = [formatClassLabelWithPeriod(classData), classData.grade, classData.book]
+            .filter(Boolean)
+            .join(' · ');
+    }
+    const packet = computeHomeworkPacketForClass(classData);
+    homeworkEditorState = { classId: classData.id, packet };
+    if (gradingEl) {
+        gradingEl.value = packet.gradingHomework || '';
+        gradingEl.disabled = !packet.gradingSourceRowId;
+    }
+    if (assignEl) {
+        assignEl.value = packet.assignHomework || '';
+        assignEl.disabled = !packet.assignSourceRowId;
+    }
+    updateHomeworkSourceHints(packet);
+    if (dueEl) {
+        dueEl.textContent = packet.dueDate ? formatDateDisplay(packet.dueDate) : '—';
+    }
+    renderHomeworkDueDateSkips(packet);
+    if (metaEl) {
+        const parts = [];
+        if (packet.targetLessonDate) {
+            parts.push(t('homeworkTabTargetLesson', {
+                date: formatDateDisplay(packet.targetLessonDate),
+                n: packet.targetSessionNumber,
+                title: packet.targetLessonTitle || ''
+            }));
+        }
+        if (packet.targetSessionNumber > 0 && packet.targetLessonDate) {
+            parts.push(t('homeworkTabGradingFrom', {
+                n: packet.targetSessionNumber,
+                date: formatDateDisplay(packet.targetLessonDate),
+                title: packet.targetLessonTitle || ''
+            }));
+        }
+        metaEl.textContent = parts.join(' · ');
+    }
+    if (msgEl) {
+        if (packet.messageKey) {
+            msgEl.hidden = false;
+            msgEl.textContent = t(packet.messageKey);
+        } else {
+            msgEl.hidden = true;
+            msgEl.textContent = '';
+        }
+    }
+}
+
+async function copyTextToClipboard(text) {
+    const value = (text || '').trim();
+    if (!value) {
+        return false;
+    }
+    try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(value);
+            return true;
+        }
+    } catch (e) {
+        /* fallback below */
+    }
+    const ta = document.createElement('textarea');
+    ta.value = value;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try {
+        ok = document.execCommand('copy');
+    } catch (e2) {
+        ok = false;
+    }
+    document.body.removeChild(ta);
+    return ok;
+}
+
+function setAppStatusMessage(message, isError) {
+    const el = document.getElementById('appStatus');
+    if (!el || !message) {
+        return;
+    }
+    el.textContent = message;
+    el.className = 'app-status app-status-visible' + (isError ? ' app-status-error' : '');
+    if (setAppStatusMessage._timer) {
+        clearTimeout(setAppStatusMessage._timer);
+    }
+    setAppStatusMessage._timer = setTimeout(() => {
+        el.className = 'app-status';
+        el.textContent = '';
+    }, 5000);
+}
+
+function showHomeworkCopyStatus(ok) {
+    setAppStatusMessage(
+        ok ? t('homeworkTabCopied') : t('homeworkTabCopyFailed'),
+        !ok
+    );
+}
+
+function initHomeworkTabListeners() {
+    if (!debouncedSaveHomeworkGrading && typeof debounce === 'function') {
+        debouncedSaveHomeworkGrading = debounce(() => persistHomeworkTextareaToSyllabus('grading'), 600);
+        debouncedSaveHomeworkAssign = debounce(() => persistHomeworkTextareaToSyllabus('assign'), 600);
+    }
+    const search = document.getElementById('homeworkClassListSearch');
+    if (search && !search.dataset.homeworkInit) {
+        search.dataset.homeworkInit = '1';
+        search.addEventListener('input', () => renderHomeworkClassList());
+    }
+    const refreshBtn = document.getElementById('homeworkRefreshSyllabiBtn');
+    if (refreshBtn && !refreshBtn.dataset.homeworkInit) {
+        refreshBtn.dataset.homeworkInit = '1';
+        refreshBtn.addEventListener('click', () => {
+            if (syncAllClassSyllabusRowsFromCalendar()) {
+                renderHomeworkEditor();
+                setAppStatusMessage(t('homeworkTabSyllabiRefreshed'), false);
+            }
+        });
+    }
+    const openClassBtn = document.getElementById('homeworkOpenClassBtn');
+    if (openClassBtn && !openClassBtn.dataset.homeworkInit) {
+        openClassBtn.dataset.homeworkInit = '1';
+        openClassBtn.addEventListener('click', () => {
+            const id = appData.ui.homeworkTabClassId;
+            if (id) {
+                navigateToTab('syllabus', { classId: id });
+            }
+        });
+    }
+    const gradingTa = document.getElementById('homeworkGradingText');
+    if (gradingTa && !gradingTa.dataset.homeworkInit) {
+        gradingTa.dataset.homeworkInit = '1';
+        gradingTa.addEventListener('input', () => debouncedSaveHomeworkGrading());
+        gradingTa.addEventListener('blur', () => persistHomeworkTextareaToSyllabus('grading'));
+    }
+    const assignTa = document.getElementById('homeworkAssignText');
+    if (assignTa && !assignTa.dataset.homeworkInit) {
+        assignTa.dataset.homeworkInit = '1';
+        assignTa.addEventListener('input', () => debouncedSaveHomeworkAssign());
+        assignTa.addEventListener('blur', () => persistHomeworkTextareaToSyllabus('assign'));
+    }
+    const copyGrading = document.getElementById('homeworkCopyGradingBtn');
+    if (copyGrading && !copyGrading.dataset.homeworkInit) {
+        copyGrading.dataset.homeworkInit = '1';
+        copyGrading.addEventListener('click', async () => {
+            const state = homeworkEditorState;
+            const classData = state?.classId
+                ? appData.classes.find((c) => c.id === state.classId)
+                : null;
+            const body = document.getElementById('homeworkGradingText')?.value || '';
+            const formatted = classData && state?.packet
+                ? formatHomeworkPasteBlock(body, classData, state.packet, 'grading')
+                : body;
+            showHomeworkCopyStatus(await copyTextToClipboard(formatted));
+        });
+    }
+    const copyAssign = document.getElementById('homeworkCopyAssignBtn');
+    if (copyAssign && !copyAssign.dataset.homeworkInit) {
+        copyAssign.dataset.homeworkInit = '1';
+        copyAssign.addEventListener('click', async () => {
+            const state = homeworkEditorState;
+            const classData = state?.classId
+                ? appData.classes.find((c) => c.id === state.classId)
+                : null;
+            const body = document.getElementById('homeworkAssignText')?.value || '';
+            const formatted = classData && state?.packet
+                ? formatHomeworkPasteBlock(body, classData, state.packet, 'assign')
+                : body;
+            showHomeworkCopyStatus(await copyTextToClipboard(formatted));
+        });
+    }
+    const copyBoth = document.getElementById('homeworkCopyBothBtn');
+    if (copyBoth && !copyBoth.dataset.homeworkInit) {
+        copyBoth.dataset.homeworkInit = '1';
+        copyBoth.addEventListener('click', async () => {
+            const state = homeworkEditorState;
+            const classData = state?.classId
+                ? appData.classes.find((c) => c.id === state.classId)
+                : null;
+            const packet = state?.packet;
+            const gBody = document.getElementById('homeworkGradingText')?.value || '';
+            const aBody = document.getElementById('homeworkAssignText')?.value || '';
+            const g = classData && packet
+                ? formatHomeworkPasteBlock(gBody, classData, packet, 'grading')
+                : gBody.trim();
+            const a = classData && packet
+                ? formatHomeworkPasteBlock(aBody, classData, packet, 'assign')
+                : aBody.trim();
+            const due = document.getElementById('homeworkDueDateDisplay')?.textContent || '';
+            const combined = [
+                '=== ' + t('homeworkTabGradingTitle') + ' ===',
+                g.trim(),
+                '',
+                '=== ' + t('homeworkTabAssignTitle') + ' ===',
+                t('homeworkTabDueLabel') + ': ' + due,
+                a.trim()
+            ].join('\n');
+            showHomeworkCopyStatus(await copyTextToClipboard(combined));
+        });
+    }
 }
 
 function openClassEditor(classData, context, options = {}) {
@@ -5126,8 +7158,9 @@ const elements = {
     holidayAllClasses: document.getElementById('holidayAllClasses'),
     deleteHolidayBtn: document.getElementById('deleteHolidayBtn'),
     
-    // Print (tab panel)
+    // Print (tab panel + options modal)
     printForm: document.getElementById('printForm'),
+    printOptionsModal: document.getElementById('printOptionsModal'),
     
     // Popup
     classPopup: document.getElementById('classPopup'),
@@ -5135,7 +7168,6 @@ const elements = {
     // Print Summary
     printSummary: document.getElementById('printSummary'),
     classSummaryTable: document.getElementById('classSummaryTable'),
-    holidaySummaryTable: document.getElementById('holidaySummaryTable'),
     eventSummaryTable: document.getElementById('eventSummaryTable'),
     lessonScheduleSummary: document.getElementById('lessonScheduleSummary'),
     compressionNotes: document.getElementById('compressionNotes'),
@@ -5376,13 +7408,6 @@ function ensureKrHolidaysSourceHint() {
     termSelector.appendChild(hint);
 }
 
-function removeLegacyKasiApiKeyUI() {
-    const wrap = document.getElementById('kasiApiKeyWrap');
-    if (wrap) {
-        wrap.remove();
-    }
-}
-
 function ensureKrHolidaysImportButton() {
     if (document.getElementById('fetchKrHolidaysBtn')) {
         return;
@@ -5415,6 +7440,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     ensureClassFormExtendedMarkup();
     repairCorruptedLangToggleButton();
     loadLanguage();
+    loadTheme();
     warnIfOpenedFromNetworkFile();
     setupSchoolGradeControls();
     setupSimsonLevelControls();
@@ -5422,17 +7448,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     bindClassScheduleInputsForSyllabusDistribute();
     loadData();
     initDefaultClassEditorModule();
+    initBooksEditorModule();
     await initTeamSync();
     initializeTermStart();
     ensureKrHolidaysImportButton();
-    removeLegacyKasiApiKeyUI();
     ensureKrHolidaysSourceHint();
     setupEventListeners();
     initAppTabs();
     initCalendarContextMenu();
     initTopBarToggle();
+    initAppChromeStickyTop();
     applyLanguage();
     renderCalendar();
+    requestAnimationFrame(syncAppChromeStickyTop);
 });
 
 function initializeTermStart() {
@@ -5503,34 +7531,6 @@ function setupEventListeners() {
         }
     });
 
-    if (elements.addSyllabusUnitBtn) {
-        elements.addSyllabusUnitBtn.addEventListener('click', () => {
-            addSyllabusUnitRow('', '');
-        });
-    }
-    if (elements.refreshSyllabusBtn) {
-        elements.refreshSyllabusBtn.addEventListener('click', refreshSyllabusFromCalendar);
-    }
-    if (elements.fillSyllabusFromUnitsBtn) {
-        elements.fillSyllabusFromUnitsBtn.addEventListener('click', fillSyllabusPagesFromUnits);
-    }
-    if (elements.applyPresetSyllabusBtn) {
-        elements.applyPresetSyllabusBtn.addEventListener('click', applyPresetSyllabusRowsToTable);
-    }
-    if (elements.addSyllabusNoteRowBtn) {
-        elements.addSyllabusNoteRowBtn.addEventListener('click', addSyllabusNoteRow);
-    }
-    if (elements.homeworkImportPreviewBtn) {
-        elements.homeworkImportPreviewBtn.addEventListener('click', previewHomeworkImport);
-    }
-    if (elements.homeworkImportApplyBtn) {
-        elements.homeworkImportApplyBtn.addEventListener('click', applyHomeworkImport);
-    }
-    const printClassSyllabusBtn = document.getElementById('printClassSyllabusBtn');
-    if (printClassSyllabusBtn) {
-        printClassSyllabusBtn.addEventListener('click', printClassSyllabusFromModal);
-    }
-
     const fetchKrBtn = document.getElementById('fetchKrHolidaysBtn');
     if (fetchKrBtn) {
         fetchKrBtn.addEventListener('click', importKoreanPublicHolidays);
@@ -5538,6 +7538,10 @@ function setupEventListeners() {
     
     // Language Toggle
     document.getElementById('langToggleBtn').addEventListener('click', toggleLanguage);
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', toggleTheme);
+    }
     
     // Button Clicks
     document.getElementById('addClassBtn').addEventListener('click', () => openClassEditor(null, 'calendar-popout'));
@@ -5545,9 +7549,10 @@ function setupEventListeners() {
     document.getElementById('exportBtn').addEventListener('click', exportData);
     document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
     document.getElementById('importFile').addEventListener('change', importData);
-    document.getElementById('printBtn').addEventListener('click', () => {
-        navigateToTab('print');
-    });
+    const printCalendarBtn = document.getElementById('printCalendarBtn');
+    if (printCalendarBtn) {
+        printCalendarBtn.addEventListener('click', openPrintCalendarDialog);
+    }
     const printCalVisSelectAll = document.getElementById('printCalVisSelectAllBtn');
     const printCalVisClearAll = document.getElementById('printCalVisClearAllBtn');
     if (printCalVisSelectAll && !printCalVisSelectAll.dataset.bound) {
@@ -5558,10 +7563,23 @@ function setupEventListeners() {
         printCalVisClearAll.dataset.bound = '1';
         printCalVisClearAll.addEventListener('click', () => setPrintCalendarVisibilityCheckboxes(false));
     }
+    const printSummarySelectAll = document.getElementById('printSummarySelectAllBtn');
+    const printSummaryClearAll = document.getElementById('printSummaryClearAllBtn');
+    if (printSummarySelectAll && !printSummarySelectAll.dataset.bound) {
+        printSummarySelectAll.dataset.bound = '1';
+        printSummarySelectAll.addEventListener('click', () => setPrintSummaryOptionCheckboxes(true));
+    }
+    if (printSummaryClearAll && !printSummaryClearAll.dataset.bound) {
+        printSummaryClearAll.dataset.bound = '1';
+        printSummaryClearAll.addEventListener('click', () => setPrintSummaryOptionCheckboxes(false));
+    }
     setupLessonFilterUi();
     setupEventApplicabilityFilterUi();
     document.getElementById('clearDataBtn').addEventListener('click', clearAllData);
-    
+    setupPrintSyllabusControls();
+    setupPrintColorModeIsolation();
+    setupAppPrintOpenerSafeties();
+
     // Modal Close Buttons
     document.getElementById('closeClassModal').addEventListener('click', () => closeModal(elements.classModal));
     document.getElementById('closeHolidayModal').addEventListener('click', () => closeModal(elements.holidayModal));
@@ -5702,9 +7720,14 @@ function setupEventListeners() {
     });
     
     // Close modals on backdrop click (safe for text selection dragging)
-    [elements.classModal, elements.holidayModal, elements.classTypeModal]
+    [elements.classModal, elements.holidayModal, elements.classTypeModal, elements.printOptionsModal]
         .filter(Boolean)
         .forEach(bindModalBackdropClose);
+
+    const closePrintOptionsModalBtn = document.getElementById('closePrintOptionsModal');
+    if (closePrintOptionsModalBtn && elements.printOptionsModal) {
+        closePrintOptionsModalBtn.addEventListener('click', closePrintOptionsModal);
+    }
     
     // Close modals on Escape key
     document.addEventListener('keydown', (e) => {
@@ -5713,6 +7736,9 @@ function setupEventListeners() {
             closeModal(elements.holidayModal);
             if (elements.classTypeModal) {
                 closeModal(elements.classTypeModal);
+            }
+            if (elements.printOptionsModal) {
+                closePrintOptionsModal();
             }
         }
     });
@@ -5732,6 +7758,9 @@ function closeModal(modal) {
     modal.classList.remove('active');
     if (modal === elements.holidayModal) {
         closeEventApplicabilityPopover();
+    }
+    if (modal === elements.printOptionsModal) {
+        mountPrintForm('tab');
     }
 }
 
@@ -5773,11 +7802,25 @@ function addSyllabusUnitRow(title = '', notes = '', unitId = null, speakingPages
     row.dataset.unitId = unitId || generateId();
     const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
     row.innerHTML = `
-        <input type="text" class="syllabus-unit-title" data-i18n-placeholder="syllabusUnitTitle" placeholder="${t('syllabusUnitTitle')}" value="${esc(title)}">
-        <input type="text" class="syllabus-unit-speaking" placeholder="${t('syllabusUnitSpeakingPages')}" value="${esc(speakingPages)}">
-        <input type="text" class="syllabus-unit-writing" placeholder="${t('syllabusUnitWritingPages')}" value="${esc(writingPages)}">
-        <input type="text" class="syllabus-unit-notes" placeholder="${t('notes')}" value="${esc(notes)}">
-        <button type="button" class="btn btn-outline btn-small syllabus-unit-remove" aria-label="Remove">×</button>
+        <div class="syllabus-unit-title-wrap">
+            <label class="syllabus-unit-field syllabus-unit-field-title">
+                <span>${escapeHtml(t('syllabusUnitTitle'))}</span>
+                <input type="text" class="syllabus-unit-title" value="${esc(title)}">
+            </label>
+            <button type="button" class="btn btn-outline btn-small syllabus-unit-remove" aria-label="Remove">×</button>
+        </div>
+        <div class="syllabus-unit-field">
+            <label>${escapeHtml(t('syllabusUnitSpeakingPages'))}</label>
+            <textarea class="syllabus-unit-speaking" rows="2">${esc(speakingPages)}</textarea>
+        </div>
+        <div class="syllabus-unit-field">
+            <label>${escapeHtml(t('syllabusUnitWritingPages'))}</label>
+            <textarea class="syllabus-unit-writing" rows="2">${esc(writingPages)}</textarea>
+        </div>
+        <div class="syllabus-unit-field syllabus-unit-field-full">
+            <label>${escapeHtml(t('notes'))}</label>
+            <textarea class="syllabus-unit-notes" rows="2">${esc(notes)}</textarea>
+        </div>
     `;
     row.querySelector('.syllabus-unit-remove').addEventListener('click', () => row.remove());
     elements.syllabusUnitsRows.appendChild(row);
@@ -5786,13 +7829,18 @@ function addSyllabusUnitRow(title = '', notes = '', unitId = null, speakingPages
 function collectSyllabusUnitsFromForm() {
     if (!elements.syllabusUnitsRows) return [];
     const rows = elements.syllabusUnitsRows.querySelectorAll('.syllabus-unit-row');
-    return Array.from(rows).map(row => ({
-        id: row.dataset.unitId || generateId(),
-        title: (row.querySelector('.syllabus-unit-title')?.value || '').trim(),
-        notes: (row.querySelector('.syllabus-unit-notes')?.value || '').trim(),
-        speakingPages: (row.querySelector('.syllabus-unit-speaking')?.value || '').trim(),
-        writingPages: (row.querySelector('.syllabus-unit-writing')?.value || '').trim()
-    })).filter(u => u.title.length > 0);
+    return Array.from(rows).map(row => {
+        const speakingEl = row.querySelector('.syllabus-unit-speaking');
+        const writingEl = row.querySelector('.syllabus-unit-writing');
+        const notesEl = row.querySelector('.syllabus-unit-notes');
+        return {
+            id: row.dataset.unitId || generateId(),
+            title: (row.querySelector('.syllabus-unit-title')?.value || '').trim(),
+            notes: notesEl ? (notesEl.value || '').trim() : '',
+            speakingPages: speakingEl ? (speakingEl.value || '').trim() : '',
+            writingPages: writingEl ? (writingEl.value || '').trim() : ''
+        };
+    }).filter(u => u.title.length > 0);
 }
 
 function getSyllabusModule() {
@@ -5877,15 +7925,33 @@ function lessonsForSyllabusBuild(classData) {
     return items;
 }
 
+function getSyllabusRowTemplatesForClass(classData) {
+    if (!classData) {
+        return [];
+    }
+    const def = getClassTypeDefinitionById(classData.classTypeId);
+    return def && Array.isArray(def.defaultSyllabusRowTemplates)
+        ? def.defaultSyllabusRowTemplates
+        : [];
+}
+
 function buildGeneratedSyllabusRows(classData) {
     const mod = getSyllabusModule();
     if (!mod) {
         return [];
     }
+    const rowTemplates = getSyllabusRowTemplatesForClass(classData);
+    const hooks = {
+        ...syllabusScheduleHooks(),
+        rowTemplates
+    };
+    if (rowTemplates.length && window.CCPSyllabusTemplates) {
+        hooks.templateIndexes = window.CCPSyllabusTemplates.buildTemplateIndexes(rowTemplates);
+    }
     return mod.buildSyllabusRowsFromSchedule(
         classData,
         lessonsForSyllabusBuild(classData),
-        syllabusScheduleHooks()
+        hooks
     );
 }
 
@@ -5926,11 +7992,52 @@ function getSyllabusRowsForClass(classData, options = {}) {
     } else {
         rows = generated;
     }
-    return localizeSyllabusRowsForCurrentLanguage(rows);
+    return enrichSyllabusRowColors(
+        localizeSyllabusRowsForCurrentLanguage(rows),
+        classData
+    );
+}
+
+/** Rows for syllabus print: form edits + calendar colors. */
+function resolveSyllabusRowsForPrint(snapshot) {
+    const mod = getSyllabusModule();
+    if (!mod) {
+        return [];
+    }
+    if (elements.syllabusTableBody) {
+        const formRows = collectSyllabusRowsFromForm();
+        const generated = buildGeneratedSyllabusRows(snapshot);
+        return enrichSyllabusRowColors(mod.mergeSyllabusRows(formRows, generated), snapshot);
+    }
+    return getSyllabusRowsForClass(snapshot, { preferMerged: true });
+}
+
+function buildClassSnapshotFromRecord(classData) {
+    if (!classData) {
+        return {};
+    }
+    return { ...classData };
+}
+
+function buildClassSnapshotForSyllabusContext() {
+    if (getActiveTab() === 'syllabus' && syllabusEditorMode === 'class') {
+        const classData = getSelectedSyllabusClass();
+        if (classData) {
+            return buildClassSnapshotFromRecord(classData);
+        }
+    }
+    if (elements.classId && elements.className) {
+        return buildClassSnapshotFromForm();
+    }
+    const classData = getSelectedSyllabusClass();
+    if (classData) {
+        return buildClassSnapshotFromRecord(classData);
+    }
+    return buildClassSnapshotFromForm();
 }
 
 function buildClassSnapshotFromForm() {
-    const id = elements.classId.value;
+    const id = elements.classId && elements.classId.value;
     const existing = id ? appData.classes.find(c => c.id === id) : null;
     const scheduleModel = getScheduleModelFromForm();
     const isDebateSchedule = scheduleModel === SCHEDULE_MODEL_DEBATE_MONTHLY;
@@ -5987,9 +8094,21 @@ function renderSyllabusEditorTable(rows) {
     elements.syllabusTableBody.innerHTML = '';
     normalized.forEach(row => {
         const tr = document.createElement('tr');
+        const rowKind = row.kind || 'lesson';
+        const eventTypeClass = row.eventType ? ` syllabus-row-${row.eventType}` : '';
+        tr.className = `syllabus-row syllabus-row-${rowKind}${eventTypeClass}`;
         tr.dataset.rowId = row.id;
-        tr.dataset.rowKind = row.kind || 'lesson';
+        tr.dataset.rowKind = rowKind;
         tr.dataset.rowSource = row.source || 'generated';
+        if (row.rowBg) {
+            tr.dataset.rowBg = row.rowBg;
+        }
+        if (row.rowColor) {
+            tr.dataset.rowColor = row.rowColor;
+        }
+        if (row.eventType) {
+            tr.dataset.eventType = row.eventType;
+        }
         if (row.date) {
             tr.dataset.rowDate = row.date;
         }
@@ -6003,18 +8122,34 @@ function renderSyllabusEditorTable(rows) {
         const isNote = row.kind === 'note';
         const titleReadonly = !isNote;
         tr.innerHTML = `
-            <td class="syllabus-ed-week">${escapeHtml(weekDisplay)}</td>
-            <td class="syllabus-ed-num">${row.sessionNumber > 0 ? row.sessionNumber : ''}</td>
-            <td><input type="text" class="syllabus-ed-title" value="${escapeAttr(row.planTitle || '')}" ${titleReadonly ? 'readonly' : ''}></td>
-            <td><textarea class="syllabus-ed-detail" rows="2"></textarea></td>
-            <td><input type="text" class="syllabus-ed-note" value="${escapeAttr(row.note || '')}"></td>
-            <td><button type="button" class="btn btn-outline btn-small syllabus-row-remove" aria-label="Remove">×</button></td>
+            <td class="syllabus-ed-week syllabus-col-week">${escapeHtml(weekDisplay)}</td>
+            <td class="syllabus-ed-num syllabus-col-num">${row.sessionNumber > 0 ? row.sessionNumber : ''}</td>
+            <td class="syllabus-col-plan"><input type="text" class="syllabus-ed-title" value="${escapeAttr(row.planTitle || '')}" ${titleReadonly ? 'readonly' : ''}></td>
+            <td class="syllabus-col-pages"><textarea class="syllabus-ed-detail" rows="4"></textarea></td>
+            <td class="syllabus-col-note"><textarea class="syllabus-ed-note" rows="2"></textarea></td>
+            <td class="syllabus-col-actions"><button type="button" class="btn btn-outline btn-small syllabus-row-remove" aria-label="Remove">×</button></td>
         `;
         const detailEl = tr.querySelector('.syllabus-ed-detail');
         if (detailEl) {
             detailEl.value = row.planDetail || '';
         }
+        const noteEl = tr.querySelector('.syllabus-ed-note');
+        if (noteEl) {
+            noteEl.value = row.note || '';
+        }
         tr.querySelector('.syllabus-row-remove').addEventListener('click', () => tr.remove());
+        if (row.rowBg || row.rowColor) {
+            let cellStyle = '';
+            if (row.rowBg) {
+                cellStyle += `background-color:${row.rowBg};`;
+            }
+            if (row.rowColor) {
+                cellStyle += `color:${row.rowColor};`;
+            }
+            tr.querySelectorAll('td').forEach(td => {
+                td.style.cssText = cellStyle;
+            });
+        }
         elements.syllabusTableBody.appendChild(tr);
     });
     if (elements.syllabusTableEmptyHint) {
@@ -6046,7 +8181,8 @@ function collectSyllabusRowsFromForm() {
         const kind = tr.dataset.rowKind || 'lesson';
         const planTitle = (tr.querySelector('.syllabus-ed-title')?.value || '').trim();
         const planDetail = tr.querySelector('.syllabus-ed-detail')?.value || '';
-        const note = tr.querySelector('.syllabus-ed-note')?.value || '';
+        const noteEl = tr.querySelector('.syllabus-ed-note');
+        const note = noteEl ? (noteEl.value || '') : '';
         let source = tr.dataset.rowSource || 'generated';
         if (kind === 'note') {
             source = 'manual';
@@ -6068,6 +8204,15 @@ function collectSyllabusRowsFromForm() {
         };
         if (mod && row.date && !row.weekLabel) {
             row.weekLabel = mod.getSchoolWeekLabel(row.date);
+        }
+        if (tr.dataset.rowBg) {
+            row.rowBg = tr.dataset.rowBg;
+        }
+        if (tr.dataset.rowColor) {
+            row.rowColor = tr.dataset.rowColor;
+        }
+        if (tr.dataset.eventType) {
+            row.eventType = tr.dataset.eventType;
         }
         return row;
     });
@@ -6107,18 +8252,30 @@ function refreshSyllabusFromCalendar() {
         alert(t('syllabusModuleMissing'));
         return;
     }
-    const snapshot = buildClassSnapshotFromForm();
+    let snapshot;
+    let classId;
+    if (getActiveTab() === 'syllabus' && syllabusEditorMode === 'class') {
+        const classData = getSelectedSyllabusClass();
+        if (!classData) {
+            return;
+        }
+        snapshot = buildClassSnapshotFromRecord(classData);
+        classId = classData.id;
+    } else {
+        snapshot = buildClassSnapshotFromForm();
+        classId = elements.classId && elements.classId.value;
+    }
     const existing = collectSyllabusRowsFromForm();
     const generated = buildGeneratedSyllabusRows(snapshot);
     const merged = mod.mergeSyllabusRows(existing, generated);
     renderSyllabusEditorTable(merged);
 
-    const classId = elements.classId && elements.classId.value;
     if (classId) {
         const index = appData.classes.findIndex(c => c.id === classId);
         if (index !== -1) {
             appData.classes[index].syllabusRows = merged;
             saveData();
+            updateClassSyllabusSummary(appData.classes[index]);
         }
     }
 }
@@ -6147,6 +8304,10 @@ function getSelectedClassTypeDefinitionFromForm() {
 }
 
 function getHomeworkImportModeForForm() {
+    const syllabusForm = getSyllabusEditorFormEl();
+    if (syllabusForm && syllabusForm.dataset.homeworkImportMode) {
+        return syllabusForm.dataset.homeworkImportMode;
+    }
     const def = getSelectedClassTypeDefinitionFromForm();
     if (def && def.homeworkImportMode) {
         return def.homeworkImportMode;
@@ -6155,7 +8316,7 @@ function getHomeworkImportModeForForm() {
     if (form && form.dataset.homeworkImportMode) {
         return form.dataset.homeworkImportMode;
     }
-    const snapshot = buildClassSnapshotFromForm();
+    const snapshot = buildClassSnapshotForSyllabusContext();
     if (classUsesDebateCompression(snapshot)) {
         return 'debate';
     }
@@ -6170,7 +8331,12 @@ function getHomeworkImportModeForForm() {
 
 function applyPresetSyllabusRowsToTable(options = {}) {
     const silent = !!options.silent;
-    const def = getSelectedClassTypeDefinitionFromForm();
+    let def;
+    if (getActiveTab() === 'syllabus' && syllabusEditorMode === 'class') {
+        def = getClassTypeDefinitionForSyllabusClass(getSelectedSyllabusClass());
+    } else {
+        def = getSelectedClassTypeDefinitionFromForm();
+    }
     const templates = def && Array.isArray(def.defaultSyllabusRowTemplates)
         ? def.defaultSyllabusRowTemplates
         : [];
@@ -6189,32 +8355,12 @@ function applyPresetSyllabusRowsToTable(options = {}) {
         }
         return;
     }
-    const bySession = new Map();
-    templates.forEach(tpl => {
-        if (tpl.sessionNumber != null) {
-            bySession.set(tpl.sessionNumber, tpl);
-        }
-    });
-    let applied = 0;
-    rows.forEach(row => {
-        if (row.kind !== 'lesson' || !row.sessionNumber) {
-            return;
-        }
-        const tpl = bySession.get(row.sessionNumber);
-        if (!tpl) {
-            return;
-        }
-        if (tpl.planTitle) {
-            row.planTitle = tpl.planTitle;
-        }
-        if (tpl.planDetail) {
-            row.planDetail = tpl.planDetail;
-            row.source = 'manual';
-            applied += 1;
-        }
-    });
-    renderSyllabusEditorTable(rows);
-    if (!applied && !silent) {
+    const api = getSyllabusTemplatesApi();
+    const result = api
+        ? api.applyRowTemplatesToSyllabusRows(rows, templates)
+        : { rows, applied: 0 };
+    renderSyllabusEditorTable(result.rows);
+    if (!result.applied && !silent) {
         alert(currentLanguage === 'ko'
             ? '매칭된 수업 번호가 없습니다. 먼저 캘린더에서 새로고침하세요.'
             : 'No matching session numbers. Refresh from calendar first.');
@@ -6240,10 +8386,16 @@ function fillSyllabusPagesFromUnits() {
     }
     let applied = 0;
     rows.forEach(row => {
-        if (row.kind !== 'lesson' || !row.sessionNumber) {
+        if (row.kind !== 'lesson') {
             return;
         }
-        const detail = mod.planDetailFromUnits(row.sessionNumber, units, row.planTitle);
+        const lessonNum = mod.getCurriculumLessonNumber
+            ? mod.getCurriculumLessonNumber(row)
+            : row.sessionNumber;
+        if (!lessonNum) {
+            return;
+        }
+        const detail = mod.planDetailFromUnits(lessonNum, units, row.planTitle);
         if (detail) {
             row.planDetail = detail;
             row.source = 'manual';
@@ -6274,7 +8426,7 @@ function previewHomeworkImport() {
         alert(t('homeworkImportNoRows'));
         return;
     }
-    const snapshot = buildClassSnapshotFromForm();
+    const snapshot = buildClassSnapshotForSyllabusContext();
     const mode = window.CCPHomeworkImport.detectImportMode(text, snapshot);
     const blocks = window.CCPHomeworkImport.parseByMode(text, mode);
     const result = window.CCPHomeworkImport.mapBlocksToSyllabusTargets(blocks, rows, mode);
@@ -6376,7 +8528,8 @@ function getSyllabusRenderLabels(classData) {
         classTitle: meta.classTitle,
         tableYear: meta.tableYear,
         subtitle: meta.subtitle,
-        termRange: meta.termRange
+        termRange: meta.termRange,
+        generalNotes: (classData && classData.syllabusGeneralNotes) ? String(classData.syllabusGeneralNotes).trim() : ''
     };
 }
 
@@ -6521,7 +8674,10 @@ function printSyllabusDocument(docHtml, windowTitle) {
 }
 
 function printClassSyllabusFromModal() {
-    const classId = elements.classId && elements.classId.value;
+    let classId = elements.classId && elements.classId.value;
+    if (getActiveTab() === 'syllabus' && syllabusEditorMode === 'class') {
+        classId = appData.ui.syllabusTabClassId || classId;
+    }
     if (!classId) {
         alert(t('syllabusTableEmptyHint'));
         return;
@@ -6534,18 +8690,19 @@ function printClassSyllabusFromModal() {
     const saved = appData.classes.find(c => c.id === classId);
     const snapshot = {
         ...(saved || {}),
-        ...buildClassSnapshotFromForm(),
         id: classId,
-        syllabusRows: resolveSyllabusRowsForSave()
+        syllabusUnits: collectSyllabusUnitsFromForm(),
+        syllabusGeneralNotes: getSyllabusGeneralNotesFromForm() || saved?.syllabusGeneralNotes || ''
     };
-    if (!snapshot.syllabusRows.length) {
+    const syllabusRows = resolveSyllabusRowsForPrint(snapshot);
+    if (!syllabusRows.length) {
         alert(t('syllabusTableEmptyHint'));
         return;
     }
     const sectionMeta = getSyllabusSectionMeta(snapshot);
     const sections = [{
         classData: snapshot,
-        rows: snapshot.syllabusRows,
+        rows: syllabusRows,
         classTitle: sectionMeta.classTitle,
         tableYear: sectionMeta.tableYear,
         subtitle: sectionMeta.subtitle,
@@ -6649,20 +8806,7 @@ function populateClassForm(classData = null, options = {}) {
         const compressionMerges = getCompressionMergesFromClass(classData, totalLessons);
         renderCustomLessonDates(totalLessons, customDates);
         renderCompressionOptions(totalLessons, compressionMerges);
-        renderSyllabusUnitsRows(classData.syllabusUnits || []);
-        const syllabusRows = getSyllabusRowsForClass(classData, { preferMerged: true });
-        renderSyllabusEditorTable(syllabusRows);
-        if (elements.classForm) {
-            elements.classForm.dataset.homeworkImportMode = classData.homeworkImportMode || '';
-            elements.classForm.dataset.lessonLabelMode = classData.lessonLabelMode || '';
-        }
-        if (elements.homeworkImportPaste) {
-            elements.homeworkImportPaste.value = '';
-        }
-        if (elements.homeworkImportPreview) {
-            elements.homeworkImportPreview.textContent = '';
-            delete elements.homeworkImportPreview.dataset.importPayload;
-        }
+        updateClassSyllabusSummary(classData);
 
         syncClassDeleteButtonVisibility(true);
     } else {
@@ -6685,14 +8829,7 @@ function populateClassForm(classData = null, options = {}) {
         renderCustomLessonDates(4, []);
         renderCompressionOptions(4, []);
         renderBooksByMonthRows({});
-        renderSyllabusUnitsRows([]);
-        renderSyllabusEditorTable([]);
-        if (elements.homeworkImportPaste) {
-            elements.homeworkImportPaste.value = '';
-        }
-        if (elements.homeworkImportPreview) {
-            elements.homeworkImportPreview.textContent = '';
-        }
+        updateClassSyllabusSummary(null);
         syncClassDeleteButtonVisibility(false);
         applyDefaultClassDatesForNewClass(options.defaultStartDate);
     }
@@ -6706,6 +8843,7 @@ function populateClassForm(classData = null, options = {}) {
     updateCompressionUiForScheduleModel();
     syncDeleteCustomClassTypeButtonVisibility();
     syncPeriodByDayUi();
+    syncClassOpenEditorButton();
 }
 
 function openClassModal(classData = null, options = {}) {
@@ -6774,6 +8912,7 @@ function populateHolidayForm(holidayData = null, options = {}) {
         }
     }
     syncEventApplicabilityUiFromDraft();
+    syncEventOpenEditorButton();
 }
 
 function openHolidayModal(holidayData = null, options = {}) {
@@ -7084,6 +9223,8 @@ function handleClassSubmit(e) {
     const rawClassTypeId = elements.classTypeSelect ? (elements.classTypeSelect.value || '') : '';
     const classTypeId = resolveClassTypeId(rawClassTypeId) || rawClassTypeId;
     const { period, periodByWeekday } = collectPeriodFieldsForSave();
+    const existingId = elements.classId.value;
+    const existingClass = existingId ? appData.classes.find((c) => c.id === existingId) : null;
 
     const classData = {
         id: elements.classId.value || generateId(),
@@ -7114,7 +9255,12 @@ function handleClassSubmit(e) {
             enabled: true,
             days: getCustomLessonDatesFromInputs(totalLessons)
         } : null,
-        syllabusUnits: collectSyllabusUnitsFromForm(),
+        syllabusUnits: elements.syllabusUnitsRows
+            ? collectSyllabusUnitsFromForm()
+            : (existingClass?.syllabusUnits || []),
+        syllabusGeneralNotes: elements.syllabusGeneralNotes
+            ? getSyllabusGeneralNotesFromForm()
+            : (existingClass?.syllabusGeneralNotes || ''),
         syllabusRows: elements.syllabusTableBody
             ? collectSyllabusRowsFromForm()
             : resolveSyllabusRowsForSave(),
@@ -7133,9 +9279,14 @@ function handleClassSubmit(e) {
         appData.classes.push(classData);
     }
     
+    const isUpdate = Boolean(existingId);
     saveData();
     renderCalendar();
     renderClassList();
+    updateClassSyllabusSummary(classData);
+    if (isUpdate) {
+        setAppStatusMessage(t('classSaved'), false);
+    }
     if (classEditorMount === 'tab') {
         updateClassEditorEmptyState();
     } else {
@@ -8095,6 +10246,10 @@ function renderMonth(date, dayIndex) {
         const dayDiv = createDayCell(i, true);
         gridDiv.appendChild(dayDiv);
     }
+
+    const weekRows = (firstDay + daysInMonth + remainingCells) / 7;
+    monthDiv.style.setProperty('--calendar-week-rows', String(weekRows));
+    monthDiv.dataset.weekRows = String(weekRows);
     
     monthDiv.appendChild(gridDiv);
     elements.calendarContainer.appendChild(monthDiv);
@@ -8110,13 +10265,18 @@ function createDayCell(dayNumber, isOtherMonth, dayEvents = [], lessons = [], da
     
     const visibleEvents = (dayEvents || []).filter(ev => {
         const type = normalizeEventType(ev.type);
-        if (type === EVENT_TYPES.HOLIDAY) return isVisibilityFilterOn('holiday');
-        return isVisibilityFilterOn(type);
+        if (type === EVENT_TYPES.HOLIDAY) return isCalendarItemVisible('holiday');
+        return isCalendarItemVisible(type);
     });
     const blockingHoliday = visibleEvents.find(ev => normalizeEventType(ev.type) === EVENT_TYPES.HOLIDAY);
+    let holidayBg = '';
+    let holidayText = '';
     if (blockingHoliday) {
+        holidayBg = blockingHoliday.bgColor || '#fef3c7';
+        holidayText = blockingHoliday.textColor || '#b45309';
         dayDiv.classList.add('holiday', 'cal-item-holiday');
-        dayDiv.style.backgroundColor = blockingHoliday.bgColor || '#fef3c7';
+        dayDiv.dataset.eventId = blockingHoliday.id;
+        dayDiv.style.backgroundColor = holidayBg;
         dayDiv.addEventListener('click', (e) => {
             if (e.target === dayDiv || e.target.classList.contains('day-number') || e.target.classList.contains('holiday-name') || e.target.classList.contains('calendar-event-chip')) {
                 openEventEditor(blockingHoliday, 'calendar-popout');
@@ -8131,12 +10291,16 @@ function createDayCell(dayNumber, isOtherMonth, dayEvents = [], lessons = [], da
     const numberDiv = document.createElement('div');
     numberDiv.className = 'day-number';
     numberDiv.textContent = dayNumber;
+    if (blockingHoliday) {
+        numberDiv.style.color = getReadableTextOnBackground(holidayBg, holidayText);
+    }
     dayDiv.appendChild(numberDiv);
     
     if (blockingHoliday) {
         const holidayDiv = document.createElement('div');
         holidayDiv.className = 'holiday-name cal-item-holiday';
-        holidayDiv.style.color = blockingHoliday.textColor || '#b45309';
+        holidayDiv.dataset.eventId = blockingHoliday.id;
+        holidayDiv.style.color = getReadableTextOnBackground(holidayBg, holidayText);
         let appliesText = '';
         if (eventHasAnyTargetFilter(blockingHoliday)) {
             appliesText = ` (${getEventAppliesToDescriptionParts(blockingHoliday).join('; ')})`;
@@ -8153,6 +10317,7 @@ function createDayCell(dayNumber, isOtherMonth, dayEvents = [], lessons = [], da
         const type = normalizeEventType(ev.type);
         const chip = document.createElement('div');
         chip.className = `calendar-event-chip cal-item-${type} event-type-${type}`;
+        chip.dataset.eventId = ev.id;
         chip.style.backgroundColor = ev.bgColor || EVENT_TYPE_DEFAULT_COLORS[type].bg;
         chip.style.color = ev.textColor || EVENT_TYPE_DEFAULT_COLORS[type].text;
         const chipLabel = getEventDisplayName(ev);
@@ -8164,7 +10329,7 @@ function createDayCell(dayNumber, isOtherMonth, dayEvents = [], lessons = [], da
     if (chipsWrap.children.length > 0) dayDiv.appendChild(chipsWrap);
 
     const visibleLessons = lessons.filter(({ classData }) => classPassesLessonFilters(classData));
-    if (isVisibilityFilterOn('lessons') && visibleLessons.length > 0) {
+    if (isCalendarItemVisible('lessons') && visibleLessons.length > 0) {
         const eventsDiv = document.createElement('div');
         eventsDiv.className = 'day-events';
         
@@ -8271,45 +10436,59 @@ function applyPrintCalendarVisibilityClasses() {
     });
 }
 
-function getPrintOptionsFromForm() {
-    const printCalendar = document.getElementById('printCalendar').checked;
-    const printSummaryCheck = document.getElementById('printSummaryCheck').checked;
-    const printClassList = document.getElementById('printClassList').checked;
-    const printHolidayList = document.getElementById('printHolidayList').checked;
-    const printLessonSchedule = document.getElementById('printLessonSchedule').checked;
-    const printCompressionNotes = document.getElementById('printCompressionNotes').checked;
-    const printSyllabusTables = document.getElementById('printSyllabusTables')
-        ? document.getElementById('printSyllabusTables').checked
-        : true;
-    const printEventsList = document.getElementById('printEventsList')
-        ? document.getElementById('printEventsList').checked
-        : printHolidayList;
-    const wantAnySummarySection = printClassList || printHolidayList || printEventsList
-        || printLessonSchedule || printCompressionNotes || printSyllabusTables;
-    const showSummary = printSummaryCheck || wantAnySummarySection;
-    const syllabusOnly = showSummary && printSyllabusTables && !printClassList && !printHolidayList
-        && !printEventsList && !printLessonSchedule && !printCompressionNotes;
-    return {
-        printCalendar,
-        printSummaryCheck,
-        printClassList,
-        printHolidayList,
-        printLessonSchedule,
-        printCompressionNotes,
-        printSyllabusTables,
-        printEventsList,
-        showSummary,
-        syllabusOnly
-    };
+function getAppStylesheetHref() {
+    const link = document.querySelector('link[rel="stylesheet"][href]');
+    if (link) {
+        try {
+            return new URL(link.getAttribute('href'), document.baseURI).href;
+        } catch (e) { /* fall through */ }
+    }
+    try {
+        return new URL('styles.css', document.baseURI).href;
+    } catch (e) {
+        return 'styles.css';
+    }
 }
 
-function handlePrint(e) {
-    e.preventDefault();
-    refreshLocalizedEventDisplayNames();
-    const opts = getPrintOptionsFromForm();
+function getAppPrintCalendarName() {
+    return (appData.calendarName && appData.calendarName.trim()) || document.title;
+}
 
-    ensureUiState();
-    appData.ui.printVisibility = {
+function collectAppPrintCalendarBodyClasses() {
+    const classes = [];
+    document.body.classList.forEach(c => {
+        if (c.startsWith('print-hide-cal-')) {
+            classes.push(c);
+        }
+    });
+    return classes;
+}
+
+function collectAppPrintSummaryBodyClasses(opts) {
+    const classes = [];
+    if (opts.syllabusOnly) {
+        classes.push('print-syllabus-only');
+    }
+    return classes;
+}
+
+/** Warn before calendar print when the grid is likely too crowded for the fixed print layout. */
+const CALENDAR_PRINT_DENSITY = {
+    maxVisibilityTypes: 3,
+    warnVisibleClasses: 10
+};
+
+const PRINT_CALENDAR_VISIBILITY_KEYS = [
+    'lessons',
+    'holidays',
+    'evaluation_deadline',
+    'homework_deadline',
+    'evaluation_period',
+    'other'
+];
+
+function readPrintCalendarVisibilityFromForm() {
+    return {
         lessons: document.getElementById('printCalLessons')?.checked !== false,
         holidays: document.getElementById('printCalHolidays')?.checked !== false,
         evaluation_deadline: document.getElementById('printCalEvalDeadline')?.checked !== false,
@@ -8317,24 +10496,900 @@ function handlePrint(e) {
         evaluation_period: document.getElementById('printCalEvalPeriod')?.checked !== false,
         other: document.getElementById('printCalOther')?.checked !== false
     };
+}
+
+function countPrintCalendarVisibilityTypesEnabled(visibility) {
+    return PRINT_CALENDAR_VISIBILITY_KEYS.filter((key) => visibility[key] !== false).length;
+}
+
+function getCalendarPrintDensityWarnings() {
+    const visibility = readPrintCalendarVisibilityFromForm();
+    const typeCount = countPrintCalendarVisibilityTypesEnabled(visibility);
+    const visibleClasses = isLessonFilterActive()
+        ? countVisibleClassesForLessonFilter()
+        : countScheduledClassesOnCalendar();
+    const warnings = [];
+
+    if (typeCount > CALENDAR_PRINT_DENSITY.maxVisibilityTypes) {
+        warnings.push(t('printCalendarWarnManyTypes')
+            .replace('{count}', String(typeCount))
+            .replace('{max}', String(CALENDAR_PRINT_DENSITY.maxVisibilityTypes)));
+    }
+    if (visibility.lessons !== false
+        && visibleClasses > CALENDAR_PRINT_DENSITY.warnVisibleClasses) {
+        warnings.push(t('printCalendarWarnManyClasses')
+            .replace('{count}', String(visibleClasses)));
+    }
+    return warnings;
+}
+
+/** If the calendar print would be crowded, confirm before continuing. */
+function confirmCalendarPrintDespiteDensityWarnings() {
+    const warnings = getCalendarPrintDensityWarnings();
+    if (!warnings.length) {
+        return true;
+    }
+    const message = `${warnings.join('\n\n')}\n\n${t('printCalendarWarnContinue')}`;
+    return window.confirm(message);
+}
+
+/** Landscape A4 — one month per printed page (matches @page in APP_PRINT_CALENDAR_INLINE_CSS). */
+const CALENDAR_PRINT_LANDSCAPE = {
+    pageW: 297,
+    pageH: 210,
+    margin: 10,
+    fitSafety: 2,
+    get contentW() {
+        return this.pageW - this.margin * 2;
+    },
+    get contentH() {
+        return this.pageH - this.margin * 2;
+    },
+    get fitContentH() {
+        return this.contentH - this.fitSafety;
+    }
+};
+
+const APP_PRINT_CALENDAR_INLINE_CSS = `
+@page {
+    size: A4 landscape;
+    margin: 0;
+}
+@page calendar-landscape {
+    size: A4 landscape;
+    margin: 0;
+}
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 0;
+    }
+    @page calendar-landscape {
+        size: A4 landscape;
+        margin: 0;
+    }
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+html.app-print-calendar-root,
+body.app-print-calendar-doc {
+    width: ${CALENDAR_PRINT_LANDSCAPE.pageW}mm;
+    min-width: ${CALENDAR_PRINT_LANDSCAPE.pageW}mm;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    color: #111;
+}
+body.app-print-calendar-doc { margin: 0; background: #fff; color: #111; }
+.app-print-document--calendar { max-width: 100%; padding: 0; }
+.app-print-document--calendar .calendar-container {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    grid-template-columns: unset !important;
+    gap: 0 !important;
+    width: 100%;
+    max-width: 100%;
+}
+.app-print-document--calendar .calendar-print-sheet {
+    page: calendar-landscape;
+    width: ${CALENDAR_PRINT_LANDSCAPE.pageW}mm;
+    height: ${CALENDAR_PRINT_LANDSCAPE.pageH}mm;
+    max-height: ${CALENDAR_PRINT_LANDSCAPE.pageH}mm;
+    box-sizing: border-box;
+    padding: ${CALENDAR_PRINT_LANDSCAPE.margin}mm;
+    margin: 0 auto;
+    overflow: hidden;
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    position: relative;
+    display: block;
+}
+.app-print-document--calendar .calendar-print-fit-wrap {
+    box-sizing: border-box;
+    overflow: hidden;
+    margin: 0 auto;
+}
+.app-print-document--calendar .calendar-print-fit-wrap > .month-calendar {
+    display: flex;
+    flex-direction: column;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100%;
+    box-sizing: border-box;
+}
+.app-print-document--calendar .calendar-print-fit-wrap .calendar-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+}
+.app-print-document--calendar .calendar-grid {
+    width: 100%;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.app-print-document--calendar .month-calendar,
+.app-print-document--calendar .calendar-grid {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.app-print-document--calendar .calendar-day {
+    min-height: 6mm !important;
+    height: auto;
+    overflow: hidden;
+    padding: 1px !important;
+}
+.app-print-document--calendar .calendar-day-header {
+    padding: 2px 1px !important;
+    font-size: 5.5pt !important;
+    letter-spacing: 0.02em;
+}
+.app-print-document--calendar .day-number {
+    font-size: 6pt !important;
+    padding: 0 2px !important;
+    line-height: 1.1;
+}
+.app-print-document--calendar .holiday-name {
+    font-size: 5.5pt !important;
+    padding: 0 2px 1px !important;
+    line-height: 1.1;
+}
+.app-print-document--calendar .calendar-event-chips {
+    gap: 0 !important;
+    margin-top: 0;
+    padding: 0 1px;
+}
+.app-print-document--calendar .day-events {
+    max-height: 16mm;
+    overflow: hidden;
+    gap: 0 !important;
+    padding: 0 1px !important;
+    margin-top: 0;
+}
+.app-print-document--calendar .event-bar {
+    font-size: 5.5pt;
+    padding: 0 2px;
+    line-height: 1.05;
+    gap: 0;
+    border-radius: 2px;
+}
+.app-print-document--calendar .event-bar .event-title,
+.app-print-document--calendar .event-bar .event-book {
+    font-size: inherit;
+    line-height: 1.05;
+}
+.app-print-document--calendar .event-bar .event-book {
+    font-size: 5pt;
+    font-weight: 500;
+    opacity: 0.95;
+}
+.app-print-document--calendar .calendar-event-chip {
+    font-size: 5pt;
+    padding: 0 2px;
+    line-height: 1.05;
+    border-radius: 2px;
+}
+.app-print-document--calendar .calendar-print-sheet:last-child {
+    page-break-after: auto;
+    break-after: auto;
+}
+.app-print-document--calendar .month-calendar {
+    width: auto;
+    max-width: none;
+    box-shadow: none;
+    border: 1px solid #000;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+.app-print-document--calendar .month-header {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+    box-shadow: none !important;
+    padding: 3mm 4mm !important;
+    background: var(--primary) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+.app-print-document--calendar .month-header h2 {
+    font-size: 11pt !important;
+    line-height: 1.15;
+}
+`;
+
+/** Portrait summary tab: overrides rules meant for calendar+summary in one document. */
+const APP_PRINT_SUMMARY_INLINE_CSS = `
+@page { size: A4 portrait; margin: 10mm; }
+@media print {
+    @page { size: A4 portrait; margin: 10mm; }
+    @page syllabus-a4 {
+        size: A4 portrait;
+        margin: 0;
+    }
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    .app-print-document--summary .print-summary {
+        page-break-before: avoid !important;
+        padding: 0 !important;
+    }
+    .app-print-document--summary .summary-section.summary-syllabus-tables .syllabus-a4-sheet:first-child {
+        page-break-before: avoid !important;
+        break-before: avoid !important;
+    }
+    body.print-syllabus-only .app-print-document--summary .print-summary > h2,
+    body.print-syllabus-only .app-print-document--summary .summary-section.summary-syllabus-tables > h3 {
+        display: none !important;
+    }
+    body.print-syllabus-only .app-print-document--summary #syllabusTablesSummary .syllabus-a4-sheet:first-child {
+        page-break-before: avoid !important;
+        break-before: avoid !important;
+    }
+}
+body.app-print-summary-doc { margin: 0; background: #fff; color: #111; }
+.app-print-document--summary { max-width: 100%; padding: 0; }
+.app-print-document--summary .print-summary { display: block !important; }
+.app-print-document--summary #syllabusTablesSummary .syllabus-pdf-export-root {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+.app-print-document--summary #syllabusTablesSummary .syllabus-a4-sheet {
+    display: block;
+    clear: both;
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    max-height: 297mm;
+    box-sizing: border-box;
+    padding: 15mm;
+    margin: 0 auto 16px;
+    overflow: hidden;
+    background: #fff;
+    page-break-after: always;
+    break-after: page;
+}
+.app-print-document--summary #syllabusTablesSummary .syllabus-a4-sheet:last-child {
+    margin-bottom: 0;
+    page-break-after: auto;
+    break-after: auto;
+}
+.app-print-document--summary #syllabusTablesSummary .syllabus-a4-page {
+    width: 100%;
+    height: 267mm;
+    max-height: 267mm;
+    min-height: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+@media print {
+    .app-print-document--summary #syllabusTablesSummary .syllabus-a4-sheet {
+        page: auto;
+        margin: 0 auto;
+        overflow: hidden !important;
+    }
+}
+#syllabusTablesSummary.syllabus-print-measure {
+    position: absolute !important;
+    left: -99999px !important;
+    top: 0 !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+    overflow: visible !important;
+}
+`;
+
+/** Landscape print tab: calendar grid only. */
+function buildAppPrintCalendarDocumentHtml() {
+    if (!elements.calendarContainer) {
+        return '';
+    }
+    const title = escapeHtml(`Calendar — ${getAppPrintCalendarName()}`);
+    const bodyClass = collectAppPrintCalendarBodyClasses().join(' ');
+    const cssHref = escapeHtml(getAppStylesheetHref());
+    const lang = escapeHtml(document.documentElement.lang || 'en');
+    const calendarHtml = elements.calendarContainer.innerHTML;
+    const bodyClasses = ['app-print-calendar-doc', bodyClass].filter(Boolean).join(' ');
+    return `<!DOCTYPE html>
+<html lang="${lang}" data-theme="light" class="print-color-mode-light app-print-calendar-root">
+<head>
+<meta charset="UTF-8">
+<title>${title}</title>
+<link rel="stylesheet" href="${cssHref}">
+<style>
+${APP_PRINT_CALENDAR_INLINE_CSS}
+</style>
+</head>
+<body class="${bodyClasses}">
+<div class="app-print-document app-print-document--calendar">
+<div class="calendar-container">${calendarHtml}</div>
+</div>
+</body>
+</html>`;
+}
+
+/** Portrait print tab: summary sections and syllabi only. */
+function buildAppPrintSummaryDocumentHtml(opts) {
+    if (!elements.printSummary) {
+        return '';
+    }
+    const summary = elements.printSummary;
+    const summaryClasses = Array.from(summary.classList)
+        .filter(c => c !== 'syllabus-print-measure')
+        .join(' ');
+    const mod = getSyllabusModule();
+    const syllabusExportCss = (opts.printSyllabusTables && mod
+        && typeof mod.getSyllabusExportStyles === 'function')
+        ? mod.getSyllabusExportStyles(true)
+        : '';
+    const title = escapeHtml(`Summary — ${getAppPrintCalendarName()}`);
+    const bodyClass = collectAppPrintSummaryBodyClasses(opts).join(' ');
+    const cssHref = escapeHtml(getAppStylesheetHref());
+    const lang = escapeHtml(document.documentElement.lang || 'en');
+    return `<!DOCTYPE html>
+<html lang="${lang}" data-theme="light" class="print-color-mode-light">
+<head>
+<meta charset="UTF-8">
+<title>${title}</title>
+<link rel="stylesheet" href="${cssHref}">
+<style>
+${syllabusExportCss}
+${APP_PRINT_SUMMARY_INLINE_CSS}
+</style>
+</head>
+<body class="app-print-summary-doc ${bodyClass}">
+<div class="app-print-document app-print-document--summary">
+<div id="printSummary" class="${summaryClasses}">${summary.innerHTML}</div>
+</div>
+</body>
+</html>`;
+}
+
+/** Run fn after the print window stylesheet is ready (or after a short fallback). */
+function measureMmToPxForPrint(doc) {
+    const mod = getSyllabusModule();
+    if (mod && typeof mod.measureMmToPx === 'function') {
+        return mod.measureMmToPx(doc);
+    }
+    const probe = doc.createElement('div');
+    probe.style.cssText = 'position:absolute;visibility:hidden;width:100mm;height:1mm;';
+    doc.body.appendChild(probe);
+    const px = probe.offsetWidth / 100;
+    doc.body.removeChild(probe);
+    return px;
+}
+
+function computeCalendarMonthScale(naturalH, naturalW, contentWpx, contentHpx) {
+    if (!naturalH || naturalH < 1 || !naturalW || naturalW < 1) {
+        return 1;
+    }
+    const scaleW = contentWpx / naturalW;
+    const scaleH = contentHpx / naturalH;
+    return Math.min(scaleW, scaleH);
+}
+
+/** Grow week rows so the grid uses the full landscape printable height (A4 content box). */
+function layoutCalendarMonthForLandscapePrint(month, contentWpx, contentHpx) {
+    month.style.width = `${contentWpx}px`;
+    month.style.maxWidth = `${contentWpx}px`;
+    month.style.boxSizing = 'border-box';
+
+    month.querySelectorAll('.calendar-day').forEach((day) => {
+        day.style.minHeight = '';
+        day.style.height = '';
+        const dayEvents = day.querySelector('.day-events');
+        if (dayEvents) {
+            dayEvents.style.maxHeight = '';
+        }
+    });
+
+    const header = month.querySelector('.month-header');
+    const grid = month.querySelector('.calendar-grid');
+    if (!grid) {
+        return;
+    }
+
+    grid.style.width = '100%';
+    grid.style.boxSizing = 'border-box';
+
+    void month.offsetHeight;
+    const headerH = header ? header.offsetHeight : 0;
+    const gridBudget = Math.max(1, contentHpx - headerH);
+
+    const cells = Array.from(grid.children);
+    const rowCount = Math.max(1, Math.ceil(cells.length / 7));
+    let headerRowH = 0;
+    cells.slice(0, 7).forEach((el) => {
+        if (el.classList.contains('calendar-day-header')) {
+            headerRowH = Math.max(headerRowH, el.offsetHeight);
+        }
+    });
+    const bodyRowCount = Math.max(1, rowCount - 1);
+    const bodyBudget = Math.max(1, gridBudget - headerRowH);
+    const rowMinPx = Math.floor(bodyBudget / bodyRowCount);
+
+    cells.forEach((el) => {
+        if (!el.classList.contains('calendar-day')) {
+            return;
+        }
+        el.style.minHeight = `${rowMinPx}px`;
+        el.style.boxSizing = 'border-box';
+
+        let topH = 2;
+        const num = el.querySelector('.day-number');
+        const hol = el.querySelector('.holiday-name');
+        const chips = el.querySelector('.calendar-event-chips');
+        if (num) {
+            topH += num.offsetHeight;
+        }
+        if (hol) {
+            topH += hol.offsetHeight;
+        }
+        if (chips) {
+            topH += chips.offsetHeight;
+        }
+        const dayEvents = el.querySelector('.day-events');
+        if (dayEvents) {
+            dayEvents.style.maxHeight = `${Math.max(10, rowMinPx - topH - 2)}px`;
+        }
+    });
+
+    void month.offsetHeight;
+}
+
+/** Wrap each month in a landscape sheet and scale to fit one page (like syllabus A4 fit). */
+function fitCalendarMonthsForPrint(doc) {
+    const a4 = CALENDAR_PRINT_LANDSCAPE;
+    doc.querySelectorAll('.calendar-print-fit-wrap').forEach((wrap) => {
+        const month = wrap.querySelector('.month-calendar');
+        if (!month) {
+            wrap.remove();
+            return;
+        }
+        const sheet = wrap.closest('.calendar-print-sheet');
+        wrap.replaceWith(month);
+        if (sheet && !sheet.querySelector('.month-calendar')) {
+            sheet.remove();
+        }
+    });
+    doc.querySelectorAll('.calendar-print-sheet').forEach((sheet) => {
+        const month = sheet.querySelector('.month-calendar');
+        if (month) {
+            sheet.replaceWith(month);
+        } else {
+            sheet.remove();
+        }
+    });
+
+    const months = Array.from(
+        doc.querySelectorAll('.app-print-document--calendar .month-calendar')
+    );
+    if (!months.length) {
+        return 0;
+    }
+
+    const mmPx = measureMmToPxForPrint(doc);
+    const contentWpx = Math.round(a4.contentW * mmPx);
+    const contentHpx = Math.round(a4.fitContentH * mmPx);
+
+    months.forEach((month, index) => {
+        month.style.transform = '';
+        month.style.transformOrigin = '';
+        month.style.width = '';
+        month.style.height = '';
+        month.style.margin = '';
+
+        const sheet = doc.createElement('div');
+        sheet.className = 'calendar-print-sheet';
+        sheet.style.page = 'calendar-landscape';
+        month.parentNode.insertBefore(sheet, month);
+        sheet.appendChild(month);
+
+        layoutCalendarMonthForLandscapePrint(month, contentWpx, contentHpx);
+
+        void doc.body.offsetHeight;
+
+        const naturalH = month.scrollHeight;
+        const naturalW = month.scrollWidth || month.offsetWidth;
+        const scale = computeCalendarMonthScale(naturalH, naturalW, contentWpx, contentHpx);
+        const scaledH = Math.ceil(naturalH * scale);
+
+        const wrap = doc.createElement('div');
+        wrap.className = 'calendar-print-fit-wrap';
+        wrap.style.width = `${contentWpx}px`;
+        wrap.style.height = `${contentHpx}px`;
+        wrap.style.maxHeight = `${contentHpx}px`;
+        wrap.style.overflow = 'hidden';
+        wrap.style.boxSizing = 'border-box';
+
+        sheet.insertBefore(wrap, month);
+        wrap.appendChild(month);
+
+        if (scale < 0.999) {
+            month.style.transformOrigin = 'top center';
+            month.style.transform = `scale(${scale})`;
+            month.style.width = `${naturalW}px`;
+            month.style.maxWidth = `${naturalW}px`;
+            wrap.style.display = 'flex';
+            wrap.style.alignItems = 'flex-start';
+            wrap.style.justifyContent = 'center';
+            wrap.style.paddingTop = scaledH < contentHpx
+                ? `${Math.floor((contentHpx - scaledH) / 2)}px`
+                : '0';
+        } else {
+            month.style.transform = '';
+            month.style.width = '100%';
+            month.style.maxWidth = '100%';
+            month.style.height = '100%';
+            wrap.style.paddingTop = '0';
+        }
+
+        if (index < months.length - 1) {
+            sheet.style.pageBreakAfter = 'always';
+            sheet.style.breakAfter = 'page';
+        }
+    });
+
+    return months.length;
+}
+
+function whenPrintWindowReady(printWin, fn) {
+    const link = printWin.document.querySelector('link[rel="stylesheet"]');
+    let ran = false;
+    const run = () => {
+        if (ran) {
+            return;
+        }
+        ran = true;
+        fn();
+    };
+    if (!link) {
+        setTimeout(run, 50);
+        return;
+    }
+    if (link.sheet) {
+        setTimeout(run, 50);
+        return;
+    }
+    link.addEventListener('load', () => setTimeout(run, 50), { once: true });
+    link.addEventListener('error', () => setTimeout(run, 50), { once: true });
+    setTimeout(run, 800);
+}
+
+function fitSyllabusInPrintWindow(printWin, opts) {
+    if (!opts.printSyllabusTables) {
+        return;
+    }
+    const mod = getSyllabusModule();
+    if (!mod || typeof mod.fitSyllabusPagesToA4 !== 'function') {
+        return;
+    }
+    if (!printWin.document.querySelector('.syllabus-a4-sheet')) {
+        return;
+    }
+    mod.fitSyllabusPagesToA4(printWin.document, SYLLABUS_PDF_A4);
+}
+
+function cleanupAfterAppPrint(opts) {
+    document.body.classList.remove(
+        'hide-calendar-print',
+        'hide-summary-print',
+        'print-syllabus-only'
+    );
+    Object.keys(EVENT_TYPE_DEFAULT_COLORS).concat(['lessons']).forEach(key => {
+        document.body.classList.remove(`print-hide-cal-${key}`);
+    });
+    endPrintColorMode();
+}
+
+function isMainPrintPrepActive() {
+    return document.documentElement.classList.contains('print-color-mode-light')
+        || document.body.classList.contains('hide-calendar-print')
+        || document.body.classList.contains('hide-summary-print')
+        || document.body.classList.contains('print-syllabus-only');
+}
+
+function restoreMainUiAfterPrintCapture() {
+    cleanupAfterAppPrint(null);
+}
+
+function setupAppPrintOpenerSafeties() {
+    if (window.__appPrintOpenerSafetiesBound) {
+        return;
+    }
+    window.__appPrintOpenerSafetiesBound = true;
+    window.addEventListener('focus', () => {
+        if (isMainPrintPrepActive()) {
+            restoreMainUiAfterPrintCapture();
+        }
+    });
+}
+
+/**
+ * Run one or more print jobs (calendar landscape tab, then summary portrait tab).
+ * Opens all windows synchronously on the Print click to avoid popup blockers.
+ */
+function runAppPrintJobs(jobs, opts) {
+    if (!jobs.length) {
+        cleanupAfterAppPrint(opts);
+        return;
+    }
+
+    const prepared = jobs.map(job => {
+        const printWin = window.open('', '_blank');
+        if (!printWin) {
+            return { ok: false };
+        }
+        printWin.document.open();
+        printWin.document.write(job.html);
+        printWin.document.close();
+        printWin.document.title = job.title;
+        printWin.document.documentElement.classList.add('print-color-mode-light');
+        return { ok: true, printWin, job };
+    });
+
+    if (prepared.some(entry => !entry.ok)) {
+        alert(t('printSyllabusBlocked'));
+        prepared.forEach(entry => {
+            if (entry.ok) {
+                try {
+                    entry.printWin.close();
+                } catch (e) { /* ignore */ }
+            }
+        });
+        cleanupAfterAppPrint(opts);
+        return;
+    }
+
+    let jobIndex = 0;
+
+    function printOneJob() {
+        if (jobIndex >= prepared.length) {
+            cleanupAfterAppPrint(opts);
+            return;
+        }
+        const { printWin, job } = prepared[jobIndex];
+        jobIndex += 1;
+        printWin.focus();
+
+        whenPrintWindowReady(printWin, () => {
+            if (job.kind === 'summary') {
+                fitSyllabusInPrintWindow(printWin, opts);
+            } else if (job.kind === 'calendar') {
+                fitCalendarMonthsForPrint(printWin.document);
+                const orient = printWin.document.createElement('style');
+                orient.setAttribute('data-calendar-print-orient', '1');
+                orient.textContent = '@page { size: A4 landscape; margin: 0; }';
+                printWin.document.head.appendChild(orient);
+            }
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    let finished = false;
+                    let closedPoll = null;
+                    const finish = () => {
+                        if (finished) {
+                            return;
+                        }
+                        finished = true;
+                        if (closedPoll !== null) {
+                            clearInterval(closedPoll);
+                            closedPoll = null;
+                        }
+                        try {
+                            printWin.close();
+                        } catch (e) { /* user may have closed the tab */ }
+                        printOneJob();
+                    };
+                    printWin.addEventListener('afterprint', finish, { once: true });
+                    printWin.addEventListener('pagehide', finish, { once: true });
+                    closedPoll = setInterval(() => {
+                        if (finished) {
+                            return;
+                        }
+                        let closed = false;
+                        try {
+                            closed = printWin.closed;
+                        } catch (e) {
+                            closed = true;
+                        }
+                        if (closed) {
+                            finish();
+                        }
+                    }, 250);
+                    try {
+                        printWin.print();
+                    } catch (e) {
+                        /* user can print manually from the new tab */
+                    }
+                    setTimeout(finish, 120000);
+                });
+            });
+        });
+    }
+
+    printOneJob();
+}
+
+function getPrintOptionsFromForm() {
+    const printClassList = document.getElementById('printClassList')?.checked !== false;
+    const printLessonSchedule = document.getElementById('printLessonSchedule')?.checked !== false;
+    const printCompressionNotes = document.getElementById('printCompressionNotes')?.checked !== false;
+    const printSyllabusTables = document.getElementById('printSyllabusTables')?.checked !== false;
+    const printEventsList = document.getElementById('printEventsList')?.checked !== false;
+    const wantAnySummarySection = printClassList || printEventsList
+        || printLessonSchedule || printCompressionNotes || printSyllabusTables;
+    const syllabusOnly = wantAnySummarySection && printSyllabusTables && !printClassList
+        && !printEventsList && !printLessonSchedule && !printCompressionNotes;
+    return {
+        printClassList,
+        printLessonSchedule,
+        printCompressionNotes,
+        printSyllabusTables,
+        printEventsList,
+        wantAnySummarySection,
+        syllabusOnly
+    };
+}
+
+/** @param {'all'|'calendar'|'summary'} mode */
+function setPrintFormSectionMode(mode) {
+    const form = document.getElementById('printForm');
+    if (!form) {
+        return;
+    }
+    const resolved = mode === 'calendar' || mode === 'summary' ? mode : 'all';
+    form.dataset.printFormMode = resolved;
+    const calSection = form.querySelector('.print-form-section--calendar');
+    const sumSection = form.querySelector('.print-form-section--summary');
+    if (calSection) {
+        calSection.hidden = resolved === 'summary';
+    }
+    if (sumSection) {
+        sumSection.hidden = resolved === 'calendar';
+    }
+    const titleEl = document.getElementById('printOptionsModalTitle');
+    if (titleEl) {
+        titleEl.textContent = resolved === 'calendar'
+            ? t('printSectionCalendar')
+            : resolved === 'summary'
+                ? t('printSectionSummary')
+                : t('printOptions');
+    }
+}
+
+function openPrintCalendarDialog() {
+    syncPrintVisibilityFromUi();
+    mountPrintForm('modal');
+    setPrintFormSectionMode('calendar');
+    if (elements.printOptionsModal) {
+        openModal(elements.printOptionsModal);
+    }
+}
+
+function openPrintSummaryDialog() {
+    syncPrintVisibilityFromUi();
+    updatePrintLessonFilterHint();
+    mountPrintForm('modal');
+    setPrintFormSectionMode('summary');
+    if (elements.printOptionsModal) {
+        openModal(elements.printOptionsModal);
+    }
+}
+
+function openPrintOptionsDialog() {
+    syncPrintVisibilityFromUi();
+    updatePrintLessonFilterHint();
+    mountPrintForm('modal');
+    setPrintFormSectionMode('all');
+    if (elements.printOptionsModal) {
+        openModal(elements.printOptionsModal);
+    }
+}
+
+function closePrintOptionsModal() {
+    if (elements.printOptionsModal) {
+        closeModal(elements.printOptionsModal);
+    }
+}
+
+function handlePrint(e) {
+    e.preventDefault();
+    const printMode = e.submitter?.dataset?.printMode === 'summary' ? 'summary' : 'calendar';
+    const modalWasOpen = elements.printOptionsModal
+        && elements.printOptionsModal.classList.contains('active');
+    if (modalWasOpen) {
+        closePrintOptionsModal();
+    }
+    runAppPrint(printMode);
+}
+
+/**
+ * Print calendar or summary in separate preview tabs (never both in one run).
+ * @param {'calendar'|'summary'} printMode
+ */
+function runAppPrint(printMode) {
+    beginPrintColorMode();
+    refreshLocalizedEventDisplayNames();
+    const formOpts = getPrintOptionsFromForm();
+    const printCalendar = printMode === 'calendar';
+    const showSummary = printMode === 'summary' && formOpts.wantAnySummarySection;
+
+    if (printCalendar && !appData.termStart) {
+        alert(t('printCalendarNeedsTerm'));
+        endPrintColorMode();
+        return;
+    }
+    if (printCalendar && !confirmCalendarPrintDespiteDensityWarnings()) {
+        endPrintColorMode();
+        return;
+    }
+    if (printMode === 'summary' && !formOpts.wantAnySummarySection) {
+        alert(t('printNothingSelectedSummary'));
+        endPrintColorMode();
+        return;
+    }
+
+    const opts = {
+        ...formOpts,
+        printCalendar,
+        showSummary,
+        syllabusOnly: showSummary && formOpts.syllabusOnly
+    };
+
+    ensureUiState();
+    appData.ui.printVisibility = readPrintCalendarVisibilityFromForm();
     saveData();
 
-    if (opts.printCalendar && appData.termStart) {
-        renderCalendar();
-    } else {
-        updatePrintSummary();
-    }
-    if (opts.printSyllabusTables) {
-        renderAllSyllabusTables();
+    calendarRenderForPrint = printCalendar;
+    try {
+        if (printCalendar && appData.termStart) {
+            renderCalendar();
+        } else {
+            updatePrintSummary();
+        }
+        if (showSummary && opts.printSyllabusTables) {
+            renderAllSyllabusTables();
+        }
+    } finally {
+        calendarRenderForPrint = false;
     }
 
-    document.body.classList.toggle('hide-calendar-print', !opts.printCalendar);
-    document.body.classList.toggle('hide-summary-print', !opts.showSummary);
-    document.body.classList.toggle('print-syllabus-only', opts.syllabusOnly && !opts.printCalendar);
+    document.body.classList.toggle('hide-calendar-print', !printCalendar);
+    document.body.classList.toggle('hide-summary-print', !showSummary);
+    document.body.classList.toggle('print-syllabus-only', opts.syllabusOnly && !printCalendar);
 
     const summary = elements.printSummary;
     summary.classList.toggle('hide-classes', !opts.printClassList);
-    summary.classList.toggle('hide-holidays', !opts.printHolidayList);
     summary.classList.toggle('hide-events', !opts.printEventsList);
     summary.classList.toggle('hide-schedule', !opts.printLessonSchedule);
     summary.classList.toggle('hide-compression', !opts.printCompressionNotes);
@@ -8345,36 +11400,37 @@ function handlePrint(e) {
     if (opts.printSyllabusTables && elements.syllabusTablesSummary
         && !elements.syllabusTablesSummary.querySelector('.syllabus-a4-sheet')) {
         alert(t('syllabusTableEmptyHint'));
+        restoreMainUiAfterPrintCapture();
         return;
     }
 
-    const mod = getSyllabusModule();
-    if (opts.printSyllabusTables && mod && typeof mod.fitSyllabusPagesToA4 === 'function') {
-        const summary = elements.printSummary;
-        if (summary) {
-            summary.classList.add('syllabus-print-measure');
-        }
-        try {
-            mod.fitSyllabusPagesToA4(document, SYLLABUS_PDF_A4);
-        } finally {
-            if (summary) {
-                summary.classList.remove('syllabus-print-measure');
-            }
-        }
-    }
-
     const runPrint = () => {
-        window.print();
-        document.body.classList.remove(
-            'hide-calendar-print',
-            'hide-summary-print',
-            'print-syllabus-only'
-        );
-        Object.keys(EVENT_TYPE_DEFAULT_COLORS).concat(['lessons']).forEach(key => {
-            document.body.classList.remove(`print-hide-cal-${key}`);
-        });
-        if (opts.printSyllabusTables && mod && typeof mod.resetAllSyllabusFit === 'function') {
-            mod.resetAllSyllabusFit(document);
+        try {
+            const jobs = [];
+            const calName = getAppPrintCalendarName();
+            if (opts.printCalendar) {
+                const html = buildAppPrintCalendarDocumentHtml();
+                if (html) {
+                    jobs.push({
+                        kind: 'calendar',
+                        html,
+                        title: `Calendar — ${calName}`
+                    });
+                }
+            }
+            if (opts.showSummary) {
+                const html = buildAppPrintSummaryDocumentHtml(opts);
+                if (html) {
+                    jobs.push({
+                        kind: 'summary',
+                        html,
+                        title: `Summary — ${calName}`
+                    });
+                }
+            }
+            runAppPrintJobs(jobs, opts);
+        } finally {
+            restoreMainUiAfterPrintCapture();
         }
     };
 
@@ -8457,37 +11513,6 @@ function updatePrintSummary() {
         });
     }
 
-    if (elements.holidaySummaryTable) {
-        const holidayTableBody = elements.holidaySummaryTable.querySelector('tbody');
-        holidayTableBody.innerHTML = '';
-        const sortedHolidays = [...appData.holidays].sort((a, b) => {
-            const dateA = parseISODateLocal(a.isRange ? a.startDate : a.date);
-            const dateB = parseISODateLocal(b.isRange ? b.startDate : b.date);
-            return dateA - dateB;
-        });
-        sortedHolidays.forEach(holiday => {
-            let appliesToText = t('allClassesLabel');
-            if (holidayHasAnyTargetFilter(holiday)) {
-                appliesToText = getHolidayAppliesToDescriptionParts(holiday).join('; ');
-            }
-            let dateText;
-            if (holiday.isRange) {
-                dateText = `${formatDateDisplay(holiday.startDate)} - ${formatDateDisplay(holiday.endDate)}`;
-            } else {
-                dateText = formatDateDisplay(holiday.date);
-            }
-            const ev = getEventById(holiday.id);
-            const displayName = ev ? getEventDisplayName(ev) : getEventDisplayName(holiday);
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${displayName}</td>
-                <td>${dateText}</td>
-                <td>${appliesToText}</td>
-            `;
-            holidayTableBody.appendChild(row);
-        });
-    }
-    
     // Update Lesson Schedule Summary
     elements.lessonScheduleSummary.innerHTML = '';
     
@@ -9153,9 +12178,17 @@ function migrateData(data) {
         data.customClassTypes = [];
         migrated = true;
     }
+    if (!Array.isArray(data.customSyllabusTemplates)) {
+        data.customSyllabusTemplates = [];
+        migrated = true;
+    }
 
     if (!data.defaultClassTypeOverrides || typeof data.defaultClassTypeOverrides !== 'object') {
         data.defaultClassTypeOverrides = {};
+        migrated = true;
+    }
+    if (!data.bookOverrides || typeof data.bookOverrides !== 'object') {
+        data.bookOverrides = {};
         migrated = true;
     }
 
@@ -9346,6 +12379,226 @@ function migrateData(data) {
     return migrated;
 }
 
+const SYLLABUS_PACK_KIND = 'ccp-syllabus-pack';
+const SYLLABUS_PACK_VERSION = 1;
+
+function countDefaultClassTypeOverrides() {
+    const overrides = appData.defaultClassTypeOverrides;
+    if (!overrides || typeof overrides !== 'object') {
+        return 0;
+    }
+    return Object.keys(overrides).filter((k) => overrides[k] && typeof overrides[k] === 'object').length;
+}
+
+function buildSyllabusPackPayload() {
+    return {
+        kind: SYLLABUS_PACK_KIND,
+        schemaVersion: SYLLABUS_PACK_VERSION,
+        exportedAt: new Date().toISOString(),
+        customSyllabusTemplates: JSON.parse(JSON.stringify(getCustomSyllabusTemplates())),
+        defaultClassTypeOverrides: JSON.parse(JSON.stringify(appData.defaultClassTypeOverrides || {})),
+        bookOverrides: JSON.parse(JSON.stringify(appData.bookOverrides || {}))
+    };
+}
+
+function exportSyllabusPack() {
+    const payload = buildSyllabusPackPayload();
+    const dataStr = JSON.stringify(payload, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    const baseName = (appData.calendarName && appData.calendarName.trim())
+        ? appData.calendarName.trim().replace(/[^a-zA-Z0-9가-힣\s-]/g, '').replace(/\s+/g, '-')
+        : 'class-calendar';
+    const filename = `${baseName}_lesson-plans-books_${dateStr}.json`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setAppStatusMessage(t('printSyllabusPackExported'), false);
+}
+
+function mergeImportedSyllabusPack(imported) {
+    let templateCount = 0;
+    let overrideCount = 0;
+    if (Array.isArray(imported.customSyllabusTemplates)) {
+        if (!Array.isArray(appData.customSyllabusTemplates)) {
+            appData.customSyllabusTemplates = [];
+        }
+        imported.customSyllabusTemplates.forEach((tpl) => {
+            if (!tpl || !tpl.id) {
+                return;
+            }
+            const idx = appData.customSyllabusTemplates.findIndex((x) => x.id === tpl.id);
+            const copy = JSON.parse(JSON.stringify(tpl));
+            if (idx === -1) {
+                appData.customSyllabusTemplates.push(copy);
+            } else {
+                appData.customSyllabusTemplates[idx] = copy;
+            }
+            templateCount += 1;
+        });
+    }
+    if (imported.defaultClassTypeOverrides && typeof imported.defaultClassTypeOverrides === 'object') {
+        if (!appData.defaultClassTypeOverrides || typeof appData.defaultClassTypeOverrides !== 'object') {
+            appData.defaultClassTypeOverrides = {};
+        }
+        Object.keys(imported.defaultClassTypeOverrides).forEach((presetId) => {
+            const patch = imported.defaultClassTypeOverrides[presetId];
+            if (!patch || typeof patch !== 'object') {
+                return;
+            }
+            appData.defaultClassTypeOverrides[presetId] = {
+                ...(appData.defaultClassTypeOverrides[presetId] || {}),
+                ...JSON.parse(JSON.stringify(patch))
+            };
+            overrideCount += 1;
+        });
+    }
+    let bookCount = 0;
+    if (imported.bookOverrides && typeof imported.bookOverrides === 'object') {
+        if (!appData.bookOverrides || typeof appData.bookOverrides !== 'object') {
+            appData.bookOverrides = {};
+        }
+        Object.keys(imported.bookOverrides).forEach((bookId) => {
+            const patch = imported.bookOverrides[bookId];
+            if (!patch || typeof patch !== 'object') {
+                return;
+            }
+            appData.bookOverrides[bookId] = JSON.parse(JSON.stringify(patch));
+            bookCount += 1;
+        });
+    }
+    return { templateCount, overrideCount, bookCount };
+}
+
+function isValidSyllabusPack(imported) {
+    if (!imported || typeof imported !== 'object') {
+        return false;
+    }
+    if (imported.kind === SYLLABUS_PACK_KIND) {
+        return Array.isArray(imported.customSyllabusTemplates)
+            || (imported.defaultClassTypeOverrides && typeof imported.defaultClassTypeOverrides === 'object');
+    }
+    if (Array.isArray(imported.customSyllabusTemplates)) {
+        return true;
+    }
+    return false;
+}
+
+function importSyllabusPackFromFile(e) {
+    const file = e.target.files[0];
+    if (!file) {
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        try {
+            const imported = JSON.parse(event.target.result);
+            if (!isValidSyllabusPack(imported)) {
+                alert(t('printSyllabusPackInvalid'));
+                return;
+            }
+            const { templateCount, overrideCount, bookCount } = mergeImportedSyllabusPack(imported);
+            saveData();
+            renderSyllabusTemplateList();
+            renderPrintSyllabusManager();
+            const msg = t('printSyllabusPackImported')
+                .replace('{templates}', String(templateCount))
+                .replace('{books}', String(bookCount || 0))
+                .replace('{overrides}', String(overrideCount));
+            setAppStatusMessage(msg, false);
+        } catch (err) {
+            alert(t('printSyllabusPackInvalid'));
+            console.error('Syllabus pack import error:', err);
+        }
+        e.target.value = '';
+    };
+    reader.readAsText(file);
+}
+
+function renderPrintSyllabusManager() {
+    if (window.CCPBooksEditor) {
+        window.CCPBooksEditor.renderPrintBooksList();
+    }
+    const statsEl = document.getElementById('printSyllabusStats');
+    const listEl = document.getElementById('printSyllabusTemplateList');
+    if (!statsEl && !listEl) {
+        return;
+    }
+    const templates = getCustomSyllabusTemplates();
+    const overrideCount = countDefaultClassTypeOverrides();
+    if (statsEl) {
+        statsEl.textContent = t('printSyllabusStats')
+            .replace('{templates}', String(templates.length))
+            .replace('{overrides}', String(overrideCount));
+    }
+    if (!listEl) {
+        return;
+    }
+    listEl.innerHTML = '';
+    if (templates.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'section-hint';
+        empty.textContent = t('printSyllabusNoTemplates');
+        listEl.appendChild(empty);
+        return;
+    }
+    templates.forEach((tpl) => {
+        const row = document.createElement('div');
+        row.className = 'print-syllabus-template-item';
+        const label = document.createElement('span');
+        label.textContent = tpl.name || tpl.id;
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'btn btn-outline btn-small';
+        editBtn.textContent = t('printSyllabusManageTemplate');
+        editBtn.addEventListener('click', () => {
+            navigateToTab('syllabus', { templateId: tpl.id });
+        });
+        row.appendChild(label);
+        row.appendChild(editBtn);
+        listEl.appendChild(row);
+    });
+}
+
+function setupPrintSyllabusControls() {
+    const exportBtn = document.getElementById('printExportSyllabusBtn');
+    const importBtn = document.getElementById('printImportSyllabusBtn');
+    const importFile = document.getElementById('printImportSyllabusFile');
+    const openTabBtn = document.getElementById('printOpenSyllabusTabBtn');
+    const topBarPrintCalendarBtn = document.getElementById('topBarPrintCalendarBtn');
+    if (topBarPrintCalendarBtn && !topBarPrintCalendarBtn.dataset.bound) {
+        topBarPrintCalendarBtn.dataset.bound = '1';
+        topBarPrintCalendarBtn.addEventListener('click', openPrintCalendarDialog);
+    }
+    const topBarPrintSummaryBtn = document.getElementById('topBarPrintSummaryBtn');
+    if (topBarPrintSummaryBtn && !topBarPrintSummaryBtn.dataset.bound) {
+        topBarPrintSummaryBtn.dataset.bound = '1';
+        topBarPrintSummaryBtn.addEventListener('click', openPrintSummaryDialog);
+    }
+    if (exportBtn && !exportBtn.dataset.bound) {
+        exportBtn.dataset.bound = '1';
+        exportBtn.addEventListener('click', exportSyllabusPack);
+    }
+    if (importBtn && importFile && !importBtn.dataset.bound) {
+        importBtn.dataset.bound = '1';
+        importBtn.addEventListener('click', () => importFile.click());
+        importFile.addEventListener('change', importSyllabusPackFromFile);
+    }
+    if (openTabBtn && !openTabBtn.dataset.bound) {
+        openTabBtn.dataset.bound = '1';
+        openTabBtn.addEventListener('click', () => {
+            syllabusListSegment = 'templates';
+            navigateToTab('syllabus');
+        });
+    }
+}
+
 function exportData() {
     const dataStr = JSON.stringify(appData, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
@@ -9389,7 +12642,8 @@ function importData(e) {
                 const migrated = migrateData(appData);
                 refreshLocalizedEventDisplayNames();
                 syncHolidaysFromEvents();
-                
+                resetCalendarClassVisibilityAfterImport();
+
                 saveData();
                 
                 if (appData.termStart) {
@@ -9461,6 +12715,92 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
+}
+
+// ============================================
+// Color contrast (calendar / dark theme)
+// ============================================
+function parseCssColorToRgb(cssColor) {
+    if (!cssColor || typeof cssColor !== 'string') {
+        return null;
+    }
+    const s = cssColor.trim();
+    const hexMatch = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(s);
+    if (hexMatch) {
+        let h = hexMatch[1];
+        if (h.length === 3) {
+            h = h.split('').map((c) => c + c).join('');
+        }
+        return {
+            r: parseInt(h.slice(0, 2), 16),
+            g: parseInt(h.slice(2, 4), 16),
+            b: parseInt(h.slice(4, 6), 16)
+        };
+    }
+    const rgbMatch = /^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/i.exec(s);
+    if (rgbMatch) {
+        return { r: +rgbMatch[1], g: +rgbMatch[2], b: +rgbMatch[3] };
+    }
+    return null;
+}
+
+function getRelativeLuminance(rgb) {
+    const channel = (v) => {
+        const c = v / 255;
+        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    };
+    return 0.2126 * channel(rgb.r) + 0.7152 * channel(rgb.g) + 0.0722 * channel(rgb.b);
+}
+
+/** Pick text color that reads on a user-chosen background (holiday cells, etc.). */
+function getReadableTextOnBackground(backgroundColor, preferredColor) {
+    const bgRgb = parseCssColorToRgb(backgroundColor);
+    if (!bgRgb) {
+        return preferredColor || '';
+    }
+    const bgLum = getRelativeLuminance(bgRgb);
+    if (preferredColor) {
+        const prefRgb = parseCssColorToRgb(preferredColor);
+        if (prefRgb) {
+            const prefLum = getRelativeLuminance(prefRgb);
+            const contrast = (Math.max(bgLum, prefLum) + 0.05) / (Math.min(bgLum, prefLum) + 0.05);
+            if (contrast >= 4.5) {
+                return preferredColor;
+            }
+        }
+    }
+    return bgLum > 0.45 ? '#1e293b' : '#f8fafc';
+}
+
+function beginPrintColorMode() {
+    document.documentElement.classList.add('print-color-mode-light');
+}
+
+function endPrintColorMode() {
+    document.documentElement.classList.remove('print-color-mode-light');
+}
+
+function setupPrintColorModeIsolation() {
+    let nativePrintColorMode = false;
+    window.addEventListener('beforeprint', () => {
+        nativePrintColorMode = true;
+        beginPrintColorMode();
+    });
+    window.addEventListener('afterprint', () => {
+        nativePrintColorMode = false;
+        endPrintColorMode();
+    });
+    window.addEventListener('focus', () => {
+        if (!nativePrintColorMode) {
+            return;
+        }
+        window.setTimeout(() => {
+            if (nativePrintColorMode) {
+                nativePrintColorMode = false;
+                endPrintColorMode();
+            }
+        }, 0);
+    });
 }
 
 function formatDateISO(date) {

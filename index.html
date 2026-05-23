@@ -4,7 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Class Calendar Planner</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=20260523-sticky-gap">
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem('calendarTheme');
+                if (theme === 'dark' || theme === 'light') {
+                    document.documentElement.setAttribute('data-theme', theme);
+                    document.documentElement.style.colorScheme = theme;
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    document.documentElement.style.colorScheme = 'dark';
+                }
+            } catch (e) { /* ignore */ }
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -22,15 +36,26 @@
                 <nav class="app-tab-nav" id="appTabNav" role="tablist" aria-label="App sections">
                     <button type="button" class="app-tab-btn is-active" role="tab" id="tabBtn-calendar" aria-selected="true" aria-controls="panel-calendar" data-tab="calendar" data-i18n="tabCalendar">Calendar</button>
                     <button type="button" class="app-tab-btn" role="tab" id="tabBtn-classes" aria-selected="false" aria-controls="panel-classes" data-tab="classes" data-i18n="tabClasses">Classes</button>
+                    <button type="button" class="app-tab-btn" role="tab" id="tabBtn-syllabus" aria-selected="false" aria-controls="panel-syllabus" data-tab="syllabus" data-i18n="tabSyllabus">Syllabus</button>
                     <button type="button" class="app-tab-btn" role="tab" id="tabBtn-events" aria-selected="false" aria-controls="panel-events" data-tab="events" data-i18n="tabEvents">Events</button>
-                    <button type="button" class="app-tab-btn" role="tab" id="tabBtn-print" aria-selected="false" aria-controls="panel-print" data-tab="print" data-i18n="tabPrint">Print &amp; data</button>
+                    <button type="button" class="app-tab-btn" role="tab" id="tabBtn-homework" aria-selected="false" aria-controls="panel-homework" data-tab="homework" data-i18n="tabHomework">Homework</button>
+                    <button type="button" class="app-tab-btn app-tab-btn--print-data" role="tab" id="tabBtn-print" aria-selected="false" aria-controls="panel-print" data-tab="print" data-i18n="tabPrint">Print &amp; data</button>
                 </nav>
-                <div class="app-top-bar-actions">
-                    <button type="button" id="howToBtn" class="btn btn-outline btn-small btn-help" data-i18n="howToBtn" title="How to use this app">How to Use</button>
-                    <button type="button" id="exportBtn" class="btn btn-outline btn-small" data-i18n="export">Export</button>
-                    <button type="button" id="importBtn" class="btn btn-outline btn-small" data-i18n="import">Import</button>
-                    <input type="file" id="importFile" accept=".json" hidden>
-                    <button type="button" id="langToggleBtn" class="btn btn-outline btn-small btn-lang">🌐 한국어</button>
+                <div class="app-top-bar-actions" role="group" aria-label="Quick actions">
+                    <div class="app-header-tool-group app-header-tool-group--print">
+                        <button type="button" id="topBarPrintCalendarBtn" class="btn btn-header-print btn-small" data-i18n="printCalendarBtn">Print calendar</button>
+                        <button type="button" id="topBarPrintSummaryBtn" class="btn btn-outline btn-small btn-header-print-secondary" data-i18n="printSummaryBtn">Print summary</button>
+                        <button type="button" id="howToBtn" class="btn btn-outline btn-small btn-help" data-i18n="howToBtn" data-i18n-title="howToBtnTitle">Help?</button>
+                    </div>
+                    <div class="app-header-tool-group app-header-tool-group--data">
+                        <button type="button" id="exportBtn" class="btn btn-outline btn-small btn-header-data" data-i18n="export">Export</button>
+                        <button type="button" id="importBtn" class="btn btn-outline btn-small btn-header-data" data-i18n="import">Import</button>
+                        <input type="file" id="importFile" accept=".json" hidden>
+                    </div>
+                    <div class="app-header-tool-group app-header-tool-group--locale">
+                        <button type="button" id="themeToggleBtn" class="btn btn-header-theme btn-small" aria-pressed="false" data-i18n="themeDark" data-i18n-title="themeToggleTitle" title="Switch light/dark theme">🌙 Dark</button>
+                        <button type="button" id="langToggleBtn" class="btn btn-header-lang btn-small btn-lang">🌐 한국어</button>
+                    </div>
                 </div>
             </div>
         </header>
@@ -40,7 +65,7 @@
                 <div class="calendar-panel-toolbar module-toolbar">
                     <button id="addClassBtn" class="btn btn-primary btn-compact" data-i18n="addClass">+ Add Class</button>
                     <button id="addHolidayBtn" class="btn btn-secondary btn-compact" data-i18n="addEvent">+ Add Event</button>
-                    <button id="printBtn" class="btn btn-outline btn-compact" data-i18n="print">Print</button>
+                    <button type="button" id="printCalendarBtn" class="btn btn-header-print btn-compact" data-i18n="printCalendarBtn">Print calendar</button>
                 </div>
 
                 <div id="calendarOptions" class="calendar-options">
@@ -135,6 +160,53 @@
                 </div>
             </section>
 
+            <section id="panel-syllabus" class="app-tab-panel" data-tab="syllabus" role="tabpanel" aria-labelledby="tabBtn-syllabus" hidden>
+                <div class="syllabus-layout module-split-layout">
+                    <aside class="module-list-panel syllabus-list-panel" aria-label="Syllabus navigation">
+                        <div class="syllabus-list-segments" role="tablist" aria-label="Syllabus list mode">
+                            <button type="button" class="syllabus-segment-btn is-active" id="syllabusSegmentClasses" data-segment="classes" data-i18n="syllabusSegmentClasses">Classes</button>
+                            <button type="button" class="syllabus-segment-btn" id="syllabusSegmentTemplates" data-segment="templates" data-i18n="syllabusSegmentTemplates">My syllabi</button>
+                        </div>
+                        <div id="syllabusClassListSection" class="syllabus-list-section">
+                            <input type="search" id="syllabusClassListSearch" class="module-list-search" autocomplete="off" spellcheck="false" data-i18n-placeholder="classListSearchPlaceholder" placeholder="Search classes…">
+                            <div id="syllabusClassList" class="module-list" role="listbox" aria-label="Classes for syllabus"></div>
+                        </div>
+                        <div id="syllabusTemplateListSection" class="syllabus-list-section" hidden>
+                            <div class="syllabus-template-toolbar">
+                                <button type="button" id="syllabusNewTemplateBtn" class="btn btn-primary btn-compact btn-block" data-i18n="syllabusNewTemplate">+ New custom syllabus</button>
+                            </div>
+                            <input type="search" id="syllabusTemplateListSearch" class="module-list-search" autocomplete="off" spellcheck="false" data-i18n-placeholder="syllabusTemplateSearchPlaceholder" placeholder="Search templates…">
+                            <div id="syllabusTemplateList" class="module-list" role="listbox" aria-label="Custom syllabus templates"></div>
+                        </div>
+                    </aside>
+                    <div class="module-editor-panel syllabus-editor-panel">
+                        <p id="syllabusEditorEmpty" class="module-empty-hint" data-i18n="syllabusTabEditorEmpty">Select a class or a custom syllabus template.</p>
+                        <div id="syllabusEditorShell" class="syllabus-editor-shell" hidden>
+                            <header class="syllabus-editor-header">
+                                <div class="syllabus-editor-title-block">
+                                    <h2 id="syllabusEditorTitle" class="syllabus-editor-title"></h2>
+                                    <p id="syllabusEditorMeta" class="syllabus-editor-meta"></p>
+                                    <p id="syllabusEditorModeBanner" class="syllabus-mode-banner section-hint" hidden></p>
+                                    <p id="syllabusScheduleChip" class="syllabus-schedule-chip section-hint" hidden></p>
+                                </div>
+                                <div class="syllabus-editor-header-actions">
+                                    <button type="button" id="syllabusSaveClassBtn" class="btn btn-primary btn-small" data-i18n="syllabusSaveClass">Save syllabus</button>
+                                    <button type="button" id="syllabusSaveTemplateBtn" class="btn btn-primary btn-small" hidden data-i18n="syllabusSaveTemplate">Save template</button>
+                                    <button type="button" id="syllabusOpenClassSettingsBtn" class="btn btn-outline btn-small" data-i18n="syllabusOpenClassSettings">Class schedule &amp; settings</button>
+                                    <button type="button" id="syllabusOpenHomeworkBtn" class="btn btn-outline btn-small" data-i18n="syllabusOpenHomework">Homework copy</button>
+                                    <select id="syllabusApplyTemplateSelect" class="syllabus-apply-select" hidden aria-label="Apply custom syllabus">
+                                        <option value="" data-i18n="syllabusApplyTemplatePick">Apply custom syllabus…</option>
+                                    </select>
+                                    <button type="button" id="syllabusSaveAsTemplateBtn" class="btn btn-outline btn-small" hidden data-i18n="syllabusSaveAsTemplate">Save as template</button>
+                                    <button type="button" id="syllabusDeleteTemplateBtn" class="btn btn-danger btn-small" hidden data-i18n="syllabusDeleteTemplate">Delete template</button>
+                                </div>
+                            </header>
+                            <div id="syllabusFormMountTab" class="syllabus-form-mount"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <section id="panel-events" class="app-tab-panel" data-tab="events" role="tabpanel" aria-labelledby="tabBtn-events" hidden>
                 <div class="module-toolbar">
                     <button type="button" id="eventsTabAddBtn" class="btn btn-secondary btn-compact" data-i18n="addEvent">+ Add Event</button>
@@ -151,13 +223,93 @@
                 </div>
             </section>
 
+            <section id="panel-homework" class="app-tab-panel" data-tab="homework" role="tabpanel" aria-labelledby="tabBtn-homework" hidden>
+                <div class="module-toolbar homework-tab-toolbar">
+                    <div class="homework-ref-date-controls">
+                        <label class="homework-ref-date-label" for="homeworkReferenceDate">
+                            <span data-i18n="homeworkTabReferenceDate">Reference date</span>
+                            <input type="date" id="homeworkReferenceDate" class="homework-ref-date-input" aria-describedby="homeworkReferenceMiniCalendar">
+                        </label>
+                        <button type="button" id="homeworkReferenceTodayBtn" class="btn btn-outline btn-small" data-i18n="homeworkTabToday">Today</button>
+                    </div>
+                </div>
+                <div class="homework-layout module-split-layout">
+                    <aside class="module-list-panel homework-sidebar-panel" aria-label="Class list">
+                        <div id="homeworkReferenceMiniCalendar" class="homework-ref-mini-calendar" role="application" data-i18n-aria-label="homeworkTabMiniCalendarLabel" aria-label="Pick reference date"></div>
+                        <button type="button" id="homeworkRefreshSyllabiBtn" class="btn btn-outline btn-small homework-update-copy-btn" data-i18n="homeworkTabRefreshSyllabi">Update homework copy paste</button>
+                        <input type="search" id="homeworkClassListSearch" class="module-list-search" autocomplete="off" spellcheck="false" data-i18n-placeholder="classListSearchPlaceholder" placeholder="Search classes…">
+                        <div id="homeworkClassList" class="module-list" role="listbox" aria-label="Classes for homework"></div>
+                    </aside>
+                    <div class="module-editor-panel homework-editor-panel">
+                        <p id="homeworkEditorEmpty" class="module-empty-hint" data-i18n="homeworkTabEditorEmpty">Select a class to see homework copy blocks from its syllabus.</p>
+                        <div id="homeworkEditorContent" class="homework-editor-content" hidden>
+                            <header class="homework-class-header">
+                                <h2 id="homeworkClassTitle" class="homework-class-title"></h2>
+                                <p id="homeworkClassMeta" class="homework-class-meta"></p>
+                                <button type="button" id="homeworkOpenClassBtn" class="btn btn-outline btn-small" data-i18n="homeworkTabOpenSyllabus">Edit syllabus</button>
+                            </header>
+                            <p class="homework-external-banner" data-i18n="homeworkTabExternalBanner">Copy from here, then paste on your other websites (Simson grading and homework assignment).</p>
+                            <p id="homeworkTabHint" class="section-hint" data-i18n="homeworkTabHint"></p>
+                            <p id="homeworkTabMessage" class="homework-tab-message" role="status" hidden></p>
+                            <div class="homework-due-block">
+                                <span class="homework-due-label" data-i18n="homeworkTabDueDate">Homework due (next class)</span>
+                                <strong id="homeworkDueDateDisplay" class="homework-due-value"></strong>
+                                <span id="homeworkTargetLessonMeta" class="homework-target-meta"></span>
+                                <div id="homeworkDueDateSkips" class="homework-due-skips" hidden></div>
+                            </div>
+                            <p class="section-hint homework-editable-hint" data-i18n="homeworkTabEditableHint">Edit the text areas below to update the syllabus (Pages / detail). Copy adds the class name and session header.</p>
+                            <div class="homework-copy-section">
+                                <div class="homework-copy-header">
+                                    <h3 data-i18n="homeworkTabGradingTitle">Previous week — for Simson grading site</h3>
+                                    <button type="button" class="btn btn-outline btn-small homework-copy-btn" id="homeworkCopyGradingBtn" data-i18n="homeworkTabCopy">Copy</button>
+                                </div>
+                                <p class="section-hint" data-i18n="homeworkTabGradingHint">Copy this block, open your Simson grading webpage in another tab, and paste there.</p>
+                                <textarea id="homeworkGradingText" class="homework-copy-textarea" rows="8" spellcheck="false" aria-describedby="homeworkGradingSourceHint"></textarea>
+                                <p id="homeworkGradingSourceHint" class="homework-source-hint section-hint" hidden></p>
+                            </div>
+                            <div class="homework-copy-section">
+                                <div class="homework-copy-header">
+                                    <h3 data-i18n="homeworkTabAssignTitle">This week — for homework assignment site</h3>
+                                    <button type="button" class="btn btn-outline btn-small homework-copy-btn" id="homeworkCopyAssignBtn" data-i18n="homeworkTabCopy">Copy</button>
+                                </div>
+                                <p class="section-hint" data-i18n="homeworkTabAssignHint">Copy this block, open your homework assignment webpage in another tab, and paste there.</p>
+                                <textarea id="homeworkAssignText" class="homework-copy-textarea" rows="8" spellcheck="false" aria-describedby="homeworkAssignSourceHint"></textarea>
+                                <p id="homeworkAssignSourceHint" class="homework-source-hint section-hint" hidden></p>
+                            </div>
+                            <div class="homework-copy-actions">
+                                <button type="button" class="btn btn-outline btn-small" id="homeworkCopyBothBtn" data-i18n="homeworkTabCopyBoth">Copy grading + assignment</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <section id="panel-print" class="app-tab-panel" data-tab="print" role="tabpanel" aria-labelledby="tabBtn-print" hidden>
                 <div class="print-data-layout">
-                    <div class="print-data-section">
+                    <div class="print-data-section print-data-section--options">
                         <h2 class="module-section-title" data-i18n="printOptions">Print Options</h2>
                         <div id="printFormMountTab"></div>
                     </div>
-                    <div class="print-data-section print-data-actions-section">
+                    <div class="print-data-section print-data-section--books print-books-section">
+                        <h2 class="module-section-title" data-i18n="printBooksHeading">Books</h2>
+                        <p class="section-hint" data-i18n="printBooksHint">Curriculum books (Write Now, Write Right, Hand in Hand, etc.): lesson plans and page blocks that class syllabi pull from. Green / Blue / Navy levels share one book where pagination is the same.</p>
+                        <p id="printBooksStats" class="print-books-stats section-hint" role="status"></p>
+                        <div id="printBooksList" class="print-books-list" aria-label="Curriculum books"></div>
+                    </div>
+                    <div class="print-data-section print-data-section--lesson-plans print-syllabus-presets-section">
+                        <h2 class="module-section-title" data-i18n="printSyllabusPresetsHeading">My lesson plans/books</h2>
+                        <p class="section-hint" data-i18n="printSyllabusPresetsHint">Custom lesson plans you save under My syllabi on the Syllabus tab, plus edited curriculum books. Export or import a pack to back up lesson plans, book page data, and class-type defaults.</p>
+                        <p id="printSyllabusStats" class="print-syllabus-stats section-hint" role="status"></p>
+                        <div class="print-data-actions print-syllabus-actions">
+                            <button type="button" id="printExportSyllabusBtn" class="btn btn-outline btn-small" data-i18n="printExportSyllabusPack">Export lesson plans/books pack</button>
+                            <button type="button" id="printImportSyllabusBtn" class="btn btn-outline btn-small" data-i18n="printImportSyllabusPack">Import lesson plans/books pack</button>
+                            <input type="file" id="printImportSyllabusFile" accept=".json,application/json" hidden>
+                            <button type="button" id="printOpenSyllabusTabBtn" class="btn btn-outline btn-small" data-i18n="printOpenSyllabusTab">Open Syllabus tab</button>
+                            <button type="button" class="btn btn-outline btn-small" data-open-default-class-editor data-i18n="printEditPdfPresets">Edit PDF preset defaults</button>
+                        </div>
+                        <div id="printSyllabusTemplateList" class="print-syllabus-template-list" data-i18n-aria-label="printSyllabusTemplateListLabel" aria-label="Custom lesson plans"></div>
+                    </div>
+                    <div class="print-data-section print-data-section--data print-data-actions-section">
                         <h2 class="module-section-title" data-i18n="tabPrintDataHeading">Data &amp; settings</h2>
                         <div class="print-data-actions">
                             <button type="button" class="btn btn-outline btn-small" data-open-default-class-editor data-i18n="defaultClassEditorOpen">Edit defaults</button>
@@ -209,22 +361,6 @@
                 </table>
             </div>
 
-            <div class="summary-section summary-holidays-legacy" style="display:none;">
-                <h3 data-i18n="holidays">Holidays</h3>
-                <table class="summary-table" id="holidaySummaryTable">
-                    <thead>
-                        <tr>
-                            <th data-i18n="holidayName">Holiday Name</th>
-                            <th data-i18n="date">Date</th>
-                            <th data-i18n="appliesTo">Applies To</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Filled by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-
             <div class="summary-section">
                 <h3 data-i18n="lessonSchedule">Lesson Schedule</h3>
                 <div id="lessonScheduleSummary">
@@ -263,6 +399,7 @@
                     <h2 id="classModalTitle" data-i18n="addNewClass">Add New Class</h2>
                     <div class="class-modal-header-actions">
                         <button type="button" id="openClassInTabBtn" class="btn btn-outline btn-small class-open-full-btn" data-i18n="openFullClassEditor">Open full editor</button>
+                        <button type="button" id="openSyllabusTabBtn" class="btn btn-outline btn-small" data-i18n="openSyllabusTab">Edit syllabus</button>
                         <button type="button" id="deleteClassBtn" class="btn btn-danger btn-small class-modal-delete-btn" data-i18n="deleteClass">Delete class</button>
                         <button type="submit" class="btn btn-primary btn-small" data-i18n="saveClass">Save Class</button>
                         <button type="button" class="modal-close" id="closeClassModal" aria-label="Close">&times;</button>
@@ -432,42 +569,62 @@
                     <p class="section-hint" data-i18n="compressionOverlapHint">Only adjacent lessons can be merged. Overlapping merges are disabled.</p>
                 </div>
 
-                <div class="form-group syllabus-section">
-                    <label data-i18n="syllabusUnits">Syllabus / curriculum units</label>
+                <div id="classSyllabusSummary" class="class-syllabus-summary form-group" hidden>
+                    <label data-i18n="syllabusTable">Syllabus</label>
+                    <p id="classSyllabusSummaryText" class="section-hint class-syllabus-summary-text"></p>
+                    <button type="button" id="classOpenSyllabusTabBtn" class="btn btn-outline btn-small" data-i18n="classTabOpenSyllabus">Edit syllabus</button>
+                </div>
+
+                </div>
+            </form>
+    </template>
+
+    <template id="syllabusEditorTemplate">
+        <div id="syllabusEditorForm" class="syllabus-editor-form" data-homework-import-mode="" data-lesson-label-mode="">
+                <section class="syllabus-editor-block syllabus-general-notes-block">
+                    <h3 class="syllabus-block-title" data-i18n="syllabusGeneralNotes">General notes &amp; instructions</h3>
+                    <p class="section-hint" data-i18n="syllabusGeneralNotesHint">For parents, substitutes, or your own reminders. Included when you print this syllabus.</p>
+                    <textarea id="syllabusGeneralNotes" class="syllabus-general-notes-input" rows="5" spellcheck="true" data-i18n-placeholder="syllabusGeneralNotesPlaceholder" placeholder="e.g., Bring workbook every class. Quiz on Unit 3 at session 8…"></textarea>
+                </section>
+
+                <section class="syllabus-editor-block syllabus-units-block">
+                    <h3 class="syllabus-block-title" data-i18n="syllabusUnits">Curriculum units</h3>
                     <p class="section-hint" data-i18n="syllabusUnitsHint">Optional units for planning. Link events to a unit when editing an event.</p>
                     <div id="syllabusUnitsRows" class="syllabus-units-rows"></div>
                     <button type="button" id="addSyllabusUnitBtn" class="btn btn-outline btn-small" data-i18n="addSyllabusUnit">Add unit</button>
-                </div>
+                </section>
 
-                <div class="form-group syllabus-table-section">
-                    <label data-i18n="syllabusTable">Syllabus table</label>
+                <section class="syllabus-editor-block syllabus-table-section">
+                    <h3 class="syllabus-block-title" data-i18n="syllabusTable">Lesson schedule table</h3>
                     <p class="section-hint" data-i18n="syllabusTableHint">Build a printable table (Month, Week, Class #, lesson plan, pages/work). Refresh after you change the calendar schedule.</p>
                     <div class="syllabus-table-actions">
                         <button type="button" id="refreshSyllabusBtn" class="btn btn-outline btn-small" data-i18n="refreshSyllabusFromCalendar">Refresh from calendar</button>
+                        <button type="button" id="startBlankSyllabusBtn" class="btn btn-outline btn-small" data-i18n="syllabusStartBlank">Start blank syllabus</button>
                         <button type="button" id="fillSyllabusFromUnitsBtn" class="btn btn-outline btn-small" data-i18n="fillSyllabusFromUnits">Fill pages from units</button>
                         <button type="button" id="applyPresetSyllabusBtn" class="btn btn-outline btn-small" data-i18n="applyPresetSyllabus">Apply preset pages</button>
+                        <button type="button" id="addSyllabusLessonRowBtn" class="btn btn-outline btn-small" data-i18n="addSyllabusLessonRow">Add lesson row</button>
                         <button type="button" id="addSyllabusNoteRowBtn" class="btn btn-outline btn-small" data-i18n="addSyllabusNoteRow">Add note row</button>
                     </div>
                     <div class="syllabus-table-editor-wrap">
                         <table class="syllabus-editor-table" aria-label="Syllabus editor">
                             <thead>
                                 <tr>
-                                    <th data-i18n="syllabusColWeek">Week</th>
-                                    <th data-i18n="syllabusColClass">Class</th>
-                                    <th data-i18n="syllabusColPlan">Weekly Lesson Plan</th>
-                                    <th data-i18n="syllabusColPages">Pages / detail</th>
-                                    <th data-i18n="syllabusColNote">Note</th>
-                                    <th><span class="sr-only">Remove</span></th>
+                                    <th class="syllabus-col-week" data-i18n="syllabusColWeek">Week</th>
+                                    <th class="syllabus-col-num" data-i18n="syllabusColClass">Class</th>
+                                    <th class="syllabus-col-plan" data-i18n="syllabusColPlan">Weekly Lesson Plan</th>
+                                    <th class="syllabus-col-pages" data-i18n="syllabusColPages">Pages / detail</th>
+                                    <th class="syllabus-col-note" data-i18n="syllabusColNote">Note</th>
+                                    <th class="syllabus-col-actions"><span class="sr-only">Remove</span></th>
                                 </tr>
                             </thead>
                             <tbody id="syllabusTableBody"></tbody>
                         </table>
                         <p id="syllabusTableEmptyHint" class="section-hint" data-i18n="syllabusTableEmptyHint">No rows yet. Click Refresh from calendar to generate rows from your lesson schedule.</p>
                     </div>
-                    <details class="homework-import-panel">
+                    <details class="homework-import-panel syllabus-editor-block syllabus-import-block">
                         <summary data-i18n="homeworkImportTitle">Import homework from paste</summary>
                         <p class="section-hint" data-i18n="homeworkImportHint">Paste debate Day blocks or Unit Part blocks. Run Refresh from calendar first so session numbers match.</p>
-                        <textarea id="homeworkImportPaste" class="homework-import-paste" rows="6" data-i18n-placeholder="homeworkImportPlaceholder" placeholder="Paste homework text here…"></textarea>
+                        <textarea id="homeworkImportPaste" class="homework-import-paste" rows="8" data-i18n-placeholder="homeworkImportPlaceholder" placeholder="Paste homework text here…"></textarea>
                         <div class="homework-import-actions">
                             <button type="button" id="homeworkImportPreviewBtn" class="btn btn-outline btn-small" data-i18n="homeworkImportPreview">Preview match</button>
                             <button type="button" id="homeworkImportApplyBtn" class="btn btn-outline btn-small" data-i18n="homeworkImportApply">Apply to table</button>
@@ -478,12 +635,20 @@
                         <button type="button" id="printClassSyllabusBtn" class="btn btn-outline btn-small" data-i18n="printClassSyllabus">Print syllabus</button>
                     </div>
                     <p class="section-hint" data-i18n="printClassSyllabusHint">Opens the print dialog; choose Save as PDF to download.</p>
-                </div>
-
-                </div>
-            </form>
+                </section>
+        </div>
     </template>
 
+
+    <div id="printOptionsModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="printOptionsModalTitle">
+        <div class="modal-content modal-wide print-options-modal-content">
+            <div class="modal-header">
+                <h2 id="printOptionsModalTitle" data-i18n="printOptions">Print Options</h2>
+                <button type="button" class="modal-close" id="closePrintOptionsModal" aria-label="Close">&times;</button>
+            </div>
+            <div id="printFormMountModal" class="print-form-mount"></div>
+        </div>
+    </div>
 
     <div id="classTypeModal" class="modal">
         <div class="modal-content modal-small">
@@ -634,72 +799,69 @@
     </div>
 
     <template id="printFormTemplate">
-            <form id="printForm" class="print-options-form">
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="printCalendar" checked>
-                        <span data-i18n="printCalendar">Print Calendar</span>
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="printSummaryCheck" checked>
-                        <span data-i18n="printSummaryPage">Print Summary Page</span>
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="printClassList" checked>
-                        <span data-i18n="includeClassList">Include Class List</span>
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="printHolidayList" checked>
-                        <span data-i18n="includeHolidayList">Include Holiday List</span>
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="printLessonSchedule" checked>
-                        <span data-i18n="includeLessonSchedule">Include Lesson Schedule</span>
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="printCompressionNotes" checked>
-                        <span data-i18n="includeCompressionNotes">Include Compression Notes</span>
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="printSyllabusTables" checked>
-                        <span data-i18n="includeSyllabusTables">Syllabus tables (per class)</span>
-                    </label>
-                </div>
-                <p id="printLessonFilterHint" class="section-hint print-lesson-filter-hint" hidden></p>
-                <p class="section-hint print-visibility-heading" data-i18n="printCalendarVisibility">On printed calendar, show:</p>
-                <div class="print-cal-vis-actions">
-                    <button type="button" class="btn btn-outline btn-small" id="printCalVisSelectAllBtn" data-i18n="filterSelectAll">Select all</button>
-                    <button type="button" class="btn btn-outline btn-small" id="printCalVisClearAllBtn" data-i18n="filterClearAll">Clear all</button>
-                </div>
-                <div class="form-group print-cal-vis">
-                    <label class="checkbox-label"><input type="checkbox" id="printCalLessons" checked><span data-i18n="showLessons">Lessons</span></label>
-                    <label class="checkbox-label"><input type="checkbox" id="printCalHolidays" checked><span data-i18n="showHolidays">Holidays</span></label>
-                    <label class="checkbox-label"><input type="checkbox" id="printCalEvalDeadline" checked><span data-i18n="showEvalDeadlines">Evaluation deadlines</span></label>
-                    <label class="checkbox-label"><input type="checkbox" id="printCalHomeworkDeadline" checked><span data-i18n="showHomeworkDeadlines">Homework deadlines</span></label>
-                    <label class="checkbox-label"><input type="checkbox" id="printCalEvalPeriod" checked><span data-i18n="showEvalPeriods">Evaluation periods</span></label>
-                    <label class="checkbox-label"><input type="checkbox" id="printCalOther" checked><span data-i18n="showOtherEvents">Other events</span></label>
-                </div>
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="printEventsList" checked>
-                        <span data-i18n="includeEventsList">Include events list</span>
-                    </label>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" data-i18n="print">Print</button>
-                </div>
+            <form id="printForm" class="print-options-form" data-print-form-mode="all">
+                <section class="print-form-section print-form-section--calendar" aria-labelledby="printSectionCalendarTitle">
+                    <h3 id="printSectionCalendarTitle" class="print-form-section-title" data-i18n="printSectionCalendar">Calendar (landscape)</h3>
+                    <p class="section-hint" data-i18n="printSectionCalendarHint">Opens one preview tab with the month grid. Use your browser&apos;s Print or Save as PDF there.</p>
+                    <div class="print-cal-vis-actions print-options-bulk-actions">
+                        <button type="button" class="btn btn-outline btn-small" id="printCalVisSelectAllBtn" data-i18n="filterSelectAll">Select all</button>
+                        <button type="button" class="btn btn-outline btn-small" id="printCalVisClearAllBtn" data-i18n="filterClearAll">Clear all</button>
+                    </div>
+                    <p class="section-hint print-visibility-heading" data-i18n="printCalendarVisibility">On printed calendar, show:</p>
+                    <div class="form-group print-cal-vis">
+                        <label class="checkbox-label"><input type="checkbox" id="printCalLessons" checked><span data-i18n="showLessons">Lessons</span></label>
+                        <label class="checkbox-label"><input type="checkbox" id="printCalHolidays" checked><span data-i18n="showHolidays">Holidays</span></label>
+                        <label class="checkbox-label"><input type="checkbox" id="printCalEvalDeadline" checked><span data-i18n="showEvalDeadlines">Evaluation deadlines</span></label>
+                        <label class="checkbox-label"><input type="checkbox" id="printCalHomeworkDeadline" checked><span data-i18n="showHomeworkDeadlines">Homework deadlines</span></label>
+                        <label class="checkbox-label"><input type="checkbox" id="printCalEvalPeriod" checked><span data-i18n="showEvalPeriods">Evaluation periods</span></label>
+                        <label class="checkbox-label"><input type="checkbox" id="printCalOther" checked><span data-i18n="showOtherEvents">Other events</span></label>
+                    </div>
+                    <div class="form-actions print-form-section-actions">
+                        <button type="submit" class="btn btn-primary" data-print-mode="calendar" data-i18n="printCalendarBtn">Print calendar</button>
+                    </div>
+                </section>
+                <section class="print-form-section print-form-section--summary" aria-labelledby="printSectionSummaryTitle">
+                    <h3 id="printSectionSummaryTitle" class="print-form-section-title" data-i18n="printSectionSummary">Summary &amp; syllabi (portrait)</h3>
+                    <p class="section-hint" data-i18n="printSectionSummaryHint">Opens one preview tab with lists and syllabus tables (one class per page).</p>
+                    <div class="print-summary-bulk-actions print-options-bulk-actions">
+                        <button type="button" class="btn btn-outline btn-small" id="printSummarySelectAllBtn" data-i18n="filterSelectAll">Select all</button>
+                        <button type="button" class="btn btn-outline btn-small" id="printSummaryClearAllBtn" data-i18n="filterClearAll">Clear all</button>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="printClassList" checked>
+                            <span data-i18n="includeClassList">Include Class List</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="printLessonSchedule" checked>
+                            <span data-i18n="includeLessonSchedule">Include Lesson Schedule</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="printCompressionNotes" checked>
+                            <span data-i18n="includeCompressionNotes">Include Compression Notes</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="printSyllabusTables" checked>
+                            <span data-i18n="includeSyllabusTables">Syllabus tables (per class)</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="printEventsList" checked>
+                            <span data-i18n="includeEventsList">Include events list</span>
+                        </label>
+                    </div>
+                    <p id="printLessonFilterHint" class="section-hint print-lesson-filter-hint" hidden></p>
+                    <div class="form-actions print-form-section-actions">
+                        <button type="submit" class="btn btn-primary" data-print-mode="summary" data-i18n="printSummaryBtn">Print summary</button>
+                    </div>
+                </section>
             </form>
     </template>
 
@@ -731,8 +893,11 @@
     <script src="js/syllabus-curricula.js"></script>
     <script src="js/syllabus-presets.js"></script>
     <script src="js/default-class-editor.js"></script>
+    <script src="js/books-editor.js"></script>
     <script src="js/homework-import.js"></script>
-    <script src="app.js?v=20260521-curricula"></script>
+    <script src="js/homework-tab.js"></script>
+    <script src="js/syllabus-templates.js"></script>
+    <script src="app.js?v=20260523-print-theme-fix"></script>
     <script src="howto.js"></script>
 </body>
 </html>

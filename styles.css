@@ -2,6 +2,7 @@
    CSS Variables & Reset
    ============================================ */
 :root {
+    color-scheme: light;
     --primary: #2563eb;
     --primary-dark: #1d4ed8;
     --secondary: #64748b;
@@ -11,6 +12,8 @@
     --bg-main: #f8fafc;
     --bg-card: #ffffff;
     --bg-hover: #f1f5f9;
+    --surface-elevated: #f1f5f9;
+    --input-bg: #ffffff;
     
     --text-primary: #1e293b;
     --text-secondary: #64748b;
@@ -24,9 +27,56 @@
     
     --holiday-bg: #fef3c7;
     --holiday-border: #f59e0b;
+
+    --top-bar-bg: rgba(248, 250, 252, 0.92);
+    --top-bar-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+
+    --btn-print-bg: #eff6ff;
+    --btn-print-border: #93c5fd;
+    --btn-print-color: #1d4ed8;
+    --btn-print-hover-bg: #dbeafe;
+    --btn-lang-bg: #f5f3ff;
+    --btn-lang-border: #c4b5fd;
+    --btn-lang-color: #5b21b6;
+    --btn-lang-hover-bg: #ede9fe;
+    --btn-theme-bg: #f1f5f9;
+    --btn-theme-border: #cbd5e1;
+    --btn-theme-color: #334155;
+    --btn-theme-hover-bg: #e2e8f0;
+
+    --print-section-options-accent: #2563eb;
+    --print-section-options-tint: #eff6ff;
+    --print-section-books-accent: #16a34a;
+    --print-section-books-tint: #f0fdf4;
+    --print-section-lessons-accent: #7c3aed;
+    --print-section-lessons-tint: #f5f3ff;
+    --print-section-data-accent: #dc2626;
+    --print-section-data-tint: #fef2f2;
+
+    --tab-print-inactive-bg: #f0fdfa;
+    --tab-print-inactive-color: #0f766e;
+    --tab-print-inactive-border: #99f6e4;
+    --tab-print-hover-bg: #ccfbf1;
+    --tab-print-active-bg: #0f766e;
+
+    --status-success-bg: #ecfdf5;
+    --status-success-color: #065f46;
+    --status-success-border: #a7f3d0;
+    --status-error-bg: #fef2f2;
+    --status-error-color: #991b1b;
+    --status-error-border: #fecaca;
+
+    --badge-warn-bg: #fef3c7;
+    --badge-warn-color: #b45309;
     
     --font-main: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
+
+    /* Sticky offsets: set from JS to match #appTopBar height */
+    --app-chrome-sticky-top: 72px;
+    /* One month ≈ one viewport below the sticky app bar */
+    --calendar-month-gap: 20px;
+    --calendar-month-view-height: calc(100dvh - var(--app-chrome-sticky-top) - var(--calendar-month-gap));
 }
 
 * {
@@ -47,9 +97,11 @@ body {
    App Layout
    ============================================ */
 .app-container {
-    max-width: 1400px;
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 24px;
+    padding: clamp(16px, 2vw, 32px);
+    box-sizing: border-box;
 }
 
 /* Sticky floating toolbar: compact essentials + collapsible details */
@@ -59,11 +111,11 @@ body {
     z-index: 200;
     margin: -24px -24px 20px;
     padding: 12px 24px;
-    background: rgba(248, 250, 252, 0.92);
+    background: var(--top-bar-bg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+    box-shadow: var(--top-bar-shadow);
 }
 
 .app-top-bar-compact {
@@ -273,8 +325,47 @@ body {
     background: #b91c1c;
 }
 
+.btn-header-print {
+    background: var(--btn-print-bg);
+    color: var(--btn-print-color);
+    border: 1px solid var(--btn-print-border);
+    font-weight: 600;
+}
+
+.btn-header-print:hover {
+    background: var(--btn-print-hover-bg);
+    border-color: var(--primary);
+    color: var(--btn-print-color);
+}
+
+.btn-header-lang {
+    background: var(--btn-lang-bg);
+    color: var(--btn-lang-color);
+    border: 1px solid var(--btn-lang-border);
+    font-weight: 600;
+}
+
+.btn-header-lang:hover {
+    background: var(--btn-lang-hover-bg);
+    border-color: #8b5cf6;
+    color: var(--btn-lang-color);
+}
+
+.btn-header-theme {
+    background: var(--btn-theme-bg);
+    color: var(--btn-theme-color);
+    border: 1px solid var(--btn-theme-border);
+    font-weight: 600;
+    min-width: 88px;
+}
+
+.btn-header-theme:hover {
+    background: var(--btn-theme-hover-bg);
+    border-color: var(--text-muted);
+}
+
 .btn-lang {
-    font-weight: 500;
+    font-weight: 600;
     min-width: 100px;
 }
 
@@ -545,14 +636,16 @@ body {
 }
 
 .lesson-filter-actions,
-.print-cal-vis-actions {
+.print-cal-vis-actions,
+.print-summary-bulk-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     padding: 10px 16px;
 }
 
-.print-cal-vis-actions {
+.print-cal-vis-actions,
+.print-summary-bulk-actions {
     padding: 0 0 8px;
 }
 
@@ -684,15 +777,60 @@ body {
 .syllabus-units-rows {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 12px;
+    margin-bottom: 12px;
 }
 
 .syllabus-unit-row {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr auto;
-    gap: 8px;
-    align-items: center;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 14px;
+    align-items: start;
+    padding: 14px 16px;
+    background: var(--bg-hover, #f8fafc);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.syllabus-unit-row .syllabus-unit-title-wrap {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.syllabus-unit-row .syllabus-unit-title-wrap label {
+    flex: 1;
+    min-width: 0;
+}
+
+.syllabus-unit-row .syllabus-unit-field label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.syllabus-unit-row .syllabus-unit-field input,
+.syllabus-unit-row .syllabus-unit-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    padding: 8px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.syllabus-unit-row .syllabus-unit-remove {
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.syllabus-unit-row .syllabus-unit-field-full {
+    grid-column: 1 / -1;
 }
 
 .modal-wide {
@@ -823,7 +961,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: 10px 12px;
-    background: var(--bg-secondary, #f8f9fa);
+    background: var(--surface-elevated);
 }
 
 .homework-import-panel summary {
@@ -871,53 +1009,116 @@ body {
 }
 
 .syllabus-table-editor-wrap {
-    max-height: 280px;
+    max-height: min(58vh, 720px);
+    min-height: 200px;
     overflow: auto;
-    border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: var(--bg-card);
 }
 
 .syllabus-editor-table {
     width: 100%;
+    min-width: 720px;
     border-collapse: collapse;
-    font-size: 0.85rem;
+    font-size: 0.9375rem;
+    line-height: 1.45;
 }
 
 .syllabus-editor-table th,
 .syllabus-editor-table td {
-    border-bottom: 1px solid #e5e7eb;
-    padding: 6px 8px;
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 12px;
     vertical-align: top;
 }
 
 .syllabus-editor-table th {
-    background: #f9fafb;
+    background: var(--surface-elevated);
+    color: var(--text-primary);
     position: sticky;
     top: 0;
     z-index: 1;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.01em;
+}
+
+.syllabus-editor-table .syllabus-col-week {
+    width: 7rem;
+    min-width: 7rem;
+}
+
+.syllabus-editor-table .syllabus-col-num {
+    width: 3.5rem;
+    min-width: 3.5rem;
+    text-align: center;
+}
+
+.syllabus-editor-table .syllabus-col-plan {
+    min-width: 10rem;
+}
+
+.syllabus-editor-table .syllabus-col-pages {
+    min-width: 14rem;
+    width: 32%;
+}
+
+.syllabus-editor-table .syllabus-col-note {
+    min-width: 8rem;
+}
+
+.syllabus-editor-table .syllabus-col-actions {
+    width: 2.75rem;
 }
 
 .syllabus-editor-table input,
 .syllabus-editor-table textarea {
     width: 100%;
-    font: inherit;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    line-height: 1.45;
     box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+}
+
+.syllabus-editor-table textarea {
+    min-height: 4.5rem;
+    resize: vertical;
 }
 
 .syllabus-editor-table input[readonly] {
-    background: #f3f4f6;
-    color: #374151;
+    background: var(--surface-elevated);
+    color: var(--text-secondary);
+    border-color: var(--border-color);
 }
 
 .syllabus-ed-week {
     white-space: nowrap;
-    font-size: 0.8rem;
-    color: #4b5563;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
 }
 
 .syllabus-ed-num {
     text-align: center;
     width: 2.5em;
+}
+
+.syllabus-editor-table .syllabus-row-holiday td {
+    background: var(--holiday-bg);
+}
+
+.syllabus-editor-table .syllabus-row-overflow td {
+    background: var(--surface-elevated);
+    color: var(--text-secondary);
+}
+
+.syllabus-editor-table .syllabus-row-extra td {
+    background: var(--bg-hover);
 }
 
 .syllabus-print-class-block {
@@ -934,13 +1135,14 @@ body {
 
 .syllabus-table th,
 .syllabus-table td {
-    border: 1px solid #333;
+    border: 1px solid var(--border-color);
     padding: 6px 8px;
     vertical-align: top;
 }
 
 .syllabus-table th {
-    background: #f3f4f6;
+    background: var(--surface-elevated);
+    color: var(--text-primary);
 }
 
 .syllabus-class-header {
@@ -1016,7 +1218,7 @@ body {
 }
 
 .syllabus-row-note td {
-    background: #fafafa;
+    background: var(--surface-elevated);
     font-style: italic;
 }
 
@@ -1038,32 +1240,107 @@ body {
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    overflow-x: clip;
+}
+
+body:has(#panel-calendar:not([hidden])) {
+    scroll-snap-type: y proximity;
 }
 
 .calendar-container {
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: var(--calendar-month-gap);
     width: 100%;
     max-width: 100%;
     min-width: 0;
+}
+
+/* Calendar tab: one full-width month per row (never multi-column grid) */
+#calendarContainer,
+#panel-calendar .calendar-container {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+    grid-template-columns: unset !important;
+    grid-auto-flow: unset !important;
+    gap: var(--calendar-month-gap);
+    width: 100%;
+    max-width: 100%;
+}
+
+#calendarContainer > .month-calendar,
+#panel-calendar .month-calendar {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: var(--calendar-month-view-height);
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+    scroll-margin-top: var(--app-chrome-sticky-top);
+}
+
+/* Fit one month per viewport: flexible week rows, no fixed cell height */
+#calendarContainer .calendar-day {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#calendarContainer .calendar-day .day-events {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+#calendarContainer .calendar-day .calendar-event-chips {
+    flex-shrink: 0;
+    max-height: 35%;
+    overflow-y: auto;
+}
+
+#calendarContainer .month-header {
+    padding: 10px 16px;
+}
+
+#calendarContainer .month-header h2 {
+    font-size: 1.1rem;
+}
+
+#calendarContainer .calendar-day-header {
+    padding: 6px 4px;
 }
 
 .month-calendar {
     background: var(--bg-card);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-md);
-    overflow: hidden;
+    overflow: visible;
     width: 100%;
     max-width: 100%;
     min-width: 0;
 }
 
 .month-header {
+    position: sticky;
+    top: var(--app-chrome-sticky-top);
+    z-index: 40;
+    flex-shrink: 0;
     padding: 16px 20px;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+}
+
+.month-calendar .calendar-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    overflow: hidden;
+    grid-template-rows: auto repeat(var(--calendar-week-rows, 6), minmax(3.25rem, 1fr));
 }
 
 .month-header h2 {
@@ -1186,6 +1463,23 @@ body {
 .event-bar:hover {
     transform: translateY(-1px);
     box-shadow: var(--shadow-md);
+}
+
+.event-bar.event-bar--calendar-focus {
+    outline: 3px solid var(--primary, #2563eb);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
+    z-index: 1;
+    position: relative;
+}
+
+.calendar-event-chip.calendar-event--calendar-focus,
+.calendar-day.calendar-event--calendar-focus {
+    outline: 3px solid var(--primary, #2563eb);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
+    z-index: 1;
+    position: relative;
 }
 
 .event-title {
@@ -1724,17 +2018,91 @@ form {
 /* ============================================
    Print Styles
    ============================================ */
+/* Light palette for print / pre-print layout — ignores dark UI theme */
+html.print-color-mode-light,
+html.print-color-mode-light[data-theme="dark"] {
+    color-scheme: light;
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #64748b;
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-hover: #f1f5f9;
+    --surface-elevated: #f1f5f9;
+    --input-bg: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --holiday-bg: #fef3c7;
+    --holiday-border: #f59e0b;
+}
+
+@page calendar-landscape {
+    size: A4 landscape;
+    margin: 0;
+}
+
 @media print {
+    @page calendar-landscape {
+        size: A4 landscape;
+        margin: 0;
+    }
+
+    :root,
+    [data-theme="dark"] {
+        color-scheme: light !important;
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --secondary: #64748b;
+        --bg-main: #f8fafc;
+        --bg-card: #ffffff;
+        --bg-hover: #f1f5f9;
+        --surface-elevated: #f1f5f9;
+        --input-bg: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --holiday-bg: #fef3c7;
+        --holiday-border: #f59e0b;
+    }
+
     * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
     
     body {
-        background: white;
+        background: white !important;
+        color: #1e293b !important;
         font-size: 10pt;
     }
-    
+
+    .calendar-day:not(.holiday),
+    .calendar-day-header,
+    .print-summary,
+    .summary-table th,
+    .summary-table tr:nth-child(even),
+    .lesson-schedule-item {
+        background: white !important;
+        color: #1e293b !important;
+    }
+
+    .calendar-day.other-month:not(.holiday) .day-number {
+        color: #94a3b8 !important;
+    }
+
+    .day-number {
+        color: #1e293b;
+    }
+
     .app-container {
         max-width: 100%;
         padding: 0;
@@ -1750,27 +2118,242 @@ form {
     .class-popup {
         display: none !important;
     }
+
+    /* Standalone print window: calendar (landscape) or summary (portrait) */
+    .app-print-document {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    .app-print-document--calendar .calendar-container {
+        display: flex !important;
+        flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        grid-template-columns: unset !important;
+        gap: 0 !important;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .app-print-document--calendar .calendar-print-sheet {
+        page: calendar-landscape;
+        width: 297mm;
+        height: 210mm;
+        max-height: 210mm;
+        box-sizing: border-box;
+        padding: 10mm;
+        margin: 0 auto;
+        overflow: hidden;
+        page-break-after: always;
+        break-after: page;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        position: relative;
+        display: block;
+    }
+
+    html.app-print-calendar-root,
+    body.app-print-calendar-doc {
+        width: 297mm;
+        min-width: 297mm;
+        margin: 0;
+        padding: 0;
+    }
+
+    body.app-print-calendar-doc .app-print-document--calendar .calendar-grid {
+        width: 100%;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+
+    body.app-print-calendar-doc .app-print-document--calendar .month-calendar,
+    body.app-print-calendar-doc .app-print-document--calendar .calendar-grid {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    body.app-print-calendar-doc .app-print-document--calendar .calendar-day {
+        min-height: 6mm !important;
+        height: auto;
+        overflow: hidden;
+        padding: 1px !important;
+    }
+
+    body.app-print-calendar-doc .app-print-document--calendar .calendar-day-header {
+        padding: 2px 1px !important;
+        font-size: 5.5pt !important;
+    }
+
+    body.app-print-calendar-doc .app-print-document--calendar .day-number {
+        font-size: 6pt !important;
+        padding: 0 2px !important;
+        line-height: 1.1;
+    }
+
+    body.app-print-calendar-doc .app-print-document--calendar .holiday-name {
+        font-size: 5.5pt !important;
+        padding: 0 2px 1px !important;
+        line-height: 1.1;
+    }
+
+    body.app-print-calendar-doc .app-print-document--calendar .calendar-event-chips {
+        gap: 0 !important;
+        padding: 0 1px;
+    }
+
+    body.app-print-calendar-doc .app-print-document--calendar .day-events {
+        max-height: 16mm;
+        overflow: hidden;
+        gap: 0 !important;
+        padding: 0 1px !important;
+    }
+
+    body.app-print-calendar-doc .app-print-document--calendar .event-bar {
+        font-size: 5.5pt;
+        padding: 0 2px;
+        line-height: 1.05;
+        gap: 0;
+        border-radius: 2px;
+    }
+
+    body.app-print-calendar-doc .app-print-document--calendar .event-bar .event-book {
+        font-size: 5pt;
+        line-height: 1.05;
+    }
+
+    body.app-print-calendar-doc .app-print-document--calendar .calendar-event-chip {
+        font-size: 5pt;
+        padding: 0 2px;
+        line-height: 1.05;
+        border-radius: 2px;
+    }
+
+    body.app-print-calendar-doc .app-print-document--calendar .month-header {
+        padding: 3mm 4mm !important;
+    }
+
+    body.app-print-calendar-doc .app-print-document--calendar .month-header h2 {
+        font-size: 11pt !important;
+        line-height: 1.15;
+    }
+
+    .app-print-document--calendar .calendar-print-sheet:last-child {
+        page-break-after: auto;
+        break-after: auto;
+    }
+
+    .app-print-document--calendar .calendar-print-fit-wrap {
+        overflow: hidden;
+        margin: 0 auto;
+    }
+
+    .app-print-document--calendar .calendar-print-fit-wrap > .month-calendar {
+        display: flex;
+        flex-direction: column;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100%;
+        box-sizing: border-box;
+    }
+
+    .app-print-document--calendar .calendar-print-fit-wrap .calendar-grid {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+    }
+
+    .app-print-document--calendar .month-calendar {
+        box-shadow: none;
+        border: 1px solid #000;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        width: auto;
+        max-width: none;
+    }
+
+    .app-print-document--summary .print-summary {
+        display: block !important;
+        page-break-before: avoid !important;
+        padding: 0 !important;
+    }
+
+    .app-print-document--summary .summary-section.summary-syllabus-tables .syllabus-a4-sheet:first-child {
+        page-break-before: avoid !important;
+        break-before: avoid !important;
+    }
+
+    body:not(.hide-summary-print) .app-print-document .print-summary {
+        display: block !important;
+    }
+
+    body.hide-summary-print .app-print-document .print-summary {
+        display: none !important;
+    }
+
+    body.hide-calendar-print .app-print-document .calendar-container {
+        display: none !important;
+    }
     
     .calendar-container {
         gap: 16px;
     }
     
+    body:has(#panel-calendar:not([hidden])) {
+        scroll-snap-type: none;
+    }
+
     .month-calendar {
+        min-height: 0;
+        scroll-snap-align: none;
+        scroll-margin-top: 0;
         box-shadow: none;
         border: 1px solid #000;
         page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    #calendarContainer .month-calendar .calendar-grid {
+        flex: none;
+        grid-template-rows: none;
+    }
+
+    .app-print-document--calendar .month-calendar {
+        page-break-after: auto;
+        break-after: auto;
     }
     
     .month-header {
+        position: static;
+        top: auto;
+        z-index: auto;
+        box-shadow: none;
         background: var(--primary) !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
     
-    .calendar-day {
+    body:not(.app-print-calendar-doc) .calendar-day {
         min-height: 70px;
+        border-color: #e2e8f0 !important;
+    }
+
+    body.app-print-calendar-doc .calendar-day {
+        border-color: #e2e8f0 !important;
+    }
+
+    .calendar-day-header {
+        background: #f1f5f9 !important;
+        color: #64748b !important;
+        border-color: #e2e8f0 !important;
     }
     
+    .event-bar,
+    .calendar-event-chip {
+        /* Keep user class/event colors from inline styles */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
     .event-bar {
         font-size: 7pt;
         padding: 2px 4px;
@@ -1799,7 +2382,6 @@ form {
     
     /* Hide sections based on print options */
     .print-summary.hide-classes #classSummaryTable,
-    .print-summary.hide-holidays #holidaySummaryTable,
     .print-summary.hide-events #eventSummaryTable,
     .print-summary.hide-schedule #lessonScheduleSummary,
     .print-summary.hide-compression #compressionNotes,
@@ -1808,7 +2390,6 @@ form {
     }
     
     .print-summary.hide-classes .summary-section:has(#classSummaryTable),
-    .print-summary.hide-holidays .summary-section:has(#holidaySummaryTable),
     .print-summary.hide-events .summary-section.summary-events,
     .print-summary.hide-schedule .summary-section:has(#lessonScheduleSummary),
     .print-summary.hide-compression .summary-section:has(#compressionNotes),
@@ -1832,6 +2413,7 @@ form {
         page: syllabus-a4;
         width: 210mm;
         height: 297mm;
+        max-height: 297mm;
         box-sizing: border-box;
         padding: 15mm;
         page-break-after: always;
@@ -1839,8 +2421,16 @@ form {
         page-break-inside: avoid;
         break-inside: avoid;
         margin: 0 auto;
-        overflow: visible;
+        overflow: hidden;
         background: #fff;
+        position: relative;
+        display: block;
+        clear: both;
+    }
+
+    .app-print-document--summary #syllabusTablesSummary .syllabus-a4-sheet {
+        page: auto;
+        overflow: hidden !important;
     }
 
     #syllabusTablesSummary .syllabus-a4-sheet:last-child {
@@ -1854,7 +2444,7 @@ form {
         max-height: 267mm;
         min-height: 0;
         padding-bottom: 6mm;
-        overflow: visible;
+        overflow: hidden;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
@@ -2010,6 +2600,11 @@ form {
         page-break-before: always;
         break-before: page;
     }
+
+    .app-print-document--summary .summary-section.summary-syllabus-tables .syllabus-a4-sheet:first-child {
+        page-break-before: avoid !important;
+        break-before: avoid !important;
+    }
 }
 
 /* Hide calendar on print if option unchecked */
@@ -2018,17 +2613,16 @@ body.hide-calendar-print .calendar-container {
 }
 
 /* Off-screen layout pass so syllabus scaling uses real dimensions before print */
-.print-summary.syllabus-print-measure {
-    display: block !important;
-    visibility: hidden;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 210mm;
-    max-width: 210mm;
-    pointer-events: none;
-    z-index: -1;
-    overflow: visible;
+#syllabusTablesSummary.syllabus-print-measure {
+    position: absolute !important;
+    left: -99999px !important;
+    top: 0 !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+    overflow: visible !important;
 }
 
 body.hide-summary-print .print-summary {
@@ -2343,7 +2937,11 @@ input.input-readonly {
     }
     
     .calendar-day {
-        min-height: 80px;
+        min-height: 0;
+    }
+
+    #calendarContainer .month-calendar {
+        min-height: var(--calendar-month-view-height);
     }
 
     .calendar-day-header {
@@ -2363,9 +2961,9 @@ input.input-readonly {
     padding: 0.5rem 1rem;
     border-radius: 8px;
     font-size: 0.9rem;
-    background: #ecfdf5;
-    color: #065f46;
-    border: 1px solid #a7f3d0;
+    background: var(--status-success-bg);
+    color: var(--status-success-color);
+    border: 1px solid var(--status-success-border);
 }
 
 .app-status.app-status-visible {
@@ -2373,9 +2971,9 @@ input.input-readonly {
 }
 
 .app-status.app-status-error {
-    background: #fef2f2;
-    color: #991b1b;
-    border-color: #fecaca;
+    background: var(--status-error-bg);
+    color: var(--status-error-color);
+    border-color: var(--status-error-border);
 }
 
 /* ============================================
@@ -2393,9 +2991,34 @@ input.input-readonly {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px;
+    gap: 0;
     flex-shrink: 0;
     margin-left: auto;
+    padding: 4px 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+}
+
+.app-header-tool-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 8px;
+}
+
+.app-header-tool-group + .app-header-tool-group {
+    border-left: 1px solid var(--border-color);
+}
+
+.app-header-tool-group--print {
+    padding-left: 6px;
+}
+
+.app-header-tool-group--locale {
+    padding-right: 6px;
 }
 
 @media (max-width: 720px) {
@@ -2408,7 +3031,23 @@ input.input-readonly {
         justify-content: flex-end;
         margin-left: 0;
         padding-top: 4px;
+        border-top: none;
+        border-radius: 10px;
+    }
+
+    .app-header-tool-group {
+        padding: 4px 6px;
+    }
+
+    .app-header-tool-group + .app-header-tool-group {
+        border-left: none;
         border-top: 1px solid var(--border-color);
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .app-header-tool-group--print {
+        border-top: none;
     }
 }
 
@@ -2443,6 +3082,24 @@ input.input-readonly {
 .app-tab-btn.is-active {
     background: var(--primary);
     color: #fff;
+}
+
+/* Print & data tab: navigation to settings panel, not the header Print action */
+.app-tab-btn--print-data:not(.is-active) {
+    color: var(--tab-print-inactive-color);
+    background: var(--tab-print-inactive-bg);
+    box-shadow: inset 0 0 0 1px var(--tab-print-inactive-border);
+}
+
+.app-tab-btn--print-data:not(.is-active):hover {
+    background: var(--tab-print-hover-bg);
+    color: var(--tab-print-inactive-color);
+}
+
+.app-tab-btn--print-data.is-active {
+    background: var(--tab-print-active-bg);
+    color: #fff;
+    box-shadow: none;
 }
 
 .app-main {
@@ -2576,7 +3233,8 @@ input.input-readonly {
 }
 
 .module-list-item.is-selected {
-    background: #eff6ff;
+    background: var(--bg-hover);
+    color: var(--primary);
     font-weight: 600;
 }
 
@@ -2589,6 +3247,28 @@ input.input-readonly {
 
 .module-editor-panel {
     min-width: 0;
+}
+
+/* Classes tab: keep Save / Open editor toolbar visible while scrolling the form */
+.class-editor-panel {
+    position: sticky;
+    top: var(--app-chrome-sticky-top);
+    align-self: start;
+    max-height: calc(100vh - var(--app-chrome-sticky-top) - 24px);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.class-editor-panel .class-form-mount {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.class-editor-panel .class-form-mount:empty {
+    flex: none;
 }
 
 .module-empty-hint {
@@ -2605,14 +3285,236 @@ input.input-readonly {
 }
 
 .class-editor-panel .class-form-mount:not(:empty) ~ .module-empty-hint,
-.event-editor-panel .event-form-mount:not(:empty) ~ .module-empty-hint {
+.event-editor-panel .event-form-mount:not(:empty) ~ .module-empty-hint,
+.syllabus-editor-panel .syllabus-editor-shell:not([hidden]) ~ .module-empty-hint {
     display: none;
 }
 
-#classFormMountTab #classForm,
-#holidayFormMountTab .event-editor-header,
-#holidayFormMountTab #holidayForm {
+/* Syllabus tab */
+.syllabus-list-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.syllabus-list-segments {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.syllabus-segment-btn {
+    flex: 1;
+    font-family: var(--font-main);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    padding: 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.syllabus-segment-btn.is-active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+.syllabus-list-section[hidden] {
+    display: none;
+}
+
+.syllabus-template-toolbar {
+    margin-bottom: 6px;
+}
+
+.syllabus-template-toolbar .btn-block {
+    width: 100%;
+}
+
+.syllabus-editor-panel {
+    position: sticky;
+    top: var(--app-chrome-sticky-top);
+    align-self: start;
+    max-height: calc(100vh - var(--app-chrome-sticky-top) - 24px);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.syllabus-editor-shell {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.syllabus-editor-header {
+    flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-card);
+}
+
+.syllabus-editor-title {
+    margin: 0;
+    font-size: 1.125rem;
+}
+
+.syllabus-editor-meta {
+    margin: 4px 0 0;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.syllabus-mode-banner {
+    margin: 6px 0 0;
+}
+
+.syllabus-schedule-chip {
+    margin: 4px 0 0;
+}
+
+.syllabus-editor-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.syllabus-apply-select {
+    font-family: var(--font-main);
+    font-size: 0.8125rem;
+    max-width: 200px;
+}
+
+.syllabus-layout.module-split-layout {
+    grid-template-columns: minmax(168px, 220px) minmax(0, 1fr);
+    gap: 20px;
+    align-items: stretch;
+    min-height: calc(100vh - var(--app-chrome-sticky-top) - 48px);
+}
+
+.syllabus-layout .module-list-panel {
+    max-height: calc(100vh - var(--app-chrome-sticky-top) - 32px);
+}
+
+.syllabus-editor-panel {
+    max-height: none;
+    min-height: calc(100vh - var(--app-chrome-sticky-top) - 32px);
+}
+
+.syllabus-editor-shell {
+    min-height: calc(100vh - var(--app-chrome-sticky-top) - 48px);
+}
+
+.syllabus-form-mount {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 20px 24px 28px;
+    font-size: 1rem;
+}
+
+.syllabus-editor-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+.syllabus-editor-block {
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.syllabus-editor-block:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.syllabus-block-title {
+    margin: 0 0 6px;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.syllabus-general-notes-input {
     display: block;
+    width: 100%;
+    min-height: 7rem;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.55;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    resize: vertical;
+    background: var(--input-bg);
+    color: var(--text-primary);
+}
+
+.syllabus-editor-block .homework-import-paste {
+    width: 100%;
+    min-height: 10rem;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    resize: vertical;
+}
+
+.syllabus-editor-block .homework-import-preview {
+    max-height: 240px;
+    font-size: 0.875rem;
+    padding: 12px;
+}
+
+.syllabus-editor-block .section-hint {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.syllabus-general-notes-print {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    white-space: pre-wrap;
+    color: var(--text-primary);
+}
+
+#syllabusTablesSummary .syllabus-general-notes-print {
+    margin-bottom: 10px;
+}
+
+.class-syllabus-summary {
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+    margin-top: 8px;
 }
 
 .class-form-mount .class-modal-content,
@@ -2620,21 +3522,405 @@ input.input-readonly {
     border-radius: var(--border-radius);
 }
 
-#classFormMountTab .class-modal-header {
+/* Events tab: sticky toolbar + scrollable form (matches class editor) */
+.event-editor-panel {
     position: sticky;
-    top: 0;
-    z-index: 2;
-    background: var(--bg-card);
+    top: var(--app-chrome-sticky-top);
+    align-self: start;
+    max-height: calc(100vh - var(--app-chrome-sticky-top) - 24px);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
-#classFormMountTab .class-modal-body {
-    max-height: none;
+.event-editor-panel .event-form-mount {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.event-editor-panel .event-form-mount:empty {
+    flex: none;
+    background: transparent;
+    border: none;
+}
+
+.event-editor-panel #holidayFormMountTab .event-editor-header {
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    margin: 0;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.event-editor-panel #holidayFormMountTab .event-editor-header h2 {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.event-editor-panel #holidayFormMountTab .event-editor-header-actions .modal-close {
+    display: none;
+}
+
+.event-editor-panel #holidayFormMountTab #holidayForm {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.class-editor-panel #classFormMountTab #classForm {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.class-editor-panel #classFormMountTab .class-modal-header {
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    margin: 0;
+    padding: 12px 16px;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.class-editor-panel #classFormMountTab .class-modal-header h2 {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.class-editor-panel #classFormMountTab .class-modal-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.class-editor-panel #classFormMountTab .class-modal-header-actions .btn-small {
+    white-space: nowrap;
+}
+
+.class-editor-panel #classFormMountTab .class-modal-header .modal-close {
+    display: none;
+}
+
+.class-editor-panel #classFormMountTab .class-modal-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .print-data-layout {
     display: grid;
-    gap: 24px;
-    max-width: 560px;
+    grid-template-columns: minmax(260px, 1fr) minmax(300px, 1.15fr);
+    gap: 24px 32px;
+    width: 100%;
+    max-width: 100%;
+    align-items: start;
+}
+
+@media screen and (min-width: 1280px) {
+    .print-data-layout {
+        grid-template-columns: minmax(280px, 1fr) minmax(300px, 1fr) minmax(300px, 1fr);
+    }
+
+    .print-data-section:first-child {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+    }
+
+    .print-books-section {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .print-syllabus-presets-section {
+        grid-column: 3;
+        grid-row: 1;
+    }
+
+    .print-data-actions-section {
+        grid-column: 2 / -1;
+        grid-row: 2;
+    }
+}
+
+.print-data-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 20px 22px 22px;
+    box-shadow: var(--shadow-md);
+}
+
+.print-data-section .module-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.print-data-section .module-section-title::before {
+    content: '';
+    width: 4px;
+    height: 1.15em;
+    border-radius: 4px;
+    flex-shrink: 0;
+    background: var(--section-accent, var(--primary));
+}
+
+.print-data-section--options {
+    --section-accent: var(--print-section-options-accent);
+    background: linear-gradient(180deg, var(--print-section-options-tint) 0%, var(--bg-card) 72px);
+}
+
+.print-data-section--books {
+    --section-accent: var(--print-section-books-accent);
+    background: linear-gradient(180deg, var(--print-section-books-tint) 0%, var(--bg-card) 88px);
+}
+
+.print-data-section--lesson-plans {
+    --section-accent: var(--print-section-lessons-accent);
+    background: linear-gradient(180deg, var(--print-section-lessons-tint) 0%, var(--bg-card) 96px);
+}
+
+.print-data-section--data {
+    --section-accent: var(--print-section-data-accent);
+    background: linear-gradient(180deg, var(--print-section-data-tint) 0%, var(--bg-card) 64px);
+}
+
+.print-data-section:first-child {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.print-books-section {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.print-syllabus-presets-section,
+.print-data-actions-section {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 860px) {
+    .print-data-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .print-data-section:first-child,
+    .print-books-section,
+    .print-syllabus-presets-section,
+    .print-data-actions-section {
+        grid-column: 1;
+        grid-row: auto;
+    }
+}
+
+.print-books-stats {
+    margin: 0 0 10px;
+}
+
+.print-books-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 12px;
+    max-height: min(70vh, 560px);
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.print-books-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 8px;
+    background: var(--surface-elevated, #f8fafc);
+}
+
+.print-books-item-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+}
+
+.print-books-item-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.print-books-item-meta {
+    margin: 0;
+    font-size: 0.82rem;
+}
+
+.print-books-edited-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--badge-warn-color);
+    background: var(--badge-warn-bg);
+    padding: 2px 8px;
+    border-radius: 999px;
+    width: fit-content;
+}
+
+.print-books-item .btn {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+#booksEditorModal .modal-content {
+    max-width: min(960px, 96vw);
+    max-height: 90vh;
+}
+
+.books-editor-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: calc(90vh - 80px);
+    overflow: hidden;
+}
+
+.books-editor-table-wrap {
+    overflow: auto;
+    flex: 1;
+    min-height: 200px;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 8px;
+}
+
+.books-editor-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+}
+
+.books-editor-table th,
+.books-editor-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+    vertical-align: top;
+}
+
+.books-editor-table th {
+    background: var(--surface-elevated, #f1f5f9);
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.books-col-num {
+    width: 2.5rem;
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-muted, #64748b);
+}
+
+.books-ed-title {
+    width: 100%;
+    min-width: 10rem;
+    font: inherit;
+    padding: 6px 8px;
+    border: 1px solid var(--border-color, #cbd5e1);
+    border-radius: 6px;
+}
+
+.books-ed-detail {
+    width: 100%;
+    min-width: 16rem;
+    font: inherit;
+    padding: 6px 8px;
+    border: 1px solid var(--border-color, #cbd5e1);
+    border-radius: 6px;
+    resize: vertical;
+}
+
+.books-editor-meta p {
+    margin: 0 0 4px;
+}
+
+.books-editor-custom-badge {
+    color: #b45309;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.books-editor-actions {
+    flex-shrink: 0;
+}
+
+.print-syllabus-stats {
+    margin: 0 0 10px;
+}
+
+.print-syllabus-template-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.print-syllabus-template-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 8px;
+    background: var(--surface-elevated, #f8fafc);
+}
+
+.print-syllabus-template-item span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.print-syllabus-template-item .btn {
+    flex-shrink: 0;
 }
 
 .module-section-title {
@@ -2651,6 +3937,43 @@ input.input-readonly {
 
 .print-options-form {
     padding: 0;
+}
+
+.print-form-section {
+    margin: 0 0 1.25rem;
+    padding: 0 0 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.print-form-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.print-form-section-title {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.print-form-section-actions {
+    margin-top: 0.75rem;
+}
+
+.btn-header-print-secondary {
+    border-color: var(--btn-print-border);
+    color: var(--btn-print-color);
+}
+
+.btn-header-print-secondary:hover {
+    background: var(--btn-print-hover-bg);
+    color: var(--btn-print-color);
+}
+
+.print-form-mount {
+    padding: 0 20px 20px;
 }
 
 /* Calendar quick-edit pop-outs */
@@ -2715,5 +4038,531 @@ input.input-readonly {
         width: 100%;
         max-height: calc(100vh - 16px);
     }
+}
+
+/* Homework tab (copy for external websites) */
+.homework-tab-toolbar {
+    margin-bottom: 8px;
+}
+
+.homework-ref-date-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.homework-ref-date-input {
+    font-family: var(--font-main);
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.homework-ref-date-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.homework-sidebar-panel {
+    gap: 6px;
+    min-height: 0;
+}
+
+.homework-sidebar-panel .homework-ref-mini-calendar,
+.homework-sidebar-panel .homework-update-copy-btn,
+.homework-sidebar-panel .module-list-search {
+    flex-shrink: 0;
+}
+
+.homework-sidebar-panel .module-list {
+    flex: 1 1 auto;
+    min-height: 120px;
+    overflow-y: auto;
+}
+
+.homework-ref-mini-calendar {
+    width: 100%;
+    flex-shrink: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    overflow: visible;
+}
+
+.homework-update-copy-btn {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.3;
+    padding: 6px 8px;
+}
+
+.homework-mini-cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+}
+
+.homework-mini-cal-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: center;
+    flex: 1;
+}
+
+.homework-mini-cal-nav-btn {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    color: inherit;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.homework-mini-cal-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.homework-mini-cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.homework-mini-cal-weekday {
+    padding: 4px 2px;
+    text-align: center;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    background: var(--bg-hover);
+}
+
+.homework-mini-cal-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: 30px;
+    gap: 1px;
+    background: var(--border-color);
+    padding: 0;
+}
+
+.homework-mini-cal-day {
+    min-height: 0;
+    padding: 0;
+    border: none;
+    background: var(--bg-card);
+    font-family: var(--font-main);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease;
+}
+
+.homework-mini-cal-day:hover:not(:disabled) {
+    background: var(--bg-hover);
+}
+
+.homework-mini-cal-day.other-month {
+    color: var(--text-muted);
+    background: var(--bg-main);
+    cursor: default;
+}
+
+.homework-mini-cal-day.is-today:not(.is-selected) {
+    box-shadow: inset 0 0 0 2px var(--primary, #2563eb);
+}
+
+.homework-mini-cal-day.is-selected {
+    background: var(--primary, #2563eb);
+    color: #fff;
+    font-weight: 700;
+}
+
+.homework-mini-cal-day.is-selected:hover {
+    background: var(--primary-dark, #1d4ed8);
+}
+
+.homework-editor-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.homework-class-header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+}
+
+.homework-class-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.homework-class-meta {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.homework-external-banner {
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: var(--border-radius);
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+    font-size: 0.9rem;
+}
+
+.homework-due-block {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 16px;
+    padding: 12px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.homework-due-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.homework-due-value {
+    font-size: 1.1rem;
+    color: var(--primary-dark);
+}
+
+.homework-target-meta {
+    flex: 1 1 100%;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.homework-due-skips {
+    flex: 1 1 100%;
+    margin: 4px 0 0;
+    padding: 0;
+}
+
+.homework-due-skips-heading {
+    margin: 0 0 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.homework-due-skips-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+
+.homework-due-skips-list li {
+    margin: 2px 0;
+}
+
+.homework-copy-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.homework-copy-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.homework-copy-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.homework-copy-textarea {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.45;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: var(--bg-card);
+    resize: vertical;
+    min-height: 120px;
+}
+
+.homework-copy-textarea:focus {
+    outline: 2px solid var(--primary, #2563eb);
+    outline-offset: 1px;
+    border-color: var(--primary, #2563eb);
+}
+
+.homework-copy-textarea:disabled {
+    background: #f1f5f9;
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.homework-source-hint {
+    margin: 4px 0 0;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.homework-editable-hint {
+    margin-bottom: 12px;
+}
+
+.homework-copy-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.homework-tab-message {
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+    font-size: 0.9rem;
+}
+
+/* ============================================
+   Dark theme
+   ============================================ */
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    --primary: #60a5fa;
+    --primary-dark: #93c5fd;
+    --secondary: #94a3b8;
+
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --bg-hover: #334155;
+    --surface-elevated: #273549;
+    --input-bg: #0f172a;
+
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+
+    --border-color: #334155;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.45);
+
+    --holiday-bg: #422006;
+    --holiday-border: #d97706;
+
+    --top-bar-bg: rgba(15, 23, 42, 0.94);
+    --top-bar-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+
+    --btn-print-bg: #1e3a5f;
+    --btn-print-border: #3b82f6;
+    --btn-print-color: #bfdbfe;
+    --btn-print-hover-bg: #1e40af;
+    --btn-lang-bg: #3b0764;
+    --btn-lang-border: #7c3aed;
+    --btn-lang-color: #e9d5ff;
+    --btn-lang-hover-bg: #4c1d95;
+    --btn-theme-bg: #334155;
+    --btn-theme-border: #475569;
+    --btn-theme-color: #e2e8f0;
+    --btn-theme-hover-bg: #475569;
+
+    --print-section-options-accent: #60a5fa;
+    --print-section-options-tint: #172554;
+    --print-section-books-accent: #4ade80;
+    --print-section-books-tint: #14532d;
+    --print-section-lessons-accent: #a78bfa;
+    --print-section-lessons-tint: #3b0764;
+    --print-section-data-accent: #f87171;
+    --print-section-data-tint: #450a0a;
+
+    --tab-print-inactive-bg: #134e4a;
+    --tab-print-inactive-color: #5eead4;
+    --tab-print-inactive-border: #0f766e;
+    --tab-print-hover-bg: #115e59;
+    --tab-print-active-bg: #14b8a6;
+
+    --status-success-bg: #052e16;
+    --status-success-color: #86efac;
+    --status-success-border: #166534;
+    --status-error-bg: #450a0a;
+    --status-error-color: #fca5a5;
+    --status-error-border: #991b1b;
+
+    --badge-warn-bg: #422006;
+    --badge-warn-color: #fcd34d;
+}
+
+[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]),
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .calendar-container {
+    background: transparent;
+}
+
+[data-theme="dark"] .calendar-day:not(.holiday) {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .calendar-day.holiday {
+    /* Background from user event color (inline) — do not override */
+    color: inherit;
+}
+
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .lesson-filter-popover-panel,
+[data-theme="dark"] .how-to-body {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .calendar-day-header {
+    background: var(--surface-elevated);
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .calendar-day.other-month:not(.holiday) {
+    background: var(--bg-main);
+}
+
+[data-theme="dark"] .calendar-day.other-month:not(.holiday) .day-number {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .calendar-day.today:not(.holiday) {
+    box-shadow: inset 0 0 0 2px var(--primary);
+}
+
+[data-theme="dark"] .calendar-day.today.holiday {
+    box-shadow: inset 0 0 0 2px rgba(248, 250, 252, 0.85);
+}
+
+[data-theme="dark"] .calendar-day.has-eval-period:not(.holiday) {
+    box-shadow: inset 0 0 0 2px rgba(167, 139, 250, 0.65);
+}
+
+[data-theme="dark"] .modal {
+    background: rgba(2, 6, 23, 0.72);
+}
+
+[data-theme="dark"] .homework-tab-message {
+    background: #422006;
+    border-color: #92400e;
+    color: #fcd34d;
+}
+
+[data-theme="dark"] .homework-external-banner {
+    background: #1e3a5f;
+    border-color: #2563eb;
+    color: #bfdbfe;
+}
+
+[data-theme="dark"] .homework-copy-textarea:disabled {
+    background: var(--surface-elevated);
+}
+
+[data-theme="dark"] .homework-due-banner {
+    background: #1e3a5f;
+    border-color: #2563eb;
+    color: #bfdbfe;
+}
+
+[data-theme="dark"] .print-syllabus-template-item,
+[data-theme="dark"] .print-books-item {
+    background: var(--surface-elevated);
+}
+
+[data-theme="dark"] .syllabus-editor-block,
+[data-theme="dark"] .module-list-panel,
+[data-theme="dark"] .module-editor-panel {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .calendar-options-details,
+[data-theme="dark"] .calendar-visibility-bar {
+    background: var(--bg-card);
+}
+
+[data-theme="dark"] .visibility-chip {
+    background: var(--surface-elevated);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .books-editor-table th {
+    background: var(--surface-elevated);
+}
+
+[data-theme="dark"] .syllabus-table th,
+[data-theme="dark"] .syllabus-table td {
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .syllabus-editor-table .syllabus-row-event.syllabus-row-evaluation_period td,
+[data-theme="dark"] .syllabus-editor-table .syllabus-row-event td {
+    background: #3b0764;
+}
+
+[data-theme="dark"] .syllabus-editor-table .syllabus-row-event.syllabus-row-evaluation_deadline td {
+    background: #450a0a;
+}
+
+[data-theme="dark"] .homework-import-panel {
+    background: var(--surface-elevated);
+}
+
+[data-theme="dark"] .summary-table th {
+    background: var(--surface-elevated);
+}
+
+/* On-screen print summary preview: keep syllabus sheets paper-white for accurate print preview */
+[data-theme="dark"] .print-summary #syllabusTablesSummary .syllabus-a4-sheet,
+[data-theme="dark"] .print-summary #syllabusTablesSummary .syllabus-a4-page {
+    background: #fff;
+    color: #111;
 }
 

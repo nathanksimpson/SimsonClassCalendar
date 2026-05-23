@@ -127,6 +127,12 @@
         if (patch.defaultTotalLessons != null) {
             merged.defaultTotalLessons = hooks.sanitizeTotalLessons(patch.defaultTotalLessons);
         }
+        if (patch.defaultSyllabusRowTemplates && Array.isArray(patch.defaultSyllabusRowTemplates)) {
+            merged.defaultSyllabusRowTemplates = deepClone(patch.defaultSyllabusRowTemplates);
+        }
+        if (global.CCPBooksEditor && global.CCPBooksEditor.applyBookTemplatesToPreset) {
+            global.CCPBooksEditor.applyBookTemplatesToPreset(merged, appData);
+        }
         return merged;
     }
 
@@ -216,6 +222,13 @@
         }
         if (patch.usesUnitPairLabels !== undefined) {
             next.usesUnitPairLabels = !!patch.usesUnitPairLabels;
+        }
+        if (patch.defaultSyllabusRowTemplates !== undefined) {
+            if (patch.defaultSyllabusRowTemplates == null) {
+                delete next.defaultSyllabusRowTemplates;
+            } else {
+                next.defaultSyllabusRowTemplates = deepClone(patch.defaultSyllabusRowTemplates);
+            }
         }
         if (Object.keys(next).length === 0) {
             delete overrides[typeId];

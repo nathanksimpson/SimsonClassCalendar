@@ -73,7 +73,7 @@
 2) 워크북
 3) 복습`;
 
-    /** Hand in Hand 1–3: shared SB pagination (26 SP); Red includes verified listening tracks. */
+    /** Hand in Hand 1–3: shared SB pagination (22 lessons); Red includes verified listening tracks. Holidays/extra days come from the calendar. */
     const HAND_IN_HAND_LISTENING_PATH =
         '[음원경로] : 통합자료실 → [반이름] → [교재이름] 교재파일 다운';
     const HAND_IN_HAND_PARENT_SIGN =
@@ -151,25 +151,7 @@
         return lines.join('\n');
     }
 
-    /** 26 sessions: substitute → 16 lessons → Children's Day → 6 lessons → 2 calendar rows. */
-    const HAND_IN_HAND_SCHEDULE = [
-        {
-            kind: 'special',
-            title: 'Substitute Holiday (3/2) — ONLY SB',
-            detail: 'Substitute Holiday — Student Book only (no worksheet).'
-        },
-        ...HAND_IN_HAND_LESSONS.slice(0, 16).map(lesson => ({ kind: 'lesson', lesson })),
-        {
-            kind: 'special',
-            title: "(5/1) Children's Day Party",
-            detail: "Children's Day Party — no regular SB lesson."
-        },
-        ...HAND_IN_HAND_LESSONS.slice(16).map(lesson => ({ kind: 'lesson', lesson })),
-        { kind: 'special', title: '(5/25) Substitute Holiday', detail: 'Substitute Holiday — adjust pacing as needed.' },
-        { kind: 'special', title: 'Extra Class', detail: 'Extra Class — review or catch-up.' }
-    ];
-
-    const HAND_IN_HAND_SESSION_COUNT = HAND_IN_HAND_SCHEDULE.length;
+    const HAND_IN_HAND_SESSION_COUNT = HAND_IN_HAND_LESSONS.length;
 
     const SESSION_KIND_LABEL = {
         speak: 'Speaking',
@@ -522,7 +504,26 @@ Homework: ${homework}`;
     const WRITE_NOW_SESSION_COUNT = 20;
 
     const WRITE_NOW_LISTENING_PATH_KO =
-        '[음원경로] 통합자료실 → [반이름] → [교재이름] 교재파일 다운';
+        '[음원경로] : 통합자료실 → [반이름] → [교재이름] 교재파일 다운';
+    const WRITE_NOW_LISTENING_SIGN =
+        'Listen 5x, Parents please sign on model writing page when completed.';
+    const WRITE_NOW_LISTENING_VIDEO_NOTE = 'See the video file for more details.';
+    const WRITE_NOW_PROJECT_READ_HW = 'Students can read project 3x for practice.';
+    const WRITE_NOW_PROJECT_PARENT_SIGN = '[ ] [ ] [ ] __________(parent\'s signature.';
+
+    function formatWriteNowPageRange(range) {
+        if (!range || range.length < 2) {
+            return '';
+        }
+        return `P.${range[0]}-${range[1]}`;
+    }
+
+    function formatWriteNowProjectPageRange(range) {
+        if (!range || range.length < 2) {
+            return '';
+        }
+        return `P. ${range[0]}-${range[1]}`;
+    }
 
     function buildWriteNowSessionSpecs() {
         const specs = [];
@@ -554,65 +555,78 @@ Homework: ${homework}`;
         return specs;
     }
 
-    function writeNowBookLabel(bookNum) {
-        return `Write Now ${bookNum}`;
-    }
-
     function writeNowPlanTitle(spec) {
-        const typeLabel = SESSION_KIND_LABEL[spec.kind] || spec.kind;
         if (spec.kind === 'project') {
-            return `Project ${spec.project} – ${typeLabel} (${formatPageRange(spec.sbRange)})`;
+            return `Project ${spec.project}`;
         }
         const part = spec.kind === 'speak' ? 'Part 1' : 'Part 2';
-        return `Unit ${spec.unit} ${part} – ${typeLabel} (${formatPageRange(spec.sbRange)})`;
+        return `Unit ${spec.unit} ${part}`;
     }
 
-    function writeNowPlanDetail(bookNum, spec) {
-        const book = writeNowBookLabel(bookNum);
-        const typeLabel = SESSION_KIND_LABEL[spec.kind] || spec.kind;
+    function writeNowProjectCoveredLine(spec) {
+        const pages = formatWriteNowProjectPageRange(spec.sbRange);
+        if (spec.project === 4) {
+            return `Project 4 SB ${pages}`;
+        }
+        return pages;
+    }
+
+    function writeNowPlanDetail(spec) {
         if (spec.kind === 'project') {
-            return `<${typeLabel} — ${book}, Project ${spec.project}>
-Covered in class: Student Book ${formatPageRangeDetail(spec.sbRange)}
-Homework: Read project 3x; parent sign project page`;
+            const sbEnd = spec.sbRange[1];
+            const parentLine = spec.project >= 2
+                ? `Parents can sign on the project page. SB ${sbEnd}`
+                : 'Parents can sign on the project page.';
+            return [
+                `Project ${spec.project}`,
+                'Covered in Class:',
+                writeNowProjectCoveredLine(spec),
+                'Homework:',
+                WRITE_NOW_PROJECT_READ_HW,
+                parentLine,
+                WRITE_NOW_PROJECT_PARENT_SIGN
+            ].join('\n');
         }
         const part = spec.kind === 'speak' ? 'Part 1' : 'Part 2';
+        const heading = `Unit ${spec.unit} ${part}`;
+        const coveredUnitLine = spec.kind === 'speak'
+            ? `Unit ${spec.unit}`
+            : heading;
         const lines = [
-            `<${typeLabel} — ${book}, Unit ${spec.unit} ${part}`,
-            `Covered in class: Student Book ${formatPageRangeDetail(spec.sbRange)}`,
-            `Homework: Workbook ${formatPageRangeDetail(spec.wbRange)}`
+            heading,
+            'Covered in Class:',
+            coveredUnitLine,
+            formatWriteNowPageRange(spec.sbRange),
+            'Homework:',
+            `Workbook: ${formatWriteNowPageRange(spec.wbRange)}`
         ];
         if (spec.kind === 'write' && spec.listening != null) {
             lines.push(
-                `Listening Track ${spec.listening} — Listen 5x; parent sign model writing page`,
+                `Listening Track ${spec.listening}`,
+                WRITE_NOW_LISTENING_SIGN,
                 WRITE_NOW_LISTENING_PATH_KO
             );
+            if (spec.listening <= 2) {
+                lines.push(WRITE_NOW_LISTENING_VIDEO_NOTE);
+            }
         }
         return lines.join('\n');
     }
 
-    function buildWriteNowTemplates(bookNum) {
+    function buildWriteNowTemplates() {
         return buildWriteNowSessionSpecs().map((spec, i) => ({
             sessionNumber: i + 1,
             planTitle: writeNowPlanTitle(spec),
-            planDetail: writeNowPlanDetail(bookNum, spec)
+            planDetail: writeNowPlanDetail(spec)
         }));
     }
 
     function buildHandInHandTemplates(level) {
-        return HAND_IN_HAND_SCHEDULE.map((row, i) => {
-            if (row.kind === 'special') {
-                return {
-                    sessionNumber: i + 1,
-                    planTitle: row.title,
-                    planDetail: row.detail
-                };
-            }
-            return {
-                sessionNumber: i + 1,
-                planTitle: handInHandLessonTitle(row.lesson),
-                planDetail: handInHandPlanDetail(row.lesson, level)
-            };
-        });
+        return HAND_IN_HAND_LESSONS.map((lesson, i) => ({
+            sessionNumber: i + 1,
+            planTitle: handInHandLessonTitle(lesson),
+            planDetail: handInHandPlanDetail(lesson, level)
+        }));
     }
 
     function sessionsFromTitles(titles, planDetail) {

@@ -1,15 +1,6 @@
 # Hand in Hand — pagination and homework (books 1–3)
 
-Presets: `preset-hand-in-hand-red` (book 1), `-orange` (book 2), `-yellow` (book 3). **26 sessions** total.
-
-## Calendar specials (not in the 22-lesson table)
-
-| Session | Title |
-|---------|--------|
-| 1 | Substitute Holiday (3/2) — ONLY SB |
-| 18 | (5/1) Children's Day Party |
-| 25 | (5/25) Substitute Holiday |
-| 26 | Extra Class |
+Presets: `preset-hand-in-hand-red` (book 1), `-orange` (book 2), `-yellow` (book 3). **22 lessons** in the book. Holidays, parties, and extra class days are added on the **calendar** and appear in each class syllabus when scheduled.
 
 ## SB lessons (shared Red / Orange / Yellow)
 

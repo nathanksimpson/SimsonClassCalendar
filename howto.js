@@ -2,19 +2,21 @@
 (function () {
     const GUIDE = {
         en: {
-            title: 'How to Use — Class Calendar Planner',
-            intro: 'This app builds a term calendar for your classes: lesson days, holidays, deadlines, syllabus tables, and printouts. Everything is organized in four tabs at the top. Use this guide in order when you are new, or jump to a section you need.',
+            title: 'Help — Class Calendar Planner',
+            intro: 'This app builds a term calendar for your classes: lesson days, holidays, deadlines, syllabus tables, and printouts. Everything is organized in tabs at the top. Use this guide in order when you are new, or jump to a section you need.',
             sections: [
                 {
-                    heading: '1. The four tabs',
-                    where: 'Top header — Calendar | Classes | Events | Print & data',
+                    heading: '1. The tabs',
+                    where: 'Top header — Calendar | Classes | Syllabus | Events | Homework | Print & data',
                     steps: [
                         'Calendar — view the month grid, set term dates, show/hide items, filter classes, and use quick add/edit pop-outs.',
-                        'Classes — search your class list and use the full class editor (syllabus, compression, colors, and more).',
+                        'Classes — schedule and settings: meeting days, term dates, compression, colors, books (no long syllabus table here).',
+                        'Syllabus — edit each class syllabus table, custom reusable syllabi (My syllabi), refresh from calendar, import homework paste, print.',
                         'Events — search holidays and deadlines and use the full event editor.',
+                        'Homework — copy previous-week and this-week homework from each class syllabus to paste into your separate Simson grading and homework assignment websites (not inside this app).',
                         'Print & data — print options, clear all data, and edit default class types.',
                         'The app remembers which tab you last used in this browser.',
-                        'Header (always visible): How to Use, Export, Import, and the language button (English ↔ Korean).'
+                        'Header (always visible): Help?, Export, Import, and the language button (English ↔ Korean).'
                     ]
                 },
                 {
@@ -106,20 +108,21 @@
                         'Click the language button to switch the whole app UI between English and Korean.',
                         'Your choice is saved in this browser.',
                         'Korean public holidays you imported show the matching language on screen and on printed/PDF output.',
-                        'If this How to Use window is open, it updates when you change language.'
+                        'If this Help window is open, it updates when you change language.'
                     ]
                 },
                 {
-                    heading: '10. Syllabus table (pages and homework)',
-                    where: 'Classes tab — open a class → Syllabus table (below curriculum units)',
+                    heading: '10. Syllabus tab (pages, homework, custom syllabi)',
+                    where: 'Syllabus tab — Classes list or My syllabi',
                     steps: [
-                        'Set your schedule (meeting days, dates, lessons) and Save Class first so the calendar is correct.',
-                        'Step ① — Click Refresh from calendar. This builds one row per lesson with date, week, class #, and lesson title. Do this before filling page content.',
-                        'Step ② — Add content using any of these (order can vary after refresh): Apply preset pages (from the class type PDF template), Fill pages from units (from syllabus units you entered above), or Import homework from paste (open the section, paste debate Day 1… blocks or RC Unit (1/2)… blocks, Preview match, then Apply to table).',
-                        'Edit the Pages / detail and Note columns directly in the table. Use Add note row for extra rows without a lesson.',
-                        'Click Save Class to store everything.',
-                        'Print syllabus for this class only (button in the class form), or use Print & data → Syllabus tables (per class) for all classes.',
-                        'Tip: Refresh again after you change meeting days or the term schedule; existing page text is kept when possible.'
+                        'In Classes tab, set meeting days, dates, and lessons, then Save Class.',
+                        'Open Syllabus tab → Classes → pick your class (or use Edit syllabus from Classes or Homework).',
+                        'Step ① — Refresh from calendar (after the class schedule is saved).',
+                        'Step ② — Apply preset pages, Fill pages from units, Import homework from paste, Start blank syllabus, or Apply custom syllabus from the dropdown.',
+                        'My syllabi — + New custom syllabus to build a reusable template; Save template; apply it to any class later.',
+                        'Add lesson row / Add note row for manual rows without a calendar date until you refresh.',
+                        'Click Save syllabus (class mode) or Save template (template mode).',
+                        'Homework tab copies text from the saved syllabus; use Edit syllabus there to jump back.'
                     ]
                 },
                 {
@@ -140,7 +143,9 @@
                         'Choose whether to print the calendar grid, the summary page, and which summary sections (class list, events, lesson schedule, compression notes, syllabus tables).',
                         'If a lesson filter is active, only filtered classes appear in class-related sections.',
                         'Under “On printed calendar, show:” pick which event types appear on the printed calendar (independent from the on-screen visibility bar on the Calendar tab).',
-                        'Click Print — your browser opens the print dialog. Choose Save as PDF to get a PDF file.',
+                        'Click Print — your browser opens a separate tab with only the print content (not the app screen). Choose Save as PDF in the print dialog.',
+                        'The calendar prints in landscape on its own tab. Summary sections and syllabi print in portrait (a second tab and print dialog if you selected both calendar and summary).',
+                        'Allow pop-ups for this site if the browser blocks the print tab.',
                         'Holiday names on print follow your current language setting (important for imported Korean public holidays).',
                         'For syllabi only: uncheck Print Calendar and all summary sections except Syllabus tables (per class).'
                     ]
@@ -165,19 +170,21 @@
             ]
         },
         ko: {
-            title: '사용 방법 — Class Calendar Planner',
-            intro: '이 앱은 학기 캘린더를 만듭니다. 수업일, 공휴일, 마감일, 강의 계획표, 인쇄까지 한곳에서 관리할 수 있습니다. 상단 네 개 탭으로 기능이 나뉩니다. 처음에는 아래 순서대로, 필요한 항목만 골라 읽어도 됩니다.',
+            title: '도움말 — Class Calendar Planner',
+            intro: '이 앱은 학기 캘린더를 만듭니다. 수업일, 공휴일, 마감일, 강의 계획표, 인쇄까지 한곳에서 관리할 수 있습니다. 상단 탭으로 기능이 나뉩니다. 처음에는 아래 순서대로, 필요한 항목만 골라 읽어도 됩니다.',
             sections: [
                 {
-                    heading: '1. 네 개 탭',
-                    where: '상단 헤더 — Calendar | Classes | Events | Print & data',
+                    heading: '1. 탭',
+                    where: '상단 헤더 — Calendar | Classes | Syllabus | Events | Homework | Print & data',
                     steps: [
                         'Calendar(캘린더) — 월별 격자, 학기 설정, 표시/숨김, 수업 필터, 빠른 추가·수정 팝업.',
-                        'Classes(수업) — 수업 목록 검색 및 전체 편집기(강의 계획표, 압축, 색상 등).',
+                        'Classes(수업) — 일정·설정(수업 요일, 학기, 압축, 색상 등).',
+                        'Syllabus(강의 계획표) — 수업별 표 편집, 사용자 강의 계획표(내 템플릿), 새로고침·붙여넣기·인쇄.',
                         'Events(이벤트) — 공휴일·마감일 목록 검색 및 전체 편집기.',
+                        'Homework(숙제) — 강의 계획표에서 지난주·이번주 숙제를 복사해, 이 앱 밖의 Simson 채점·숙제 배정 웹사이트에 붙여넣기.',
                         'Print & data(인쇄·데이터) — 인쇄 옵션, 전체 삭제, 기본 수업 유형 편집.',
                         '마지막으로 연 탭은 이 브라우저에 저장됩니다.',
-                        '헤더(항상 표시): How to Use(사용 방법), Export(보내기), Import(가져오기), 언어 버튼(영어 ↔ 한국어).'
+                        '헤더(항상 표시): 도움말?, Export(보내기), Import(가져오기), 언어 버튼(영어 ↔ 한국어).'
                     ]
                 },
                 {
@@ -273,16 +280,16 @@
                     ]
                 },
                 {
-                    heading: '10. 강의 계획표 (페이지·과제)',
-                    where: 'Classes 탭 — 수업 열기 → 강의 계획표 (단원 목록 아래)',
+                    heading: '10. Syllabus 탭 (페이지·과제·사용자 강의 계획표)',
+                    where: 'Syllabus 탭 — Classes 또는 My syllabi(내 강의 계획표)',
                     steps: [
-                        '일정(수업 요일, 날짜, 회차)을 맞춘 뒤 Save Class로 저장하세요.',
-                        '① 캘린더에서 새로고침 — 날짜, 주차, 회차, 수업 제목 행이 만들어집니다. 페이지 내용 전에 실행하세요.',
-                        '② 내용 추가(새로고침 후): 프리셋 페이지 적용, 단원에서 페이지 채우기, 또는 과제 붙여넣기 가져오기(Debate Day·RC Unit 블록 붙여넣기 → 매칭 미리보기 → 표에 적용).',
-                        'Pages / detail, Note 열을 직접 수정하세요. 메모 행 추가로 수업 없는 행을 넣을 수 있습니다.',
-                        'Save Class로 저장합니다.',
-                        '강의 계획표 인쇄(이 수업만) 또는 Print & data → 강의 계획표 (수업별).',
-                        '팁: 수업 요일·학기 일정을 바꾼 뒤 다시 새로고침하세요. 가능하면 기존 페이지 내용이 유지됩니다.'
+                        'Classes 탭에서 수업 요일·날짜를 맞춘 뒤 Save Class로 저장하세요.',
+                        'Syllabus 탭 → Classes → 수업 선택(또는 수업/숙제 화면의 강의 계획표 편집).',
+                        '① 캘린더에서 새로고침(수업 일정 저장 후).',
+                        '② 프리셋 페이지 적용, 단원에서 채우기, 과제 붙여넣기, 빈 강의 계획표로 시작, 또는 사용자 강의 계획표 적용.',
+                        '내 강의 계획표 — + 사용자 강의 계획표로 재사용 템플릿 만들기 → 템플릿 저장 → 다른 수업에 적용.',
+                        '수업 행 추가 / 메모 행 추가로 수동 편집. 수업 모드에서는 강의 계획표 저장, 템플릿 모드에서는 템플릿 저장.',
+                        'Homework 탭은 저장된 강의 계획표에서 복사합니다.'
                     ]
                 },
                 {
@@ -303,7 +310,9 @@
                         '캘린더, 요약 페이지, 요약 항목(수업 목록, 이벤트, 수업 일정, 압축 메모, 강의 계획표)을 선택하세요.',
                         '수업 필터가 켜져 있으면 수업 관련 항목에는 필터된 수업만 포함됩니다.',
                         '“인쇄 캘린더에 표시:”에서 인쇄물에 나올 이벤트 유형을 고릅니다 (Calendar 탭 화면 표시와 별개).',
-                        'Print 클릭 → 브라우저 인쇄 창에서 PDF로 저장.',
+                        'Print 클릭 → 앱 화면이 아닌 인쇄 전용 탭이 열립니다. 인쇄 창에서 PDF로 저장하세요.',
+                        '캘린더는 가로(landscape) 전용 탭에서 인쇄됩니다. 요약·강의 계획표는 세로(portrait) 탭에서 인쇄됩니다 (캘린더와 요약을 모두 선택하면 탭과 인쇄 창이 두 번 열립니다).',
+                        '인쇄 탭이 막히면 이 사이트의 팝업을 허용하세요.',
                         '인쇄 시 공휴일 이름은 현재 언어 설정을 따릅니다 (가져온 한국 공휴일에 중요).',
                         '강의 계획표만: Print Calendar와 다른 요약 항목을 해제하고 강의 계획표 (수업별)만 선택하세요.'
                     ]

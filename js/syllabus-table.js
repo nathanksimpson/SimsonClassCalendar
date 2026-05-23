@@ -158,14 +158,31 @@
         return `${m0} ${mon.getDate()}–${m1} ${fri.getDate()}`;
     }
 
+    /** 1-based curriculum index for preset pages / unit pairs (skips holidays). */
+    function getCurriculumLessonNumber(row) {
+        if (!row) {
+            return 0;
+        }
+        if (row.lessonNumber != null && row.lessonNumber > 0) {
+            return row.lessonNumber;
+        }
+        if (row.kind === 'lesson' || row.kind === 'overflow') {
+            return row.sessionNumber || 0;
+        }
+        return 0;
+    }
+
     function rowKey(row) {
         if (row.kind === 'note') {
             return `note:${row.id || row.planTitle || ''}`;
         }
         if (row.kind === 'overflow') {
-            return `overflow:${row.sessionNumber || 0}`;
+            return `overflow:${getCurriculumLessonNumber(row)}`;
         }
-        return `${row.kind}:${row.date || ''}:${row.sessionNumber || 0}`;
+        if (row.kind === 'lesson') {
+            return `lesson:${row.date || ''}:${getCurriculumLessonNumber(row)}`;
+        }
+        return `${row.kind}:${row.date || ''}`;
     }
 
     function newRowId() {
@@ -227,8 +244,17 @@
             const db = b.date instanceof Date ? b.date : parseLocal(b.date);
             return da - db;
         });
-        let sessionNumber = 0;
+        let lessonNumber = 0;
         const units = classData.syllabusUnits || [];
+        const rowTemplates = hooks && Array.isArray(hooks.rowTemplates) ? hooks.rowTemplates : [];
+        const templateIndexes = rowTemplates.length && hooks.templateIndexes
+            ? hooks.templateIndexes
+            : (rowTemplates.length && global.CCPSyllabusTemplates
+                ? global.CCPSyllabusTemplates.buildTemplateIndexes(rowTemplates)
+                : null);
+        const resolveRowTemplate = rowTemplates.length && global.CCPSyllabusTemplates
+            ? (row) => global.CCPSyllabusTemplates.resolveRowTemplate(templateIndexes, row)
+            : null;
         const useFullMonth = hooks && hooks.useFullMonthNames === true;
         const holidayDetail = (hooks && hooks.slotHolidayDetail) || 'No regular lesson — holiday / no class';
         const eventDetail = (hooks && hooks.slotEventDetail) || 'Special session — not a regular lesson';
@@ -250,14 +276,14 @@
             const shortDate = formatSyllabusShortDate(d);
 
             if (lesson.__syllabusExtraPeriod === true) {
-                sessionNumber += 1;
                 rows.push(applyRowColors({
                     id: newRowId(),
                     kind: 'extra',
                     date: dateStr,
                     monthKey,
                     weekLabel,
-                    sessionNumber,
+                    sessionNumber: 0,
+                    lessonNumber: 0,
                     planTitle: extraTitle,
                     planDetail: extraDetail,
                     note: extraNote,
@@ -268,7 +294,6 @@
 
             const forceHoliday = lesson.__syllabusHoliday === true;
             if (forceHoliday || (hooks && hooks.isHolidayForClass && hooks.isHolidayForClass(dateStr, classData))) {
-                sessionNumber += 1;
                 const hol = hooks.getHolidayForClass
                     ? hooks.getHolidayForClass(dateStr, classData)
                     : null;
@@ -280,7 +305,8 @@
                     date: dateStr,
                     monthKey,
                     weekLabel,
-                    sessionNumber,
+                    sessionNumber: 0,
+                    lessonNumber: 0,
                     planTitle: `${shortDate} ${holName}`.trim(),
                     planDetail: holidayDetail,
                     note: '',
@@ -289,9 +315,21 @@
                 return;
             }
 
-            sessionNumber += 1;
-            let planTitle = lesson.label || `Lesson ${sessionNumber}`;
-            let planDetail = planDetailFromUnits(sessionNumber, units, planTitle);
+            lessonNumber += 1;
+            let planTitle = lesson.label || `Lesson ${lessonNumber}`;
+            const rowForTemplate = { planTitle, lessonNumber, sessionNumber: lessonNumber };
+            let planDetail = planDetailFromUnits(lessonNumber, units, planTitle);
+            if (resolveRowTemplate) {
+                const tpl = resolveRowTemplate(rowForTemplate);
+                if (tpl) {
+                    if (tpl.planTitle) {
+                        planTitle = tpl.planTitle;
+                    }
+                    if (tpl.planDetail) {
+                        planDetail = tpl.planDetail;
+                    }
+                }
+            }
             let kind = 'lesson';
             let colors = null;
 
@@ -311,7 +349,8 @@
                 date: dateStr,
                 monthKey,
                 weekLabel,
-                sessionNumber,
+                sessionNumber: lessonNumber,
+                lessonNumber,
                 planTitle,
                 planDetail,
                 note: '',
@@ -342,6 +381,19 @@
             }
             if (item.__syllabusUnscheduled) {
                 const lessonNum = item.lessonNum || 0;
+                const overflowTitle = item.label || `Lesson ${lessonNum}`;
+                const overflowRow = {
+                    planTitle: overflowTitle,
+                    lessonNumber: lessonNum,
+                    sessionNumber: lessonNum
+                };
+                let overflowDetail = planDetailFromUnits(lessonNum, units, overflowTitle);
+                if (resolveRowTemplate) {
+                    const tpl = resolveRowTemplate(overflowRow);
+                    if (tpl && tpl.planDetail) {
+                        overflowDetail = tpl.planDetail;
+                    }
+                }
                 rows.push({
                     id: newRowId(),
                     kind: 'overflow',
@@ -349,12 +401,11 @@
                     monthKey: '',
                     weekLabel: '',
                     sessionNumber: lessonNum,
-                    planTitle: item.label || `Lesson ${lessonNum}`,
-                    planDetail: planDetailFromUnits(lessonNum, units, item.label || ''),
+                    lessonNumber: lessonNum,
+                    planTitle: overflowTitle,
+                    planDetail: overflowDetail,
                     note: overflowNote,
-                    source: 'generated',
-                    rowBg: '#f9fafb',
-                    rowColor: '#374151'
+                    source: 'generated'
                 });
             }
         });
@@ -404,7 +455,10 @@
                 planDetail: preserveText(prev.planDetail, gen.planDetail, keepEdits),
                 note: preserveText(prev.note, gen.note, keepEdits),
                 weekLabel: gen.weekLabel || prev.weekLabel,
-                source: keepEdits ? prev.source : 'generated'
+                source: keepEdits ? prev.source : 'generated',
+                rowBg: gen.rowBg || prev.rowBg || '',
+                rowColor: gen.rowColor || prev.rowColor || '',
+                eventType: gen.eventType || prev.eventType || ''
             };
         });
 
@@ -419,6 +473,9 @@
             monthKey: r.monthKey || (r.date ? r.date.slice(0, 7) : ''),
             weekLabel: r.weekLabel || (r.date ? getSchoolWeekLabel(r.date) : ''),
             sessionNumber: r.sessionNumber != null ? r.sessionNumber : 0,
+            lessonNumber: r.lessonNumber != null
+                ? r.lessonNumber
+                : (r.kind === 'lesson' || r.kind === 'overflow' ? (r.sessionNumber || 0) : 0),
             planTitle: r.planTitle || '',
             planDetail: r.planDetail || '',
             note: r.note || '',
@@ -570,9 +627,13 @@
         const merge = computeSyllabusCellMerges(normalized, useFullMonth);
 
         let headerBlock = '';
+        if (L.generalNotes) {
+            const notesHtml = escapeHtml(L.generalNotes).replace(/\n/g, '<br>');
+            headerBlock += `<div class="syllabus-general-notes-print">${notesHtml}</div>`;
+        }
         if (L.classTitle) {
             if (pdfLayout) {
-                headerBlock = `<h2 class="syllabus-pdf-title">${escapeHtml(L.classTitle)}</h2>`;
+                headerBlock += `<h2 class="syllabus-pdf-title">${escapeHtml(L.classTitle)}</h2>`;
             } else {
                 const titleParts = [escapeHtml(L.classTitle)];
                 if (L.subtitle) {
@@ -581,7 +642,7 @@
                 if (L.termRange) {
                     titleParts.push(escapeHtml(L.termRange));
                 }
-                headerBlock = `<div class="syllabus-class-header">${titleParts.join(' · ')}</div>`;
+                headerBlock += `<div class="syllabus-class-header">${titleParts.join(' · ')}</div>`;
             }
         }
 
@@ -629,6 +690,10 @@
     }
 
     const EXPORT_CSS = `
+*, *::before, *::after {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
 body { font-family: "DM Sans", Arial, sans-serif; font-size: 11pt; color: #111; margin: 24px; }
 .syllabus-doc-cover { margin-bottom: 2rem; }
 .syllabus-doc-cover h1 { font-size: 1.5rem; margin: 0 0 0.5rem; }
@@ -648,9 +713,13 @@ body { font-family: "DM Sans", Arial, sans-serif; font-size: 11pt; color: #111; 
 .syllabus-plan-detail { display: block; font-size: 0.95em; color: inherit; margin-top: 2px; }
 .syllabus-plan-subline { display: block; font-size: 0.88em; margin-top: 3px; font-style: italic; opacity: 0.92; }
 .syllabus-plan-subline-emphasis { font-style: normal; font-weight: 500; }
-.syllabus-row-holiday td { border-color: #d97706; }
-.syllabus-row-event td { border-color: #7c3aed; }
-.syllabus-row-extra td { border-color: #6b7280; border-style: dashed; }
+.syllabus-row-holiday td { border-color: #d97706; background-color: #fef3c7; color: #b45309; }
+.syllabus-row-event td { border-color: #7c3aed; background-color: #e9d5ff; color: #6b21a1; }
+.syllabus-row-event.syllabus-row-evaluation_deadline td { border-color: #991b1b; background-color: #fecaca; color: #991b1b; }
+.syllabus-row-event.syllabus-row-homework_deadline td { border-color: #1e40af; background-color: #dbeafe; color: #1e40af; }
+.syllabus-row-event.syllabus-row-evaluation_period td { border-color: #6b21a1; background-color: #e9d5ff; color: #6b21a1; }
+.syllabus-row-event.syllabus-row-other td { border-color: #6b7280; background-color: #e5e7eb; color: #374151; }
+.syllabus-row-extra td { border-color: #6b7280; border-style: dashed; background-color: #e5e7eb; color: #374151; }
 .syllabus-row-overflow td { border-color: #9ca3af; }
 .syllabus-row-note td { background: #fafafa; font-style: italic; }
 `;
@@ -663,6 +732,7 @@ body.syllabus-a4-export { font-family: Arial, Helvetica, sans-serif; font-size: 
 .syllabus-a4-sheet {
   width: 210mm;
   height: 297mm;
+  max-height: 297mm;
   box-sizing: border-box;
   padding: ${SYLLABUS_A4_MARGIN_MM}mm;
   page-break-after: always;
@@ -670,7 +740,10 @@ body.syllabus-a4-export { font-family: Arial, Helvetica, sans-serif; font-size: 
   page-break-inside: avoid;
   break-inside: avoid;
   margin: 0 auto;
-  overflow: visible;
+  overflow: hidden;
+  position: relative;
+  display: block;
+  clear: both;
   background: #fff;
 }
 .syllabus-a4-sheet:last-child { page-break-after: auto; break-after: auto; }
@@ -684,7 +757,7 @@ body.syllabus-a4-export { font-family: Arial, Helvetica, sans-serif; font-size: 
   box-sizing: border-box;
   margin: 0;
   padding: 0 0 ${SYLLABUS_A4_FIT_SAFETY_MM}mm 0;
-  overflow: visible;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -1010,12 +1083,23 @@ body.syllabus-a4-export { font-family: Arial, Helvetica, sans-serif; font-size: 
             void doc.body.offsetHeight;
         }
 
-        pageEl.style.height = '';
-        pageEl.style.minHeight = '';
+        pageEl.style.height = `${SYLLABUS_A4_PAGE.contentH}mm`;
+        pageEl.style.minHeight = '0';
         pageEl.style.maxHeight = `${SYLLABUS_A4_PAGE.contentH}mm`;
         pageEl.style.boxSizing = 'border-box';
-        pageEl.style.overflow = 'visible';
+        pageEl.style.overflow = 'hidden';
         pageEl.style.paddingBottom = `${SYLLABUS_A4_FIT_SAFETY_MM}mm`;
+
+        const sheet = pageEl.closest('.syllabus-a4-sheet');
+        if (sheet) {
+            sheet.style.height = `${SYLLABUS_A4_PAGE.pageH}mm`;
+            sheet.style.maxHeight = `${SYLLABUS_A4_PAGE.pageH}mm`;
+            sheet.style.overflow = 'hidden';
+            sheet.style.position = 'relative';
+            sheet.style.display = 'block';
+            sheet.style.clear = 'both';
+            sheet.style.boxSizing = 'border-box';
+        }
 
         return scale;
     }
@@ -1134,6 +1218,7 @@ body.syllabus-a4-export { font-family: Arial, Helvetica, sans-serif; font-size: 
         getSchoolWeekMonday,
         formatMonthShortFromKey,
         buildSyllabusRowsFromSchedule,
+        getCurriculumLessonNumber,
         planDetailFromUnits,
         mergeSyllabusRows,
         normalizeRows,

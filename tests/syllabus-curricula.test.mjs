@@ -58,9 +58,10 @@ function assert(cond, msg) {
     assert(red && orange && yellow, 'all hand in hand presets exist');
     assert(!orange.isStub && !yellow.isStub, 'orange yellow not stubs');
     [red, orange, yellow].forEach(p => {
-        assert(p.defaultTotalLessons === 26, `${p.id} 26 sessions`);
+        assert(p.defaultTotalLessons === 22, `${p.id} 22 lessons`);
+        assert(p.defaultSyllabusRowTemplates[0].planTitle.includes('Unit 1'), `${p.id} first lesson pages`);
         assert(p.defaultSyllabusRowTemplates[1].planTitle.includes('Unit 1'), `${p.id} session 2 pages`);
-        assert(p.defaultSyllabusRowTemplates[1].planDetail.includes('Worksheet 1'), `${p.id} worksheet line`);
+        assert(p.defaultSyllabusRowTemplates[0].planDetail.includes('Worksheet 1'), `${p.id} worksheet line`);
     });
     [orange, yellow].forEach(p => {
         assert(!p.defaultSyllabusRowTemplates[1].planDetail.includes('Tracks:'), `${p.id} no tracks`);
@@ -68,12 +69,13 @@ function assert(cond, msg) {
     assert(red.defaultBook === 'Hand in Hand 1', 'red book');
     assert(orange.defaultBook === 'Hand in Hand 2', 'orange book');
     assert(yellow.defaultBook === 'Hand in Hand 3', 'yellow book');
-    assert(red.defaultSyllabusRowTemplates[1].planDetail.includes('Tracks: 2-4'), 'red listening tracks');
-    assert(red.defaultSyllabusRowTemplates[1].planDetail.includes('음원경로'), 'red audio path');
-    assert(red.defaultSyllabusRowTemplates[2].planDetail.includes('Homework:'), 'red homework heading');
-    assert(!orange.defaultSyllabusRowTemplates[1].planDetail.includes('음원경로'), 'orange no audio block');
-    assert(red.defaultSyllabusRowTemplates[17].planTitle.includes('Children'), 'children day session');
-    assert(red.defaultSyllabusRowTemplates[23].planTitle.includes('Review Pages 88-93'), 'final review row');
+    assert(red.defaultSyllabusRowTemplates[0].planDetail.includes('Tracks: 2-4'), 'red listening tracks');
+    assert(red.defaultSyllabusRowTemplates[0].planDetail.includes('음원경로'), 'red audio path');
+    assert(red.defaultSyllabusRowTemplates[1].planDetail.includes('Homework:'), 'red homework heading');
+    assert(!orange.defaultSyllabusRowTemplates[0].planDetail.includes('음원경로'), 'orange no audio block');
+    assert(red.defaultSyllabusRowTemplates[21].planTitle.includes('Review Pages 88-93'), 'final review row');
+    assert(!red.defaultSyllabusRowTemplates.some(r => r.planTitle.includes('Substitute Holiday')), 'no baked-in holidays');
+    assert(!red.defaultSyllabusRowTemplates.some(r => r.planTitle.includes('Extra Class')), 'no baked-in extra class');
 }
 
 // WR+SP Write Right Green / Blue / Navy (18 sessions, SB/WB ranges)
@@ -141,16 +143,17 @@ function assert(cond, msg) {
     const blue = CCPSyllabusPresets.getById('preset-write-now-blue');
     const navy = CCPSyllabusPresets.getById('preset-write-now-navy');
     assert(green.defaultTotalLessons === 20, 'write now 20 lessons');
-    assert(green.defaultSyllabusRowTemplates[0].planTitle.includes('Unit 1 Part 1'), 'wn part 1 title');
-    assert(green.defaultSyllabusRowTemplates[0].planTitle.includes('p.8'), 'wn unit 1 sb');
-    assert(green.defaultSyllabusRowTemplates[0].planDetail.includes('Workbook p.2-3'), 'wn wb hw part1');
-    assert(green.defaultSyllabusRowTemplates[1].planTitle.includes('Unit 1 Part 2'), 'wn part 2 title');
-    assert(green.defaultSyllabusRowTemplates[1].planDetail.includes('p.12-15'), 'wn part2 sb');
+    assert(green.defaultSyllabusRowTemplates[0].planTitle === 'Unit 1 Part 1', 'wn part 1 title');
+    assert(green.defaultSyllabusRowTemplates[0].planDetail.includes('P.8-11'), 'wn unit 1 sb');
+    assert(green.defaultSyllabusRowTemplates[0].planDetail.includes('Workbook: P.2-3'), 'wn wb hw part1');
+    assert(green.defaultSyllabusRowTemplates[1].planTitle === 'Unit 1 Part 2', 'wn part 2 title');
+    assert(green.defaultSyllabusRowTemplates[1].planDetail.includes('P.12-15'), 'wn part2 sb');
     assert(green.defaultSyllabusRowTemplates[1].planDetail.includes('Listening Track 1'), 'wn listening');
-    assert(blue.defaultSyllabusRowTemplates[0].planTitle.includes('p.8'), 'blue same pagination');
-    assert(navy.defaultSyllabusRowTemplates[4].planTitle.includes('Project 1'), 'project row');
-    assert(navy.defaultSyllabusRowTemplates[4].planDetail.includes('p.24-25'), 'wn project 1 range');
-    assert(navy.defaultSyllabusRowTemplates[19].planDetail.includes('p.78-79'), 'wn project 4 range');
+    assert(green.defaultSyllabusRowTemplates[1].planDetail.includes('See the video file'), 'wn video note track 1');
+    assert(blue.defaultSyllabusRowTemplates[0].planDetail.includes('P.8-11'), 'blue same pagination');
+    assert(navy.defaultSyllabusRowTemplates[4].planTitle === 'Project 1', 'project row');
+    assert(navy.defaultSyllabusRowTemplates[4].planDetail.includes('P. 24-25'), 'wn project 1 range');
+    assert(navy.defaultSyllabusRowTemplates[19].planDetail.includes('Project 4 SB P. 78-79'), 'wn project 4 range');
 }
 
 // Level groups cover six bands
