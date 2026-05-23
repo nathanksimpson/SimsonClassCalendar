@@ -556,6 +556,25 @@ body {
     padding: 0 0 8px;
 }
 
+.event-applicability-popover {
+    z-index: 1100;
+}
+
+.event-applicability-filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.event-applicability-summary {
+    margin: 6px 0 0;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+
 .lesson-filter-search-wrap {
     padding: 0 16px 8px;
 }
@@ -2368,6 +2387,29 @@ input.input-readonly {
 
 .app-top-bar--global .app-top-bar-compact {
     align-items: flex-end;
+}
+
+.app-top-bar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+@media (max-width: 720px) {
+    .app-top-bar--global .app-top-bar-compact {
+        align-items: stretch;
+    }
+
+    .app-top-bar-actions {
+        width: 100%;
+        justify-content: flex-end;
+        margin-left: 0;
+        padding-top: 4px;
+        border-top: 1px solid var(--border-color);
+    }
 }
 
 .app-tab-nav {

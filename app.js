@@ -320,6 +320,14 @@ const translations = {
         sectionsLabel: 'Levels',
         bySchoolBand: 'School level (quick):',
         holidayFilterRequired: 'Select at least one filter (section, grade band, grades, or class names), or turn on All Classes.',
+        eventApplicabilityFilterBtn: 'Choose applicability…',
+        eventApplicabilityFilterTitle: 'Event applies to',
+        eventApplicabilityFilterStatus: '{selected} of {total} filters selected',
+        eventApplicabilityFilterBtnActive: 'Applicability ({selected}/{total})',
+        eventApplicabilitySectionSchoolBand: 'School level (quick)',
+        eventApplicabilitySectionLevel: 'By Simson level',
+        eventApplicabilityNoOptions: 'No classes yet. Add classes in the Classes tab.',
+        eventApplicabilitySummaryEmpty: 'No filters selected — open the filter and choose at least one.',
         saveHoliday: 'Save Holiday',
         
         // Popup
@@ -693,6 +701,14 @@ const translations = {
         sectionsLabel: '레벨',
         bySchoolBand: '학교급 (빠른 선택):',
         holidayFilterRequired: '모든 수업을 켜거나, 반·학교급·학년·수업 중 하나 이상 선택하세요.',
+        eventApplicabilityFilterBtn: '적용 대상 선택…',
+        eventApplicabilityFilterTitle: '일정 적용 대상',
+        eventApplicabilityFilterStatus: '{total}개 중 {selected}개 필터 선택됨',
+        eventApplicabilityFilterBtnActive: '적용 대상 ({selected}/{total})',
+        eventApplicabilitySectionSchoolBand: '학교급 (빠른 선택)',
+        eventApplicabilitySectionLevel: '심슨 레벨별',
+        eventApplicabilityNoOptions: '수업이 없습니다. 수업 탭에서 수업을 추가하세요.',
+        eventApplicabilitySummaryEmpty: '선택된 필터가 없습니다. 필터를 열어 하나 이상 선택하세요.',
         saveHoliday: '휴일 저장',
         
         // Popup
@@ -807,7 +823,16 @@ function applyLanguage() {
         searchEl.placeholder = translations[currentLanguage].lessonFilterSearchPlaceholder;
     }
     setupSimsonLevelPresetSelect();
-    setupHolidayLevelSectionCheckboxes();
+    if (isEventApplicabilityPopoverOpen()) {
+        renderEventApplicabilityPopoverBody();
+        updateEventApplicabilityStatusText();
+    }
+    updateEventApplicabilityButtonLabel();
+    updateEventApplicabilitySummaryText();
+    const eventAppSearchEl = document.getElementById('eventApplicabilitySearch');
+    if (eventAppSearchEl && translations[currentLanguage].lessonFilterSearchPlaceholder) {
+        eventAppSearchEl.placeholder = translations[currentLanguage].lessonFilterSearchPlaceholder;
+    }
     if (elements.classTypeSelect && (isClassPopoutOpen() || (getActiveTab() === 'classes' && classEditorMount === 'tab'))) {
         const v = elements.classTypeSelect.value;
         populateClassTypeSelect();
@@ -816,13 +841,16 @@ function applyLanguage() {
         }
     }
 
-    syncHolidaysFromEvents();
+    refreshLocalizedEventDisplayNames();
 
     // Re-render calendar to update month/day names and localized event labels
     if (appData.termStart) {
         renderCalendar();
+    } else {
+        updatePrintSummary();
     }
     applyTopBarCollapsedState();
+    document.dispatchEvent(new CustomEvent('calendarLanguageChanged', { detail: { lang: currentLanguage } }));
 }
 
 function updateCalendarTitle() {
@@ -2665,6 +2693,10 @@ function normalizeKrHolidayLabelForLookup(name) {
         .replace(/·/g, 'ㆍ');
 }
 
+function textContainsHangul(text) {
+    return /[\u3131-\u318E\uAC00-\uD7A3]/.test(String(text || ''));
+}
+
 function translateKrPublicHolidayName(koName) {
     const raw = String(koName || '').trim();
     if (!raw) {
@@ -2721,17 +2753,85 @@ function backfillKrPublicHolidayBilingualNames(ev) {
     if (!ev || !isKrPublicHolidayImportedEvent(ev)) {
         return false;
     }
-    if (ev.nameKo && ev.nameEn) {
-        return false;
+    let changed = false;
+    if (!ev.nameKo && !ev.nameEn && ev.name) {
+        const legacy = String(ev.name).trim();
+        if (textContainsHangul(legacy)) {
+            ev.nameKo = legacy;
+            ev.nameEn = translateKrPublicHolidayName(legacy);
+            changed = true;
+        } else {
+            ev.nameEn = legacy;
+            changed = true;
+        }
     }
-    const ko = (ev.nameKo || ev.name || '').trim();
-    if (!ko) {
-        return false;
+    if (!ev.nameKo && ev.nameEn && textContainsHangul(ev.nameEn)) {
+        ev.nameKo = String(ev.nameEn).trim();
+        ev.nameEn = translateKrPublicHolidayName(ev.nameKo);
+        changed = true;
     }
-    ev.nameKo = ko;
-    ev.nameEn = (ev.nameEn || translateKrPublicHolidayName(ko)).trim() || ko;
-    ev.name = currentLanguage === 'ko' ? ev.nameKo : ev.nameEn;
-    return true;
+    if (ev.nameKo && !ev.nameEn) {
+        ev.nameEn = (translateKrPublicHolidayName(ev.nameKo) || ev.nameKo).trim();
+        changed = true;
+    }
+    if (!ev.nameKo && ev.nameEn) {
+        changed = true;
+    }
+    const ko = (ev.nameKo || '').trim();
+    const en = (ev.nameEn || (ko ? translateKrPublicHolidayName(ko) : '')).trim();
+    if (ko) {
+        ev.nameKo = ko;
+    }
+    if (en) {
+        ev.nameEn = en;
+    }
+    const nextName = currentLanguage === 'ko' ? (ev.nameKo || ev.nameEn) : (ev.nameEn || ev.nameKo);
+    if (nextName && ev.name !== nextName) {
+        ev.name = nextName;
+        changed = true;
+    }
+    return changed;
+}
+
+/** Keep calendar, print summary, and syllabus in sync with the active UI language. */
+function refreshLocalizedEventDisplayNames() {
+    if (!Array.isArray(appData.events)) {
+        return;
+    }
+    let changed = false;
+    appData.events.forEach((ev) => {
+        if (backfillKrPublicHolidayBilingualNames(ev)) {
+            changed = true;
+        } else if (isKrPublicHolidayImportedEvent(ev) && (ev.nameKo || ev.nameEn)) {
+            const nextName = currentLanguage === 'ko' ? (ev.nameKo || ev.nameEn) : (ev.nameEn || ev.nameKo);
+            if (nextName && ev.name !== nextName) {
+                ev.name = nextName;
+                changed = true;
+            }
+        }
+    });
+    syncHolidaysFromEvents();
+    if (changed) {
+        saveData();
+    }
+}
+
+function getEventById(eventId) {
+    if (!eventId || !Array.isArray(appData.events)) {
+        return null;
+    }
+    return appData.events.find((ev) => ev.id === eventId) || null;
+}
+
+function getLocalizedHolidayRecord(holiday) {
+    if (!holiday) {
+        return null;
+    }
+    const ev = getEventById(holiday.id);
+    if (ev) {
+        return { ...holiday, name: getEventDisplayName(ev) };
+    }
+    return { ...holiday, name: getEventDisplayName(holiday) };
 }
 
 function parseKrPublicHolidayYearJson(json, year) {
@@ -3428,6 +3528,425 @@ function selectAllLessonFiltersInPopover() {
 
 function clearAllLessonFiltersInPopover() {
     setAllLessonFilterCheckboxesInPopover(false);
+}
+
+// ============================================
+// Event applicability filter (event editor — same UX as lesson filter)
+// ============================================
+const EMPTY_EVENT_APPLICABILITY = {
+    grades: [],
+    classNames: [],
+    sectionLevels: [],
+    allElementary: false,
+    allMiddleSchool: false
+};
+let eventApplicabilityDraft = { ...EMPTY_EVENT_APPLICABILITY };
+
+function getEventApplicabilityOptionGroups() {
+    const seenNames = new Set();
+    const classes = [];
+    getClassesInDisplayOrder().forEach(classData => {
+        const name = classData.name;
+        if (!name || seenNames.has(name)) {
+            return;
+        }
+        seenNames.add(name);
+        classes.push({
+            value: name,
+            label: formatClassLabelWithPeriod(classData)
+        });
+    });
+    return {
+        classes,
+        grades: SCHOOL_GRADE_OPTIONS.map(code => ({ value: code, label: code })),
+        sectionLevels: getAllSimsonLevels().map(level => ({
+            value: level.id,
+            label: level.name
+        })),
+        schoolBands: [
+            { value: 'allElementary', label: t('allElementaryLabel') },
+            { value: 'allMiddleSchool', label: t('allMiddleSchoolLabel') }
+        ]
+    };
+}
+
+function getDefaultAllSelectedEventApplicability() {
+    const groups = getEventApplicabilityOptionGroups();
+    return {
+        grades: groups.grades.map(g => g.value),
+        classNames: groups.classes.map(c => c.value),
+        sectionLevels: groups.sectionLevels.map(s => s.value),
+        allElementary: true,
+        allMiddleSchool: true
+    };
+}
+
+function countEventApplicabilityOptions() {
+    const groups = getEventApplicabilityOptionGroups();
+    return groups.classes.length
+        + groups.grades.length
+        + groups.sectionLevels.length
+        + groups.schoolBands.length;
+}
+
+function countEventApplicabilitySelected(draft = eventApplicabilityDraft) {
+    return (draft.grades?.length || 0)
+        + (draft.classNames?.length || 0)
+        + (draft.sectionLevels?.length || 0)
+        + (draft.allElementary ? 1 : 0)
+        + (draft.allMiddleSchool ? 1 : 0);
+}
+
+function loadEventApplicabilityDraftFromHoliday(holidayData) {
+    if (!holidayData || !holidayHasAnyTargetFilter(holidayData)) {
+        eventApplicabilityDraft = { ...EMPTY_EVENT_APPLICABILITY };
+        return;
+    }
+    eventApplicabilityDraft = {
+        grades: [...(holidayData.grades || [])],
+        classNames: [...(holidayData.classNames || [])],
+        sectionLevels: [...(holidayData.sectionLevels || [])],
+        allElementary: holidayData.allElementary === true,
+        allMiddleSchool: holidayData.allMiddleSchool === true
+    };
+}
+
+function readEventApplicabilityFromPopoverDom() {
+    const draft = { ...EMPTY_EVENT_APPLICABILITY };
+    document.querySelectorAll('#eventApplicabilityPopoverBody input[data-event-filter]').forEach(cb => {
+        if (!cb.checked) {
+            return;
+        }
+        const key = cb.getAttribute('data-event-filter');
+        const val = cb.value;
+        if (key === 'schoolBand') {
+            if (val === 'allElementary') {
+                draft.allElementary = true;
+            } else if (val === 'allMiddleSchool') {
+                draft.allMiddleSchool = true;
+            }
+            return;
+        }
+        if (key === 'grades' || key === 'classNames' || key === 'sectionLevels') {
+            draft[key].push(val);
+        }
+    });
+    return draft;
+}
+
+function applyEventApplicabilityToPopoverDom() {
+    const d = eventApplicabilityDraft;
+    document.querySelectorAll('#eventApplicabilityPopoverBody input[data-event-filter]').forEach(cb => {
+        const key = cb.getAttribute('data-event-filter');
+        const val = cb.value;
+        if (key === 'schoolBand') {
+            cb.checked = val === 'allElementary' ? d.allElementary : d.allMiddleSchool;
+            return;
+        }
+        const arr = d[key];
+        cb.checked = Array.isArray(arr) && arr.includes(val);
+    });
+}
+
+function applyEventApplicabilitySearch() {
+    const input = document.getElementById('eventApplicabilitySearch');
+    const emptyMsg = document.getElementById('eventApplicabilitySearchEmpty');
+    const body = document.getElementById('eventApplicabilityPopoverBody');
+    if (!body) {
+        return;
+    }
+    const query = normalizeLessonFilterSearchQuery(input ? input.value : '');
+    let anyChipVisible = false;
+
+    body.querySelectorAll('.lesson-filter-section').forEach(section => {
+        let sectionMatches = 0;
+        section.querySelectorAll('.lesson-filter-chip').forEach(chip => {
+            const label = chip.querySelector('span')?.textContent || '';
+            const match = lessonFilterLabelMatchesQuery(label, query);
+            chip.hidden = !match;
+            if (match) {
+                sectionMatches += 1;
+            }
+        });
+        section.hidden = sectionMatches === 0;
+        if (sectionMatches > 0) {
+            anyChipVisible = true;
+        }
+    });
+
+    if (emptyMsg) {
+        emptyMsg.hidden = !query || anyChipVisible;
+    }
+    body.classList.toggle('lesson-filter-body--search-empty', !!query && !anyChipVisible);
+}
+
+function buildEventApplicabilitySectionHtml(titleKey, filterKey, options) {
+    if (!options.length) {
+        return '';
+    }
+    const chips = options.map(opt => `
+        <label class="checkbox-label lesson-filter-chip">
+            <input type="checkbox" data-event-filter="${filterKey}" value="${escapeAttr(opt.value)}">
+            <span>${escapeHtml(opt.label)}</span>
+        </label>`).join('');
+    return `
+        <section class="lesson-filter-section" data-filter-key="${filterKey}">
+            <h4 class="lesson-filter-section-title">${escapeHtml(t(titleKey))}</h4>
+            <div class="lesson-filter-chip-grid">${chips}</div>
+        </section>`;
+}
+
+function renderEventApplicabilityPopoverBody() {
+    const body = document.getElementById('eventApplicabilityPopoverBody');
+    if (!body) {
+        return;
+    }
+    const searchEl = document.getElementById('eventApplicabilitySearch');
+    const prevQuery = searchEl ? searchEl.value : '';
+    const groups = getEventApplicabilityOptionGroups();
+    if (!groups.classes.length && !groups.grades.length) {
+        body.innerHTML = `<p class="lesson-filter-empty-calendar">${escapeHtml(t('eventApplicabilityNoOptions'))}</p>`;
+        applyEventApplicabilitySearch();
+        return;
+    }
+    body.innerHTML = [
+        buildEventApplicabilitySectionHtml('eventApplicabilitySectionSchoolBand', 'schoolBand', groups.schoolBands),
+        buildEventApplicabilitySectionHtml('eventApplicabilitySectionLevel', 'sectionLevels', groups.sectionLevels),
+        buildEventApplicabilitySectionHtml('lessonFilterSectionGrade', 'grades', groups.grades),
+        buildEventApplicabilitySectionHtml('lessonFilterSectionClasses', 'classNames', groups.classes)
+    ].join('');
+    applyEventApplicabilityToPopoverDom();
+    if (searchEl) {
+        searchEl.value = prevQuery;
+    }
+    applyEventApplicabilitySearch();
+}
+
+function updateEventApplicabilityStatusText() {
+    const status = document.getElementById('eventApplicabilityFilterStatus');
+    if (!status) {
+        return;
+    }
+    const total = countEventApplicabilityOptions();
+    const selected = countEventApplicabilitySelected();
+    status.textContent = t('eventApplicabilityFilterStatus')
+        .replace('{selected}', String(selected))
+        .replace('{total}', String(total));
+}
+
+function updateEventApplicabilityButtonLabel() {
+    const btn = document.getElementById('eventApplicabilityFilterBtn');
+    if (!btn) {
+        return;
+    }
+    const total = countEventApplicabilityOptions();
+    const selected = countEventApplicabilitySelected();
+    if (total > 0 && selected > 0 && selected < total) {
+        btn.textContent = t('eventApplicabilityFilterBtnActive')
+            .replace('{selected}', String(selected))
+            .replace('{total}', String(total));
+        btn.classList.add('lesson-filter-btn--active');
+    } else {
+        btn.textContent = t('eventApplicabilityFilterBtn');
+        btn.classList.remove('lesson-filter-btn--active');
+    }
+}
+
+function updateEventApplicabilitySummaryText() {
+    const el = document.getElementById('eventApplicabilitySummary');
+    if (!el) {
+        return;
+    }
+    if (elements.holidayAllClasses && elements.holidayAllClasses.checked) {
+        el.hidden = true;
+        return;
+    }
+    const parts = getHolidayAppliesToDescriptionParts(eventApplicabilityDraft);
+    if (parts.length === 0) {
+        el.textContent = t('eventApplicabilitySummaryEmpty');
+    } else {
+        el.textContent = parts.join(' · ');
+    }
+    el.hidden = false;
+}
+
+function syncEventApplicabilityUiFromDraft() {
+    const row = document.getElementById('eventApplicabilityFilterRow');
+    const allClasses = elements.holidayAllClasses && elements.holidayAllClasses.checked;
+    if (row) {
+        row.style.display = allClasses ? 'none' : 'flex';
+    }
+    updateEventApplicabilityButtonLabel();
+    updateEventApplicabilitySummaryText();
+    if (isEventApplicabilityPopoverOpen()) {
+        applyEventApplicabilityToPopoverDom();
+        updateEventApplicabilityStatusText();
+    }
+}
+
+function positionEventApplicabilityPopover() {
+    const popover = document.getElementById('eventApplicabilityPopover');
+    const btn = document.getElementById('eventApplicabilityFilterBtn');
+    if (!popover || !btn) {
+        return;
+    }
+    const rect = btn.getBoundingClientRect();
+    const panel = popover.querySelector('.lesson-filter-popover-panel');
+    const margin = 8;
+    let top = rect.bottom + margin;
+    let left = rect.left;
+    popover.style.top = `${top}px`;
+    popover.style.left = `${left}px`;
+    if (panel) {
+        const panelRect = panel.getBoundingClientRect();
+        if (left + panelRect.width > window.innerWidth - margin) {
+            left = Math.max(margin, window.innerWidth - panelRect.width - margin);
+            popover.style.left = `${left}px`;
+        }
+        if (top + panelRect.height > window.innerHeight - margin) {
+            top = Math.max(margin, rect.top - panelRect.height - margin);
+            popover.style.top = `${top}px`;
+        }
+    }
+}
+
+function openEventApplicabilityPopover() {
+    const popover = document.getElementById('eventApplicabilityPopover');
+    const btn = document.getElementById('eventApplicabilityFilterBtn');
+    const searchEl = document.getElementById('eventApplicabilitySearch');
+    if (!popover || !btn) {
+        return;
+    }
+    if (searchEl) {
+        searchEl.value = '';
+    }
+    renderEventApplicabilityPopoverBody();
+    updateEventApplicabilityStatusText();
+    popover.hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+    positionEventApplicabilityPopover();
+    if (searchEl) {
+        requestAnimationFrame(() => searchEl.focus());
+    }
+}
+
+function closeEventApplicabilityPopover() {
+    const popover = document.getElementById('eventApplicabilityPopover');
+    const btn = document.getElementById('eventApplicabilityFilterBtn');
+    if (!popover) {
+        return;
+    }
+    popover.hidden = true;
+    if (btn) {
+        btn.setAttribute('aria-expanded', 'false');
+    }
+}
+
+function isEventApplicabilityPopoverOpen() {
+    const popover = document.getElementById('eventApplicabilityPopover');
+    return popover && !popover.hidden;
+}
+
+function commitEventApplicabilityFromPopover() {
+    eventApplicabilityDraft = readEventApplicabilityFromPopoverDom();
+    updateEventApplicabilityStatusText();
+    updateEventApplicabilityButtonLabel();
+    updateEventApplicabilitySummaryText();
+}
+
+function setAllEventApplicabilityCheckboxesInPopover(checked) {
+    document.querySelectorAll('#eventApplicabilityPopoverBody input[data-event-filter]').forEach(cb => {
+        cb.checked = checked;
+    });
+    commitEventApplicabilityFromPopover();
+}
+
+function selectAllEventApplicabilityInPopover() {
+    setAllEventApplicabilityCheckboxesInPopover(true);
+}
+
+function clearAllEventApplicabilityInPopover() {
+    setAllEventApplicabilityCheckboxesInPopover(false);
+}
+
+function setupEventApplicabilityFilterUi() {
+    const btn = document.getElementById('eventApplicabilityFilterBtn');
+    let popover = document.getElementById('eventApplicabilityPopover');
+    const closeBtn = document.getElementById('eventApplicabilityFilterCloseBtn');
+    const selectAllBtn = document.getElementById('eventApplicabilitySelectAllBtn');
+    const clearAllBtn = document.getElementById('eventApplicabilityClearAllBtn');
+    const body = document.getElementById('eventApplicabilityPopoverBody');
+    if (!btn || !popover || !body) {
+        return;
+    }
+    if (popover.parentElement !== document.body) {
+        document.body.appendChild(popover);
+    }
+
+    if (!btn.dataset.bound) {
+        btn.dataset.bound = '1';
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isEventApplicabilityPopoverOpen()) {
+                closeEventApplicabilityPopover();
+            } else {
+                openEventApplicabilityPopover();
+            }
+        });
+    }
+    if (closeBtn && !closeBtn.dataset.bound) {
+        closeBtn.dataset.bound = '1';
+        closeBtn.addEventListener('click', () => closeEventApplicabilityPopover());
+    }
+    if (selectAllBtn && !selectAllBtn.dataset.bound) {
+        selectAllBtn.dataset.bound = '1';
+        selectAllBtn.addEventListener('click', () => selectAllEventApplicabilityInPopover());
+    }
+    if (clearAllBtn && !clearAllBtn.dataset.bound) {
+        clearAllBtn.dataset.bound = '1';
+        clearAllBtn.addEventListener('click', () => clearAllEventApplicabilityInPopover());
+    }
+    if (!body.dataset.bound) {
+        body.dataset.bound = '1';
+        body.addEventListener('change', (e) => {
+            if (e.target.matches('input[data-event-filter]')) {
+                commitEventApplicabilityFromPopover();
+            }
+        });
+    }
+    const searchEl = document.getElementById('eventApplicabilitySearch');
+    if (searchEl && !searchEl.dataset.bound) {
+        searchEl.dataset.bound = '1';
+        searchEl.addEventListener('input', () => applyEventApplicabilitySearch());
+        searchEl.addEventListener('search', () => applyEventApplicabilitySearch());
+    }
+    if (!document.body.dataset.eventApplicabilityDismissBound) {
+        document.body.dataset.eventApplicabilityDismissBound = '1';
+        document.addEventListener('click', (e) => {
+            if (!isEventApplicabilityPopoverOpen()) {
+                return;
+            }
+            const pop = document.getElementById('eventApplicabilityPopover');
+            const filterBtn = document.getElementById('eventApplicabilityFilterBtn');
+            if (pop && pop.contains(e.target)) {
+                return;
+            }
+            if (filterBtn && filterBtn.contains(e.target)) {
+                return;
+            }
+            closeEventApplicabilityPopover();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isEventApplicabilityPopoverOpen()) {
+                closeEventApplicabilityPopover();
+            }
+        });
+        window.addEventListener('resize', () => {
+            if (isEventApplicabilityPopoverOpen()) {
+                positionEventApplicabilityPopover();
+            }
+        });
+    }
 }
 
 function setPrintCalendarVisibilityCheckboxes(checked) {
@@ -4605,8 +5124,6 @@ const elements = {
     holidayBgColor: document.getElementById('holidayBgColor'),
     holidayTextColor: document.getElementById('holidayTextColor'),
     holidayAllClasses: document.getElementById('holidayAllClasses'),
-    holidayFilterSection: document.getElementById('holidayFilterSection'),
-    holidayClassCheckboxes: document.getElementById('holidayClassCheckboxes'),
     deleteHolidayBtn: document.getElementById('deleteHolidayBtn'),
     
     // Print (tab panel)
@@ -4770,39 +5287,6 @@ function setupSimsonLevelPresetSelect() {
     }
 }
 
-function setupHolidayLevelSectionCheckboxes() {
-    let container = document.getElementById('holidaySectionCheckboxes');
-    if (!container) {
-        const legacy = document.querySelector('input[name="holidaySection"]');
-        if (legacy) {
-            container = legacy.closest('.checkbox-group');
-            if (container) {
-                container.id = 'holidaySectionCheckboxes';
-            }
-        }
-    }
-    if (!container) {
-        return;
-    }
-    const checked = new Set(
-        Array.from(container.querySelectorAll('input[name="holidaySection"]:checked')).map(cb => cb.value)
-    );
-    container.innerHTML = '';
-    container.className = 'checkbox-group grade-checkboxes simson-level-checkboxes';
-    getAllSimsonLevels().forEach(level => {
-        const label = document.createElement('label');
-        label.className = 'checkbox-label';
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.name = 'holidaySection';
-        cb.value = level.id;
-        cb.checked = checked.has(level.id);
-        label.appendChild(cb);
-        label.appendChild(document.createTextNode(` ${level.name}`));
-        container.appendChild(label);
-    });
-}
-
 function handleClassLevelPresetChange() {
     if (!elements.classLevel || !elements.classGrade) {
         return;
@@ -4815,7 +5299,6 @@ function handleClassLevelPresetChange() {
 
 function setupSimsonLevelControls() {
     setupSimsonLevelPresetSelect();
-    setupHolidayLevelSectionCheckboxes();
 }
 
 function setupSchoolGradeControls() {
@@ -4844,25 +5327,6 @@ function setupSchoolGradeControls() {
         });
     }
 
-    document.querySelectorAll('#holidayModal input[name="holidayGrade"]').forEach((input, index) => {
-        if (index >= SCHOOL_GRADE_OPTIONS.length) {
-            return;
-        }
-        const code = SCHOOL_GRADE_OPTIONS[index];
-        input.value = code;
-        const label = input.closest('label');
-        if (!label) {
-            return;
-        }
-        while (label.firstChild) {
-            label.removeChild(label.firstChild);
-        }
-        label.appendChild(input);
-        label.appendChild(document.createTextNode(' '));
-        const span = document.createElement('span');
-        span.textContent = code;
-        label.appendChild(span);
-    });
 }
 
 /** Fix broken markup like `??? ?????/button>` from bad saves / wrong encoding. */
@@ -5095,6 +5559,7 @@ function setupEventListeners() {
         printCalVisClearAll.addEventListener('click', () => setPrintCalendarVisibilityCheckboxes(false));
     }
     setupLessonFilterUi();
+    setupEventApplicabilityFilterUi();
     document.getElementById('clearDataBtn').addEventListener('click', clearAllData);
     
     // Modal Close Buttons
@@ -5115,7 +5580,13 @@ function setupEventListeners() {
     
     // Holiday "All Classes" toggle
     elements.holidayAllClasses.addEventListener('change', (e) => {
-        elements.holidayFilterSection.style.display = e.target.checked ? 'none' : 'block';
+        if (e.target.checked) {
+            closeEventApplicabilityPopover();
+            eventApplicabilityDraft = { ...EMPTY_EVENT_APPLICABILITY };
+        } else if (!holidayHasAnyTargetFilter(eventApplicabilityDraft)) {
+            eventApplicabilityDraft = getDefaultAllSelectedEventApplicability();
+        }
+        syncEventApplicabilityUiFromDraft();
     });
     
     // Class Name autocomplete + auto-fill levels when name exactly matches a class
@@ -5259,6 +5730,9 @@ function openModal(modal) {
 
 function closeModal(modal) {
     modal.classList.remove('active');
+    if (modal === elements.holidayModal) {
+        closeEventApplicabilityPopover();
+    }
 }
 
 /**
@@ -5415,19 +5889,44 @@ function buildGeneratedSyllabusRows(classData) {
     );
 }
 
+function localizeSyllabusRowsForCurrentLanguage(rows) {
+    const mod = getSyllabusModule();
+    return (rows || []).map((row) => {
+        if (row.kind === 'holiday' && row.date) {
+            const hol = getHolidayForDate(row.date);
+            if (!hol || !hol.name) {
+                return row;
+            }
+            const d = parseISODateLocal(row.date);
+            let shortDate = '';
+            if (!Number.isNaN(d.getTime())) {
+                shortDate = mod && typeof mod.formatSyllabusShortDate === 'function'
+                    ? mod.formatSyllabusShortDate(d)
+                    : formatDateDisplay(row.date);
+            }
+            return { ...row, planTitle: `${shortDate} ${hol.name}`.trim() };
+        }
+        return row;
+    });
+}
+
 function getSyllabusRowsForClass(classData, options = {}) {
     const generated = buildGeneratedSyllabusRows(classData);
     const saved = Array.isArray(classData.syllabusRows) ? classData.syllabusRows : [];
+    let rows;
     if (options.preferMerged && saved.length > 0) {
         const mod = getSyllabusModule();
         if (mod) {
-            return mod.mergeSyllabusRows(saved, generated);
+            rows = mod.mergeSyllabusRows(saved, generated);
+        } else {
+            rows = saved;
         }
+    } else if (saved.length > 0 && !options.preferFresh) {
+        rows = saved;
+    } else {
+        rows = generated;
     }
-    if (saved.length > 0 && !options.preferFresh) {
-        return saved;
-    }
-    return generated;
+    return localizeSyllabusRowsForCurrentLanguage(rows);
 }
 
 function buildClassSnapshotFromForm() {
@@ -6214,24 +6713,8 @@ function openClassModal(classData = null, options = {}) {
 }
 
 function populateHolidayForm(holidayData = null, options = {}) {
-    // Populate class name checkboxes dynamically
-    populateHolidayClassCheckboxes();
-    
-    // Reset all grade checkboxes
-    const gradeCheckboxes = document.querySelectorAll('input[name="holidayGrade"]');
-    gradeCheckboxes.forEach(cb => cb.checked = false);
+    closeEventApplicabilityPopover();
 
-    const sectionCheckboxes = document.querySelectorAll('input[name="holidaySection"]');
-    sectionCheckboxes.forEach(cb => cb.checked = false);
-    const holidayAllEl = document.getElementById('holidayAllElementary');
-    const holidayAllMid = document.getElementById('holidayAllMiddleSchool');
-    if (holidayAllEl) holidayAllEl.checked = false;
-    if (holidayAllMid) holidayAllMid.checked = false;
-    
-    // Reset all class checkboxes
-    const classCheckboxes = document.querySelectorAll('input[name="holidayClass"]');
-    classCheckboxes.forEach(cb => cb.checked = false);
-    
     if (elements.eventType) {
         elements.eventType.value = holidayData
             ? normalizeEventType(holidayData.type)
@@ -6266,38 +6749,10 @@ function populateHolidayForm(holidayData = null, options = {}) {
         elements.holidayBgColor.value = holidayData.bgColor || '#fef3c7';
         elements.holidayTextColor.value = holidayData.textColor || '#b45309';
         
-        // Handle grades, sections, school bands, class names
-        const hasGrades = holidayData.grades && holidayData.grades.length > 0;
-        const hasClassNames = holidayData.classNames && holidayData.classNames.length > 0;
-        const hasSections = holidayData.sectionLevels && holidayData.sectionLevels.length > 0;
-        const allEl = holidayData.allElementary === true;
-        const allMid = holidayData.allMiddleSchool === true;
         const isAllClasses = !holidayHasAnyTargetFilter(holidayData);
-        
         elements.holidayAllClasses.checked = isAllClasses;
-        elements.holidayFilterSection.style.display = isAllClasses ? 'none' : 'block';
-        
-        if (hasGrades) {
-            gradeCheckboxes.forEach(cb => {
-                cb.checked = holidayData.grades.includes(cb.value);
-            });
-        }
+        loadEventApplicabilityDraftFromHoliday(holidayData);
 
-        if (hasSections) {
-            sectionCheckboxes.forEach(cb => {
-                cb.checked = holidayData.sectionLevels.includes(cb.value);
-            });
-        }
-        if (holidayAllEl) holidayAllEl.checked = allEl;
-        if (holidayAllMid) holidayAllMid.checked = allMid;
-        
-        if (hasClassNames) {
-            const classCbs = document.querySelectorAll('input[name="holidayClass"]');
-            classCbs.forEach(cb => {
-                cb.checked = holidayData.classNames.includes(cb.value);
-            });
-        }
-        
         elements.deleteHolidayBtn.style.display = 'block';
     } else {
         elements.holidayModalTitle.textContent = t('addEventTitle');
@@ -6309,7 +6764,7 @@ function populateHolidayForm(holidayData = null, options = {}) {
         elements.holidaySingleDate.style.display = 'block';
         elements.holidayDateRange.style.display = 'none';
         elements.holidayAllClasses.checked = true;
-        elements.holidayFilterSection.style.display = 'none';
+        eventApplicabilityDraft = { ...EMPTY_EVENT_APPLICABILITY };
         elements.deleteHolidayBtn.style.display = 'none';
         applyEventTypeDefaultColors();
         if (options.defaultDate) {
@@ -6318,34 +6773,11 @@ function populateHolidayForm(holidayData = null, options = {}) {
             elements.holidayEndDate.value = addOneDayISO(options.defaultDate);
         }
     }
+    syncEventApplicabilityUiFromDraft();
 }
 
 function openHolidayModal(holidayData = null, options = {}) {
     openEventEditor(holidayData, options.context || 'calendar-popout', options);
-}
-
-// Populate class name checkboxes for holiday modal
-function populateHolidayClassCheckboxes() {
-    const container = elements.holidayClassCheckboxes;
-    container.innerHTML = '';
-    
-    const seenNames = new Set();
-    getClassesInDisplayOrder().forEach(classData => {
-        const name = classData.name;
-        if (!name || seenNames.has(name)) {
-            return;
-        }
-        seenNames.add(name);
-        const label = document.createElement('label');
-        label.className = 'checkbox-label';
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.name = 'holidayClass';
-        cb.value = name;
-        label.appendChild(cb);
-        label.appendChild(document.createTextNode(formatClassLabelWithPeriod(classData)));
-        container.appendChild(label);
-    });
 }
 
 // ============================================
@@ -6742,28 +7174,16 @@ function handleHolidaySubmit(e) {
     let allMiddleSchool = false;
     
     if (!elements.holidayAllClasses.checked) {
-        const gradeCheckboxes = document.querySelectorAll('input[name="holidayGrade"]:checked');
-        grades = Array.from(gradeCheckboxes).map(cb => cb.value);
+        if (isEventApplicabilityPopoverOpen()) {
+            commitEventApplicabilityFromPopover();
+        }
+        grades = [...(eventApplicabilityDraft.grades || [])];
+        classNames = [...(eventApplicabilityDraft.classNames || [])];
+        sectionLevels = [...(eventApplicabilityDraft.sectionLevels || [])];
+        allElementary = eventApplicabilityDraft.allElementary === true;
+        allMiddleSchool = eventApplicabilityDraft.allMiddleSchool === true;
 
-        const sectionCbs = document.querySelectorAll('input[name="holidaySection"]:checked');
-        sectionLevels = Array.from(sectionCbs).map(cb => cb.value);
-
-        const elAllEl = document.getElementById('holidayAllElementary');
-        const elAllMid = document.getElementById('holidayAllMiddleSchool');
-        allElementary = !!(elAllEl && elAllEl.checked);
-        allMiddleSchool = !!(elAllMid && elAllMid.checked);
-        
-        const classCheckboxes = document.querySelectorAll('input[name="holidayClass"]:checked');
-        classNames = Array.from(classCheckboxes).map(cb => cb.value);
-
-        const draft = {
-            grades,
-            classNames,
-            sectionLevels,
-            allElementary,
-            allMiddleSchool
-        };
-        if (!holidayHasAnyTargetFilter(draft)) {
+        if (!holidayHasAnyTargetFilter(eventApplicabilityDraft)) {
             alert(t('holidayFilterRequired'));
             return;
         }
@@ -7536,6 +7956,7 @@ function isHolidayForClass(dateStr, classData) {
 
 // Get holiday that covers a specific date (handles both single dates and ranges)
 function getHolidayForDate(dateStr) {
+    syncHolidaysFromEvents();
     if (!Array.isArray(appData.holidays)) {
         return null;
     }
@@ -7550,10 +7971,10 @@ function getHolidayForDate(dateStr) {
             const end = parseISODateLocal(holiday.endDate);
             if (!Number.isNaN(start.getTime()) && !Number.isNaN(end.getTime())
                 && checkDate >= start && checkDate <= end) {
-                return holiday;
+                return getLocalizedHolidayRecord(holiday);
             }
         } else if (holiday.date === dateStr) {
-            return holiday;
+            return getLocalizedHolidayRecord(holiday);
         }
     }
 
@@ -7884,6 +8305,7 @@ function getPrintOptionsFromForm() {
 
 function handlePrint(e) {
     e.preventDefault();
+    refreshLocalizedEventDisplayNames();
     const opts = getPrintOptionsFromForm();
 
     ensureUiState();
@@ -7897,6 +8319,11 @@ function handlePrint(e) {
     };
     saveData();
 
+    if (opts.printCalendar && appData.termStart) {
+        renderCalendar();
+    } else {
+        updatePrintSummary();
+    }
     if (opts.printSyllabusTables) {
         renderAllSyllabusTables();
     }
@@ -8049,9 +8476,11 @@ function updatePrintSummary() {
             } else {
                 dateText = formatDateDisplay(holiday.date);
             }
+            const ev = getEventById(holiday.id);
+            const displayName = ev ? getEventDisplayName(ev) : getEventDisplayName(holiday);
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${holiday.name}</td>
+                <td>${displayName}</td>
                 <td>${dateText}</td>
                 <td>${appliesToText}</td>
             `;
@@ -8208,7 +8637,7 @@ function applyLoadedAppData(data) {
     appData = data;
     const migrated = migrateData(appData);
     ensureUiState();
-    syncHolidaysFromEvents();
+    refreshLocalizedEventDisplayNames();
     if (migrated) {
         saveData();
     }
@@ -8958,6 +9387,8 @@ function importData(e) {
                 invalidateScheduleCache();
                 
                 const migrated = migrateData(appData);
+                refreshLocalizedEventDisplayNames();
+                syncHolidaysFromEvents();
                 
                 saveData();
                 

@@ -25,7 +25,13 @@
                     <button type="button" class="app-tab-btn" role="tab" id="tabBtn-events" aria-selected="false" aria-controls="panel-events" data-tab="events" data-i18n="tabEvents">Events</button>
                     <button type="button" class="app-tab-btn" role="tab" id="tabBtn-print" aria-selected="false" aria-controls="panel-print" data-tab="print" data-i18n="tabPrint">Print &amp; data</button>
                 </nav>
-                <button id="langToggleBtn" class="btn btn-outline btn-small btn-lang">🌐 한국어</button>
+                <div class="app-top-bar-actions">
+                    <button type="button" id="howToBtn" class="btn btn-outline btn-small btn-help" data-i18n="howToBtn" title="How to use this app">How to Use</button>
+                    <button type="button" id="exportBtn" class="btn btn-outline btn-small" data-i18n="export">Export</button>
+                    <button type="button" id="importBtn" class="btn btn-outline btn-small" data-i18n="import">Import</button>
+                    <input type="file" id="importFile" accept=".json" hidden>
+                    <button type="button" id="langToggleBtn" class="btn btn-outline btn-small btn-lang">🌐 한국어</button>
+                </div>
             </div>
         </header>
 
@@ -155,11 +161,7 @@
                         <h2 class="module-section-title" data-i18n="tabPrintDataHeading">Data &amp; settings</h2>
                         <div class="print-data-actions">
                             <button type="button" class="btn btn-outline btn-small" data-open-default-class-editor data-i18n="defaultClassEditorOpen">Edit defaults</button>
-                            <button type="button" id="howToBtn" class="btn btn-outline btn-small" data-i18n="howToBtn" title="How to use this app">How to Use</button>
-                            <button id="exportBtn" class="btn btn-outline btn-small" data-i18n="export">Export</button>
-                            <button id="importBtn" class="btn btn-outline btn-small" data-i18n="import">Import</button>
-                            <input type="file" id="importFile" accept=".json" style="display: none;">
-                            <button id="clearDataBtn" class="btn btn-danger btn-small" data-i18n="clearAllData">Clear All Data</button>
+                            <button type="button" id="clearDataBtn" class="btn btn-danger btn-small" data-i18n="clearAllData">Clear All Data</button>
                         </div>
                     </div>
                 </div>
@@ -594,72 +596,10 @@
                             <span data-i18n="allClasses">All Classes</span>
                         </label>
                     </div>
-                    <div id="holidayFilterSection" class="holiday-filter-section" style="display: none;">
-                        <div class="filter-group">
-                            <label class="filter-label" data-i18n="bySection">By Simson level:</label>
-                            <div id="holidaySectionCheckboxes" class="checkbox-group grade-checkboxes simson-level-checkboxes"></div>
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label" data-i18n="bySchoolBand">School level (quick):</label>
-                            <div class="checkbox-group grade-checkboxes">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="holidayAllElementary" value="1">
-                                    <span data-i18n="allElementaryLabel">All elementary (?????6)</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="holidayAllMiddleSchool" value="1">
-                                    <span data-i18n="allMiddleSchoolLabel">All middle school (?????3)</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label" data-i18n="byGrade">By Grade:</label>
-                            <div class="checkbox-group grade-checkboxes">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="holidayGrade" value="??">
-                                    ??
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="holidayGrade" value="??">
-                                    ??
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="holidayGrade" value="??">
-                                    ??
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="holidayGrade" value="??">
-                                    ??
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="holidayGrade" value="??">
-                                    ??
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="holidayGrade" value="??">
-                                    ??
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="holidayGrade" value="??">
-                                    ??
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="holidayGrade" value="??">
-                                    ??
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="holidayGrade" value="??">
-                                    ??
-                                </label>
-                            </div>
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label" data-i18n="byClassName">By Class Name:</label>
-                            <div id="holidayClassCheckboxes" class="checkbox-group class-checkboxes">
-                                <!-- Dynamically populated by JavaScript -->
-                            </div>
-                        </div>
+                    <div id="eventApplicabilityFilterRow" class="event-applicability-filter-row" style="display: none;">
+                        <button type="button" id="eventApplicabilityFilterBtn" class="btn btn-outline btn-small lesson-filter-btn" aria-expanded="false" aria-controls="eventApplicabilityPopover" data-i18n="eventApplicabilityFilterBtn">Choose applicability…</button>
                     </div>
+                    <p id="eventApplicabilitySummary" class="event-applicability-summary" hidden></p>
                 </div>
 
                 <div class="form-actions event-form-actions">
@@ -762,6 +702,25 @@
                 </div>
             </form>
     </template>
+
+    <div id="eventApplicabilityPopover" class="lesson-filter-popover event-applicability-popover" hidden role="dialog" aria-modal="true" aria-labelledby="eventApplicabilityFilterTitle">
+        <div class="lesson-filter-popover-panel">
+            <div class="lesson-filter-header">
+                <h3 id="eventApplicabilityFilterTitle" data-i18n="eventApplicabilityFilterTitle">Event applies to</h3>
+                <button type="button" class="lesson-filter-close" id="eventApplicabilityFilterCloseBtn" aria-label="Close">&times;</button>
+            </div>
+            <p id="eventApplicabilityFilterStatus" class="lesson-filter-status"></p>
+            <div class="lesson-filter-actions">
+                <button type="button" class="btn btn-outline btn-small" id="eventApplicabilitySelectAllBtn" data-i18n="filterSelectAll">Select all</button>
+                <button type="button" class="btn btn-outline btn-small" id="eventApplicabilityClearAllBtn" data-i18n="filterClearAll">Clear all</button>
+            </div>
+            <div class="lesson-filter-search-wrap">
+                <input type="search" id="eventApplicabilitySearch" class="lesson-filter-search" autocomplete="off" spellcheck="false" data-i18n-placeholder="lessonFilterSearchPlaceholder" placeholder="Search classes, grades, levels…">
+            </div>
+            <p id="eventApplicabilitySearchEmpty" class="lesson-filter-search-empty" hidden data-i18n="lessonFilterSearchEmpty">No matches. Try a different search.</p>
+            <div id="eventApplicabilityPopoverBody" class="lesson-filter-body"></div>
+        </div>
+    </div>
 
     <script src="js/schedule-core.js"></script>
     <script src="js/utils.js"></script>
