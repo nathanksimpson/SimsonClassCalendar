@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Calendar Planner</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-top-bar app-top-bar--global" id="appTopBar">
+            <div id="appStatus" class="app-status" role="status" aria-live="polite"></div>
+
+            <div class="app-top-bar-compact">
+                <div class="app-top-bar-title-block">
+                    <h1 data-i18n="appTitle">Class Calendar Planner</h1>
+                    <span id="topBarCalendarLabel" class="top-bar-calendar-label" hidden></span>
+                </div>
+                <nav class="app-tab-nav" id="appTabNav" role="tablist" aria-label="App sections">
+                    <button type="button" class="app-tab-btn is-active" role="tab" id="tabBtn-calendar" aria-selected="true" aria-controls="panel-calendar" data-tab="calendar" data-i18n="tabCalendar">Calendar</button>
+                    <button type="button" class="app-tab-btn" role="tab" id="tabBtn-classes" aria-selected="false" aria-controls="panel-classes" data-tab="classes" data-i18n="tabClasses">Classes</button>
+                    <button type="button" class="app-tab-btn" role="tab" id="tabBtn-events" aria-selected="false" aria-controls="panel-events" data-tab="events" data-i18n="tabEvents">Events</button>
+                    <button type="button" class="app-tab-btn" role="tab" id="tabBtn-print" aria-selected="false" aria-controls="panel-print" data-tab="print" data-i18n="tabPrint">Print &amp; data</button>
+                </nav>
+                <button id="langToggleBtn" class="btn btn-outline btn-small btn-lang">🌐 한국어</button>
+            </div>
+        </header>
+
+        <main class="app-main" id="appMain">
+            <section id="panel-calendar" class="app-tab-panel is-active" data-tab="calendar" role="tabpanel" aria-labelledby="tabBtn-calendar">
+                <div class="calendar-panel-toolbar module-toolbar">
+                    <button id="addClassBtn" class="btn btn-primary btn-compact" data-i18n="addClass">+ Add Class</button>
+                    <button id="addHolidayBtn" class="btn btn-secondary btn-compact" data-i18n="addEvent">+ Add Event</button>
+                    <button id="printBtn" class="btn btn-outline btn-compact" data-i18n="print">Print</button>
+                </div>
+
+                <div id="calendarOptions" class="calendar-options">
+                <button type="button" id="topBarToggle" class="app-top-bar-toggle calendar-options-toggle" aria-expanded="true" aria-controls="topBarDetails">
+                    <span class="app-top-bar-toggle-icon" aria-hidden="true">▲</span>
+                    <span class="top-bar-toggle-label" data-i18n="topBarCollapse">Collapse calendar options</span>
+                </button>
+
+            <div id="topBarDetails" class="app-top-bar-details calendar-options-details">
+                <div class="term-selector">
+                    <label for="calendarName" data-i18n="calendarName">Calendar Name:</label>
+                    <input type="text" id="calendarName" data-i18n-placeholder="calendarNamePlaceholder" placeholder="e.g., Fall 2025 Term">
+                    <label for="termStart" data-i18n="termStartMonth">Term Start Month:</label>
+                    <input type="month" id="termStart" value="">
+                    <label for="termMonthCount" data-i18n="termMonthCount">Months to display:</label>
+                    <select id="termMonthCount" aria-label="Term month count">
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select>
+                </div>
+
+                <div id="calendarVisibilityBar" class="calendar-visibility-bar">
+                    <span class="visibility-bar-label" data-i18n="calendarVisibility">Show on calendar:</span>
+                    <label class="checkbox-label visibility-chip">
+                        <input type="checkbox" id="visLessons" checked>
+                        <span data-i18n="showLessons">Lessons</span>
+                    </label>
+                    <label class="checkbox-label visibility-chip">
+                        <input type="checkbox" id="visHolidays" checked>
+                        <span data-i18n="showHolidays">Holidays</span>
+                    </label>
+                    <label class="checkbox-label visibility-chip">
+                        <input type="checkbox" id="visEvalDeadline" checked>
+                        <span data-i18n="showEvalDeadlines">Evaluation deadlines</span>
+                    </label>
+                    <label class="checkbox-label visibility-chip">
+                        <input type="checkbox" id="visHomeworkDeadline" checked>
+                        <span data-i18n="showHomeworkDeadlines">Homework deadlines</span>
+                    </label>
+                    <label class="checkbox-label visibility-chip">
+                        <input type="checkbox" id="visEvalPeriod" checked>
+                        <span data-i18n="showEvalPeriods">Evaluation periods</span>
+                    </label>
+                    <label class="checkbox-label visibility-chip">
+                        <input type="checkbox" id="visOther" checked>
+                        <span data-i18n="showOtherEvents">Other events</span>
+                    </label>
+                    <button type="button" id="lessonFilterBtn" class="btn btn-outline btn-small lesson-filter-btn" aria-expanded="false" aria-controls="lessonFilterPopover" data-i18n="lessonFilterBtn">Filter lessons…</button>
+                </div>
+                <div id="lessonFilterPopover" class="lesson-filter-popover" hidden role="dialog" aria-modal="true" aria-labelledby="lessonFilterTitle">
+                    <div class="lesson-filter-popover-panel">
+                        <div class="lesson-filter-header">
+                            <h3 id="lessonFilterTitle" data-i18n="lessonFilterTitle">Filter lessons on calendar</h3>
+                            <button type="button" class="lesson-filter-close" id="lessonFilterCloseBtn" aria-label="Close">&times;</button>
+                        </div>
+                        <p id="lessonFilterStatus" class="lesson-filter-status"></p>
+                        <div class="lesson-filter-actions">
+                            <button type="button" class="btn btn-outline btn-small" id="lessonFilterSelectAllBtn" data-i18n="filterSelectAll">Select all</button>
+                            <button type="button" class="btn btn-outline btn-small" id="lessonFilterClearAllBtn" data-i18n="filterClearAll">Clear all</button>
+                            <button type="button" class="btn btn-outline btn-small" id="lessonFilterResetBtn" data-i18n="lessonFilterReset">Reset filters</button>
+                        </div>
+                        <div class="lesson-filter-search-wrap">
+                            <input type="search" id="lessonFilterSearch" class="lesson-filter-search" autocomplete="off" spellcheck="false" data-i18n-placeholder="lessonFilterSearchPlaceholder" placeholder="Search classes, grades, levels…">
+                        </div>
+                        <p id="lessonFilterSearchEmpty" class="lesson-filter-search-empty" hidden data-i18n="lessonFilterSearchEmpty">No matches. Try a different search.</p>
+                        <div id="lessonFilterPopoverBody" class="lesson-filter-body"></div>
+                    </div>
+                </div>
+            </div>
+                </div>
+
+                <div id="calendarContainer" class="calendar-container">
+                    <!-- Calendars will be rendered here by JavaScript -->
+                </div>
+            </section>
+
+            <section id="panel-classes" class="app-tab-panel" data-tab="classes" role="tabpanel" aria-labelledby="tabBtn-classes" hidden>
+                <div class="module-toolbar">
+                    <button type="button" id="classesTabAddBtn" class="btn btn-primary btn-compact" data-i18n="addClass">+ Add Class</button>
+                </div>
+                <div class="classes-layout module-split-layout">
+                    <aside class="module-list-panel" aria-label="Class list">
+                        <input type="search" id="classListSearch" class="module-list-search" autocomplete="off" spellcheck="false" data-i18n-placeholder="classListSearchPlaceholder" placeholder="Search classes…">
+                        <div id="classList" class="module-list" role="listbox" aria-label="Classes"></div>
+                    </aside>
+                    <div class="module-editor-panel class-editor-panel">
+                        <div id="classFormMountTab" class="class-form-mount"></div>
+                        <p id="classEditorEmpty" class="module-empty-hint" data-i18n="classEditorEmpty">Select a class from the list, or click + Add Class to create one.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="panel-events" class="app-tab-panel" data-tab="events" role="tabpanel" aria-labelledby="tabBtn-events" hidden>
+                <div class="module-toolbar">
+                    <button type="button" id="eventsTabAddBtn" class="btn btn-secondary btn-compact" data-i18n="addEvent">+ Add Event</button>
+                </div>
+                <div class="events-layout module-split-layout">
+                    <aside class="module-list-panel" aria-label="Event list">
+                        <input type="search" id="eventListSearch" class="module-list-search" autocomplete="off" spellcheck="false" data-i18n-placeholder="eventListSearchPlaceholder" placeholder="Search events…">
+                        <div id="eventList" class="module-list" role="listbox" aria-label="Events"></div>
+                    </aside>
+                    <div class="module-editor-panel event-editor-panel">
+                        <div id="holidayFormMountTab" class="event-form-mount"></div>
+                        <p id="eventEditorEmpty" class="module-empty-hint" data-i18n="eventEditorEmpty">Select an event from the list, or click + Add Event to create one.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="panel-print" class="app-tab-panel" data-tab="print" role="tabpanel" aria-labelledby="tabBtn-print" hidden>
+                <div class="print-data-layout">
+                    <div class="print-data-section">
+                        <h2 class="module-section-title" data-i18n="printOptions">Print Options</h2>
+                        <div id="printFormMountTab"></div>
+                    </div>
+                    <div class="print-data-section print-data-actions-section">
+                        <h2 class="module-section-title" data-i18n="tabPrintDataHeading">Data &amp; settings</h2>
+                        <div class="print-data-actions">
+                            <button type="button" class="btn btn-outline btn-small" data-open-default-class-editor data-i18n="defaultClassEditorOpen">Edit defaults</button>
+                            <button type="button" id="howToBtn" class="btn btn-outline btn-small" data-i18n="howToBtn" title="How to use this app">How to Use</button>
+                            <button id="exportBtn" class="btn btn-outline btn-small" data-i18n="export">Export</button>
+                            <button id="importBtn" class="btn btn-outline btn-small" data-i18n="import">Import</button>
+                            <input type="file" id="importFile" accept=".json" style="display: none;">
+                            <button id="clearDataBtn" class="btn btn-danger btn-small" data-i18n="clearAllData">Clear All Data</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Print Summary Section (hidden on screen, shown on print) -->
+        <div id="printSummary" class="print-summary">
+            <h2 data-i18n="termSummary">Term Summary</h2>
+            
+            <div class="summary-section">
+                <h3 data-i18n="classes">Classes</h3>
+                <table class="summary-table" id="classSummaryTable">
+                    <thead>
+                        <tr>
+                            <th data-i18n="className">Class Name</th>
+                            <th data-period-col="1" data-i18n="classPeriod">Period</th>
+                            <th data-i18n="level">Level</th>
+                            <th data-i18n="grade">Grade</th>
+                            <th data-i18n="defaultBook">Default book</th>
+                            <th data-i18n="booksByMonth">Books by month</th>
+                            <th data-i18n="startDate">Start Date</th>
+                            <th data-i18n="endDate">End Date</th>
+                            <th data-i18n="day">Day</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="summary-section summary-events">
+                <h3 data-i18n="eventsSummary">Events</h3>
+                <table class="summary-table" id="eventSummaryTable">
+                    <thead>
+                        <tr>
+                            <th data-i18n="eventType">Type</th>
+                            <th data-i18n="holidayName">Name</th>
+                            <th data-i18n="date">Date</th>
+                            <th data-i18n="appliesTo">Applies To</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="summary-section summary-holidays-legacy" style="display:none;">
+                <h3 data-i18n="holidays">Holidays</h3>
+                <table class="summary-table" id="holidaySummaryTable">
+                    <thead>
+                        <tr>
+                            <th data-i18n="holidayName">Holiday Name</th>
+                            <th data-i18n="date">Date</th>
+                            <th data-i18n="appliesTo">Applies To</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="summary-section">
+                <h3 data-i18n="lessonSchedule">Lesson Schedule</h3>
+                <div id="lessonScheduleSummary">
+                    <!-- Filled by JavaScript -->
+                </div>
+            </div>
+
+            <div class="summary-section">
+                <h3 data-i18n="compressionNotes">Compression Notes</h3>
+                <ul id="compressionNotes">
+                    <!-- Filled by JavaScript -->
+                </ul>
+            </div>
+
+            <div class="summary-section summary-syllabus-tables">
+                <h3 data-i18n="syllabusTables">Syllabus tables</h3>
+                <div id="syllabusTablesSummary">
+                    <!-- Filled by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class quick edit (calendar pop-out) -->
+    <div id="classModal" class="modal calendar-popout" aria-hidden="true">
+        <div class="modal-content class-modal-content calendar-popout-content">
+            <div id="classFormMountModal" class="class-form-mount"></div>
+        </div>
+    </div>
+
+    <template id="classFormTemplate">
+            <form id="classForm">
+                <input type="hidden" id="classId" value="">
+
+                <div class="modal-header class-modal-header">
+                    <h2 id="classModalTitle" data-i18n="addNewClass">Add New Class</h2>
+                    <div class="class-modal-header-actions">
+                        <button type="button" id="openClassInTabBtn" class="btn btn-outline btn-small class-open-full-btn" data-i18n="openFullClassEditor">Open full editor</button>
+                        <button type="button" id="deleteClassBtn" class="btn btn-danger btn-small class-modal-delete-btn" data-i18n="deleteClass">Delete class</button>
+                        <button type="submit" class="btn btn-primary btn-small" data-i18n="saveClass">Save Class</button>
+                        <button type="button" class="modal-close" id="closeClassModal" aria-label="Close">&times;</button>
+                    </div>
+                </div>
+
+                <div class="class-modal-body">
+                <div class="form-group autocomplete-wrapper class-modal-name-field">
+                    <label for="className" data-i18n="className">Class Name</label>
+                    <input type="text" id="className" required data-i18n-placeholder="classNamePlaceholder" placeholder="e.g., Debate" autocomplete="off">
+                    <div id="classNameSuggestions" class="autocomplete-dropdown"></div>
+                </div>
+
+                <div class="form-row class-type-row">
+                    <div class="form-group class-type-select-wrap">
+                        <label for="classTypeSelect" data-i18n="classTypeLabel">Class type</label>
+                        <select id="classTypeSelect" aria-describedby="classTypeHint"></select>
+                        <p id="classTypeHint" class="section-hint" data-i18n="classTypeHint"></p>
+                    </div>
+                    <div class="form-group class-type-inline-actions">
+                        <span class="form-spacer-label" aria-hidden="true">&nbsp;</span>
+                        <div class="class-type-action-buttons">
+                            <button type="button" class="btn btn-outline btn-small" data-open-default-class-editor data-i18n="defaultClassEditorOpen">Edit defaults</button>
+                            <button type="button" id="openClassTypeModalBtn" class="btn btn-outline btn-small" data-i18n="classTypeNewType">New class type</button>
+                            <button type="button" id="deleteCustomClassTypeBtn" class="btn btn-outline btn-small" style="display: none;" data-i18n="classTypeDelete">Delete type</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group form-group-class-period">
+                        <label for="classPeriod" data-i18n="classPeriod">Period</label>
+                        <select id="classPeriod"></select>
+                        <p class="section-hint" data-i18n="classPeriodHint">Lower numbers appear first in lists, print summary, and on days with multiple classes (1 = first period).</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="classLevel" data-i18n="classLevelPreset">Section (preset)</label>
+                        <select id="classLevel">
+                            <option value="" data-i18n="selectLevel">Select level</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="classLevelCustom" data-i18n="classLevelCustom">Level (custom)</label>
+                        <input type="text" id="classLevelCustom" data-i18n-placeholder="classLevelCustomPlaceholder" placeholder="Optional: full level name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="classGrade" data-i18n="grade">Grade</label>
+                        <select id="classGrade">
+                            <option value="" data-i18n="selectGrade">Select grade (optional)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="classBook" data-i18n="defaultBook">Default book (fallback)</label>
+                    <input type="text" id="classBook" required data-i18n-placeholder="bookPlaceholder" placeholder="Used when a month has no book set">
+                </div>
+
+                <div class="form-group books-by-month-section">
+                    <label data-i18n="booksByMonth">Books by month</label>
+                    <p class="section-hint" data-i18n="booksByMonthHint">One book per calendar month (shown on lessons in that month). Leave a month blank to use the default book.</p>
+                    <p class="section-hint" data-i18n="termCalendarMonthsHint">One book unit per month. Default is 3 months = 3 books.</p>
+                    <div id="booksByMonthRows" class="books-by-month-rows"></div>
+                    <div class="form-row books-by-month-actions">
+                        <button type="button" id="addBookMonthRowBtn" class="btn btn-outline btn-small" data-i18n="addBookMonth">Add month</button>
+                        <button type="button" id="fillBooksFromDefaultBtn" class="btn btn-outline btn-small" data-i18n="fillBooksFromDefault">Fill term from default book</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="classNotes" data-i18n="notes">Notes</label>
+                    <textarea id="classNotes" rows="2" data-i18n-placeholder="notesPlaceholder" placeholder="Optional notes about this class..."></textarea>
+                </div>
+
+                <div class="form-row form-row-term-dates">
+                    <div class="form-group">
+                        <label for="classStartDate" data-i18n="startDate">Start Date</label>
+                        <input type="date" id="classStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="classTermMonths" data-i18n="termCalendarMonths">Term (calendar months)</label>
+                        <input type="number" id="classTermMonths" min="1" max="24" value="3" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="classEndDate" data-i18n="endDate">End Date</label>
+                        <input type="date" id="classEndDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="classUseAutoTermEnd" checked>
+                        <span data-i18n="useAutoTermEnd">Auto-set end date to the last day of the final month</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="classTotalLessons" data-i18n="totalLessons">Total Lessons</label>
+                    <input type="number" id="classTotalLessons" min="1" value="4" required>
+                </div>
+                <div class="form-row form-row-meeting-days">
+                    <div class="form-group form-group-meeting-days">
+                        <label data-i18n="meetingDays">Meeting days</label>
+                        <p class="section-hint" data-i18n="meetingDaysHint"></p>
+                        <div class="meeting-days-block">
+                            <div class="meeting-days-presets"></div>
+                            <div id="classMeetingDaysRow" class="meeting-days-row" role="group" aria-label="Meeting days"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group class-color-group">
+                    <div class="class-color-pickers">
+                        <div class="class-color-field">
+                            <label for="classColor" data-i18n="classBackgroundColor">Background color</label>
+                            <input type="color" id="classColor" value="#e67e22">
+                        </div>
+                        <div class="class-color-field">
+                            <label for="classTextColor" data-i18n="classTextColor">Text color</label>
+                            <input type="color" id="classTextColor" value="#ffffff">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Schedule Option -->
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="customScheduleEnabled">
+                        <span data-i18n="customSchedule">Custom Schedule (manually pick dates for each lesson)</span>
+                    </label>
+                </div>
+
+                <div id="customScheduleSection" class="custom-schedule-section" style="display: none;">
+                    <p class="section-hint" data-i18n="selectDatesHint">Select specific dates for each lesson day:</p>
+                    <div id="customLessonDates" class="custom-lesson-dates"></div>
+                </div>
+
+                <div class="form-group compression-mode-group">
+                    <label data-i18n="compressionModeLabel">Compression</label>
+                    <div class="radio-group">
+                        <label class="checkbox-label">
+                            <input type="radio" name="compressionMode" id="compressionModeAuto" value="autoWhenNeeded" checked>
+                            <span data-i18n="compressionModeAuto">Auto compress when a month does not have enough class days</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="radio" name="compressionMode" id="compressionModeManual" value="manual">
+                            <span data-i18n="compressionModeManual">Manual only (use my merge choices below)</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="radio" name="compressionMode" id="compressionModeManualPerMonth" value="manualPerMonth">
+                            <span data-i18n="compressionModeManualPerMonth">Per month (choose merges for each calendar month)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="compressionByMonthSection" class="compression-by-month-section" style="display: none;">
+                    <p class="section-hint" data-i18n="compressionByMonthHint">Choose which lesson pairs to merge for each month (typical for weekly debate). Each month can differ when holidays shorten the schedule.</p>
+                    <div id="compressionByMonthRows" class="compression-by-month-rows"></div>
+                </div>
+
+                <div class="compression-options" id="compressionGlobalSection">
+                    <p class="section-hint" data-i18n="compressionHint">Compression groups (choose merges):</p>
+                    <p class="section-hint" data-i18n="compressionMergeCheckboxesNote">Merge checkboxes apply in Manual mode only. Per month uses the section above. In Auto mode, pairs merge only when a month has fewer class meetings than lesson days.</p>
+                    <div id="compressionCheckboxes" class="compression-checkboxes"></div>
+                    <p class="section-hint" data-i18n="compressionOverlapHint">Only adjacent lessons can be merged. Overlapping merges are disabled.</p>
+                </div>
+
+                <div class="form-group syllabus-section">
+                    <label data-i18n="syllabusUnits">Syllabus / curriculum units</label>
+                    <p class="section-hint" data-i18n="syllabusUnitsHint">Optional units for planning. Link events to a unit when editing an event.</p>
+                    <div id="syllabusUnitsRows" class="syllabus-units-rows"></div>
+                    <button type="button" id="addSyllabusUnitBtn" class="btn btn-outline btn-small" data-i18n="addSyllabusUnit">Add unit</button>
+                </div>
+
+                <div class="form-group syllabus-table-section">
+                    <label data-i18n="syllabusTable">Syllabus table</label>
+                    <p class="section-hint" data-i18n="syllabusTableHint">Build a printable table (Month, Week, Class #, lesson plan, pages/work). Refresh after you change the calendar schedule.</p>
+                    <div class="syllabus-table-actions">
+                        <button type="button" id="refreshSyllabusBtn" class="btn btn-outline btn-small" data-i18n="refreshSyllabusFromCalendar">Refresh from calendar</button>
+                        <button type="button" id="fillSyllabusFromUnitsBtn" class="btn btn-outline btn-small" data-i18n="fillSyllabusFromUnits">Fill pages from units</button>
+                        <button type="button" id="applyPresetSyllabusBtn" class="btn btn-outline btn-small" data-i18n="applyPresetSyllabus">Apply preset pages</button>
+                        <button type="button" id="addSyllabusNoteRowBtn" class="btn btn-outline btn-small" data-i18n="addSyllabusNoteRow">Add note row</button>
+                    </div>
+                    <div class="syllabus-table-editor-wrap">
+                        <table class="syllabus-editor-table" aria-label="Syllabus editor">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="syllabusColWeek">Week</th>
+                                    <th data-i18n="syllabusColClass">Class</th>
+                                    <th data-i18n="syllabusColPlan">Weekly Lesson Plan</th>
+                                    <th data-i18n="syllabusColPages">Pages / detail</th>
+                                    <th data-i18n="syllabusColNote">Note</th>
+                                    <th><span class="sr-only">Remove</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="syllabusTableBody"></tbody>
+                        </table>
+                        <p id="syllabusTableEmptyHint" class="section-hint" data-i18n="syllabusTableEmptyHint">No rows yet. Click Refresh from calendar to generate rows from your lesson schedule.</p>
+                    </div>
+                    <details class="homework-import-panel">
+                        <summary data-i18n="homeworkImportTitle">Import homework from paste</summary>
+                        <p class="section-hint" data-i18n="homeworkImportHint">Paste debate Day blocks or Unit Part blocks. Run Refresh from calendar first so session numbers match.</p>
+                        <textarea id="homeworkImportPaste" class="homework-import-paste" rows="6" data-i18n-placeholder="homeworkImportPlaceholder" placeholder="Paste homework text here…"></textarea>
+                        <div class="homework-import-actions">
+                            <button type="button" id="homeworkImportPreviewBtn" class="btn btn-outline btn-small" data-i18n="homeworkImportPreview">Preview match</button>
+                            <button type="button" id="homeworkImportApplyBtn" class="btn btn-outline btn-small" data-i18n="homeworkImportApply">Apply to table</button>
+                        </div>
+                        <pre id="homeworkImportPreview" class="homework-import-preview" aria-live="polite"></pre>
+                    </details>
+                    <div class="syllabus-print-actions">
+                        <button type="button" id="printClassSyllabusBtn" class="btn btn-outline btn-small" data-i18n="printClassSyllabus">Print syllabus</button>
+                    </div>
+                    <p class="section-hint" data-i18n="printClassSyllabusHint">Opens the print dialog; choose Save as PDF to download.</p>
+                </div>
+
+                </div>
+            </form>
+    </template>
+
+
+    <div id="classTypeModal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2 data-i18n="classTypeCreateTitle">Create a class type</h2>
+                <button type="button" class="modal-close" id="closeClassTypeModal" aria-label="Close">&times;</button>
+            </div>
+            <form id="classTypeForm">
+                <div class="form-group">
+                    <label for="newClassTypeName" data-i18n="classTypeName">Type name</label>
+                    <input type="text" id="newClassTypeName" required maxlength="80">
+                </div>
+                <div class="form-group">
+                    <label for="newClassTypeTotalLessons" data-i18n="totalLessons">Total lessons</label>
+                    <input type="number" id="newClassTypeTotalLessons" min="1" value="8" required>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="meetingDays">Meeting days</label>
+                    <p class="section-hint" data-i18n="classTypeMeetingDaysHint"></p>
+                    <div class="meeting-days-block">
+                        <div class="meeting-days-presets"></div>
+                        <div id="newClassTypeMeetingDaysRow" class="meeting-days-row" role="group"></div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" data-i18n="classTypeSave">Save type</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Event quick edit (calendar pop-out) -->
+    <div id="holidayModal" class="modal calendar-popout" aria-hidden="true">
+        <div class="modal-content calendar-popout-content">
+            <div id="holidayFormMountModal" class="event-form-mount"></div>
+        </div>
+    </div>
+
+    <template id="holidayFormTemplate">
+            <div class="event-editor-header modal-header">
+                <h2 id="holidayModalTitle" data-i18n="addHolidayTitle">Add Holiday</h2>
+                <div class="event-editor-header-actions">
+                    <button type="button" id="openEventInTabBtn" class="btn btn-outline btn-small event-open-full-btn" data-i18n="openFullEventEditor">Open full editor</button>
+                    <button type="button" class="modal-close" id="closeHolidayModal" aria-label="Close">&times;</button>
+                </div>
+            </div>
+            <form id="holidayForm">
+                <input type="hidden" id="holidayId" value="">
+                
+                <div class="form-group">
+                    <label for="eventType" data-i18n="eventType">Event type</label>
+                    <select id="eventType" required>
+                        <option value="holiday" data-i18n="eventTypeHoliday">Holiday / no class</option>
+                        <option value="evaluation_deadline" data-i18n="eventTypeEvalDeadline">Evaluation deadline</option>
+                        <option value="homework_deadline" data-i18n="eventTypeHomeworkDeadline">Homework deadline</option>
+                        <option value="evaluation_period" data-i18n="eventTypeEvalPeriod">Evaluation period</option>
+                        <option value="other" data-i18n="eventTypeOther">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventNotes" data-i18n="notes">Notes</label>
+                    <textarea id="eventNotes" rows="2" data-i18n-placeholder="eventNotesPlaceholder" placeholder="Optional notes..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="holidayName" data-i18n="holidayName">Holiday/Event Name</label>
+                    <input type="text" id="holidayName" required data-i18n-placeholder="holidayNamePlaceholder" placeholder="e.g., Thanksgiving">
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="holidayIsRange">
+                        <span data-i18n="dateRange">Date Range (multiple days)</span>
+                    </label>
+                </div>
+
+                <div id="holidaySingleDate" class="form-group">
+                    <label for="holidayDate" data-i18n="date">Date</label>
+                    <input type="date" id="holidayDate">
+                </div>
+
+                <div id="holidayDateRange" class="form-row" style="display: none;">
+                    <div class="form-group">
+                        <label for="holidayStartDate" data-i18n="startDate">Start Date</label>
+                        <input type="date" id="holidayStartDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="holidayEndDate" data-i18n="endDate">End Date</label>
+                        <input type="date" id="holidayEndDate">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="holidayBgColor" data-i18n="bgColor">Background Color</label>
+                        <input type="color" id="holidayBgColor" value="#fef3c7">
+                    </div>
+                    <div class="form-group">
+                        <label for="holidayTextColor" data-i18n="textColor">Text Color</label>
+                        <input type="color" id="holidayTextColor" value="#b45309">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="appliesTo">Applies To</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="holidayAllClasses" checked>
+                            <span data-i18n="allClasses">All Classes</span>
+                        </label>
+                    </div>
+                    <div id="holidayFilterSection" class="holiday-filter-section" style="display: none;">
+                        <div class="filter-group">
+                            <label class="filter-label" data-i18n="bySection">By Simson level:</label>
+                            <div id="holidaySectionCheckboxes" class="checkbox-group grade-checkboxes simson-level-checkboxes"></div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" data-i18n="bySchoolBand">School level (quick):</label>
+                            <div class="checkbox-group grade-checkboxes">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="holidayAllElementary" value="1">
+                                    <span data-i18n="allElementaryLabel">All elementary (?????6)</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="holidayAllMiddleSchool" value="1">
+                                    <span data-i18n="allMiddleSchoolLabel">All middle school (?????3)</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" data-i18n="byGrade">By Grade:</label>
+                            <div class="checkbox-group grade-checkboxes">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="holidayGrade" value="??">
+                                    ??
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="holidayGrade" value="??">
+                                    ??
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="holidayGrade" value="??">
+                                    ??
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="holidayGrade" value="??">
+                                    ??
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="holidayGrade" value="??">
+                                    ??
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="holidayGrade" value="??">
+                                    ??
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="holidayGrade" value="??">
+                                    ??
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="holidayGrade" value="??">
+                                    ??
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="holidayGrade" value="??">
+                                    ??
+                                </label>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" data-i18n="byClassName">By Class Name:</label>
+                            <div id="holidayClassCheckboxes" class="checkbox-group class-checkboxes">
+                                <!-- Dynamically populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions event-form-actions">
+                    <button type="button" id="deleteHolidayBtn" class="btn btn-danger" style="display: none;" data-i18n="delete">Delete</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="saveEvent">Save Event</button>
+                </div>
+            </form>
+    </template>
+
+    <!-- Class Detail Popup (hover) -->
+    <div id="classPopup" class="class-popup">
+        <div class="popup-content">
+            <div class="popup-title"></div>
+            <div class="popup-details">
+                <p><strong data-i18n="level">Level:</strong> <span class="popup-level"></span></p>
+                <p><strong data-i18n="grade">Grade:</strong> <span class="popup-grade"></span></p>
+                <p><strong data-i18n="bookThisLesson">Book (this lesson):</strong> <span class="popup-book"></span></p>
+                <p><strong data-i18n="lesson">Lesson:</strong> <span class="popup-lesson"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- How to Use Modal -->
+    <div id="howToModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="howToTitle">
+        <div class="modal-content modal-howto">
+            <div class="modal-header">
+                <h2 id="howToTitle">How to Use</h2>
+                <button type="button" class="modal-close" id="closeHowToModal" aria-label="Close">&times;</button>
+            </div>
+            <div id="howToBody" class="how-to-body"></div>
+        </div>
+    </div>
+
+    <template id="printFormTemplate">
+            <form id="printForm" class="print-options-form">
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printCalendar" checked>
+                        <span data-i18n="printCalendar">Print Calendar</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printSummaryCheck" checked>
+                        <span data-i18n="printSummaryPage">Print Summary Page</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printClassList" checked>
+                        <span data-i18n="includeClassList">Include Class List</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printHolidayList" checked>
+                        <span data-i18n="includeHolidayList">Include Holiday List</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printLessonSchedule" checked>
+                        <span data-i18n="includeLessonSchedule">Include Lesson Schedule</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printCompressionNotes" checked>
+                        <span data-i18n="includeCompressionNotes">Include Compression Notes</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printSyllabusTables" checked>
+                        <span data-i18n="includeSyllabusTables">Syllabus tables (per class)</span>
+                    </label>
+                </div>
+                <p id="printLessonFilterHint" class="section-hint print-lesson-filter-hint" hidden></p>
+                <p class="section-hint print-visibility-heading" data-i18n="printCalendarVisibility">On printed calendar, show:</p>
+                <div class="print-cal-vis-actions">
+                    <button type="button" class="btn btn-outline btn-small" id="printCalVisSelectAllBtn" data-i18n="filterSelectAll">Select all</button>
+                    <button type="button" class="btn btn-outline btn-small" id="printCalVisClearAllBtn" data-i18n="filterClearAll">Clear all</button>
+                </div>
+                <div class="form-group print-cal-vis">
+                    <label class="checkbox-label"><input type="checkbox" id="printCalLessons" checked><span data-i18n="showLessons">Lessons</span></label>
+                    <label class="checkbox-label"><input type="checkbox" id="printCalHolidays" checked><span data-i18n="showHolidays">Holidays</span></label>
+                    <label class="checkbox-label"><input type="checkbox" id="printCalEvalDeadline" checked><span data-i18n="showEvalDeadlines">Evaluation deadlines</span></label>
+                    <label class="checkbox-label"><input type="checkbox" id="printCalHomeworkDeadline" checked><span data-i18n="showHomeworkDeadlines">Homework deadlines</span></label>
+                    <label class="checkbox-label"><input type="checkbox" id="printCalEvalPeriod" checked><span data-i18n="showEvalPeriods">Evaluation periods</span></label>
+                    <label class="checkbox-label"><input type="checkbox" id="printCalOther" checked><span data-i18n="showOtherEvents">Other events</span></label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printEventsList" checked>
+                        <span data-i18n="includeEventsList">Include events list</span>
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" data-i18n="print">Print</button>
+                </div>
+            </form>
+    </template>
+
+    <script src="js/schedule-core.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/syllabus-table.js"></script>
+    <script src="js/schedule-matrix-data.js"></script>
+    <script src="js/syllabus-schedule-matrix.js"></script>
+    <script src="js/syllabus-curricula-data.js"></script>
+    <script src="js/syllabus-curricula.js"></script>
+    <script src="js/syllabus-presets.js"></script>
+    <script src="js/default-class-editor.js"></script>
+    <script src="js/homework-import.js"></script>
+    <script src="app.js?v=20260521-curricula"></script>
+    <script src="howto.js"></script>
+</body>
+</html>
+
